@@ -1,0 +1,18 @@
+# Configuración del Worker de la API de me gusta.
+#
+# Solo valores PUBLICOS aqui. Los secretos (SUPABASE_SERVICE_ROLE_KEY, VISITOR_HASH_PEPPER)
+# se definen con `wrangler secret put` o en .dev.vars. Nunca en este archivo ni en el repositorio.
+
+name = "deus-likes-api"
+main = "src/index.js"
+compatibility_date = "2026-10-20"
+workers_dev = true
+
+[vars]
+# Origenes que pueden llamar a la API (lista explicita, separada por comas).
+ALLOWED_ORIGINS = "https://DeusStellaris.github.io"
+# Indice de busqueda publicado: fuente del catalogo de proyectos.
+SITE_INDEX_URL = "https://DeusStellaris.github.io/search-index.json"
+# URL del proyecto de Supabase. No es secreta: la seguridad depende de RLS y de los secretos.
+# Marcador vacio hasta crear el proyecto; sin valor el Worker responde 503 de forma controlada.
+SUPABASE_URL = ""

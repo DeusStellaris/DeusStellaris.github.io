@@ -28,9 +28,9 @@ Mientras ese valor no se reemplace, Decap falla al autenticar. No hay ningún me
 Para completarlo hace falta:
 
 1. **Una OAuth App en GitHub** (cuenta `DeusStellaris`), con la URL de callback que indique el Worker.
-2. **Un Cloudflare Worker** que haga el intercambio OAuth con PKCE. Sus secretos (`GITHUB_OAUTH_CLIENT_ID`, `GITHUB_OAUTH_CLIENT_SECRET`) van solo como secretos del Worker (`wrangler secret put`), nunca en el repositorio ni en el navegador.
+2. **El Worker de autenticación** de `workers/decap-auth/`, que hace el intercambio OAuth con PKCE. Sus secretos (`GITHUB_CLIENT_SECRET_PROD`, `OAUTH_STATE_KEY`) van solo como secretos del Worker (`wrangler secret put`), nunca en el repositorio ni en el navegador. Procedimiento completo en `workers/decap-auth/README.md`.
 3. **Sustituir** `base_url` en `public/admin/config.yml` por la URL real del Worker.
-4. **Acotar** `connect-src` de `public/admin/index.html` al dominio exacto del Worker (ahora usa `https://*.workers.dev`).
+4. **Verificar** que `connect-src` de `public/admin/index.html` solo incluye `https://api.github.com`. El login usa un popup, así que el Worker no necesita estar ahí.
 
 Este Worker no está construido todavía. Es la primera tarea pendiente antes de poder editar contenido.
 

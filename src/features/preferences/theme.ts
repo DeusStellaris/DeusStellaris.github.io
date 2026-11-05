@@ -39,6 +39,8 @@ export function syncThemeToggles(): void {
 export function applyTheme(theme: Theme): void {
   document.documentElement.dataset.theme = theme;
   syncThemeToggles();
+  // Otros módulos (p. ej. Giscus) reaccionan al cambio de tema.
+  document.dispatchEvent(new CustomEvent('deus:theme-change', { detail: theme }));
 }
 
 /** Guarda la elección explícita del visitante y la aplica. */

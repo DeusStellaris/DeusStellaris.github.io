@@ -11,6 +11,12 @@ import { noRawHtml } from './config/markdown/no-raw-html.mjs';
  * solo requiere editar src/config/site.json.
  */
 const site = JSON.parse(readFileSync(new URL('./src/config/site.json', import.meta.url), 'utf8'));
+const services = JSON.parse(
+  readFileSync(new URL('./src/config/services.json', import.meta.url), 'utf8'),
+);
+
+// Origen de la API de me gusta (Worker), solo si ya está configurado. Sin URL no se abre ningún dominio.
+const apiOrigins = services.apiBaseUrl ? [new URL(services.apiBaseUrl).origin] : [];
 
 export default defineConfig({
   site: site.url,
@@ -48,9 +54,14 @@ export default defineConfig({
         "form-action 'self'",
         "img-src 'self' data: https://avatars.githubusercontent.com",
         "font-src 'self'",
-        "connect-src 'self' https://*.supabase.co",
+        `connect-src 'self' https://*.supabase.co${apiOrigins.map((origin) => ` ${origin}`).join('')}`,
         'frame-src https://giscus.app',
       ],
+      // Giscus carga su script desde giscus.app solo tras la acción del visitante (ver Comments.astro).
+      // Astro 7 exige declarar script-src mediante scriptDirective; los hashes se añaden solos.
+      scriptDirective: {
+        resources: ["'self'", 'https://giscus.app'],
+      },
     },
   },
 

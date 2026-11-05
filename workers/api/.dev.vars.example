@@ -1,0 +1,6 @@
+# Copiar a .dev.vars (ignorado por git) solo para pruebas locales. Ningun valor real en el repositorio.
+ALLOWED_ORIGINS = "http://localhost:4321"
+SITE_INDEX_URL = "http://localhost:4321/search-index.json"
+SUPABASE_URL = "REEMPLAZAR_URL_DEL_PROYECTO_SUPABASE"
+SUPABASE_SERVICE_ROLE_KEY = "REEMPLAZAR_SERVICE_ROLE_KEY_SOLO_LOCAL"
+VISITOR_HASH_PEPPER = "REEMPLAZAR_SECRETO_DE_32_CARACTERES_O_MAS"

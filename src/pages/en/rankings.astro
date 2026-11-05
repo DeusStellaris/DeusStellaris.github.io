@@ -1,0 +1,19 @@
+---
+import RankingPanel from '../../components/ranking/RankingPanel.astro';
+import { type Locale, t } from '../../i18n';
+import { RANKING_SEGMENT } from '../../i18n/routes';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const locale: Locale = 'en';
+---
+
+<BaseLayout
+  title={`${t(locale, 'ranking.heading')} · ${t(locale, 'common.siteName')}`}
+  description={t(locale, 'ranking.intro')}
+  locale={locale}
+  pagePaths={{ es: `/${RANKING_SEGMENT.es}/`, en: `/${RANKING_SEGMENT.en}/` }}
+>
+  <div class="container">
+    <RankingPanel locale={locale} />
+  </div>
+</BaseLayout>

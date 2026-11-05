@@ -18,7 +18,10 @@
     "lint": "biome lint .",
     "format": "biome format --write .",
     "audit": "npm audit --omit=dev",
-    "ci": "npm run sync:decap && biome check . && astro check && astro build"
+    "ci": "npm run sync:decap && biome check . && astro check && astro build && npm run test",
+    "test:unit": "node --test tests/unit/",
+    "test:workers": "npm --prefix workers/decap-auth test && npm --prefix workers/api test",
+    "test": "npm run test:unit && npm run test:workers"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",

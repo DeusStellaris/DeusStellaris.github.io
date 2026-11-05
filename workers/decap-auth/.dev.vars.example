@@ -1,0 +1,8 @@
+# Copiar a .dev.vars (ignorado por git) solo para pruebas locales con `wrangler dev`.
+# Ningún valor real debe entrar en el repositorio.
+
+DEV_OAUTH_ENABLED = "true"
+GITHUB_CLIENT_ID_DEV = "REEMPLAZAR_CLIENT_ID_DE_LA_APP_DE_DESARROLLO"
+GITHUB_CLIENT_SECRET_DEV = "REEMPLAZAR_SECRETO_DE_LA_APP_DE_DESARROLLO"
+GITHUB_CLIENT_SECRET_PROD = "NO_NECESARIO_EN_LOCAL"
+OAUTH_STATE_KEY = "REEMPLAZAR_CLAVE_BASE64_DE_32_BYTES"

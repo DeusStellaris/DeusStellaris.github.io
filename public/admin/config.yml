@@ -1,8 +1,9 @@
 # Configuración de Decap CMS. Ver docs/setup/decap-cms.md.
 #
 # PENDIENTE DE CONFIGURAR (no inventar valores):
-#   - backend.base_url: URL del Cloudflare Worker de autenticación OAuth (PKCE).
+#   - backend.base_url: URL del Cloudflare Worker de autenticación (workers/decap-auth).
 #     Mientras tenga el valor de marcador, el inicio de sesión falla de forma explícita.
+#     Procedimiento completo en workers/decap-auth/README.md.
 #
 # Las rutas de imágenes se escriben relativas al archivo de contenido, para que
 # Astro (image() en src/content.config.ts) las optimice al compilar.
@@ -11,7 +12,6 @@ backend:
   name: github
   repo: DeusStellaris/DeusStellaris.github.io
   branch: main
-  auth_type: pkce
   base_url: https://REEMPLAZAR-worker-oauth.example.invalid
   auth_endpoint: auth
 

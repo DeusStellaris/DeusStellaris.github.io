@@ -1,0 +1,68 @@
+---
+import giscus from '../../config/giscus.json';
+import { type Locale, t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+const configured =
+  giscus.enabled &&
+  giscus.repoId !== null &&
+  giscus.categoryId !== null &&
+  giscus.category !== null;
+---
+
+<!--
+  Comentarios con Giscus (GitHub Discussions). El script de giscus.app se carga solo cuando el
+  visitante pulsa "Cargar comentarios": no hay conexiones a terceros hasta esa acción.
+  Gestiona src/features/comments/giscus.ts.
+-->
+<section class="comments" aria-labelledby="comments-heading">
+  <h2 id="comments-heading">{t(locale, 'comments.heading')}</h2>
+  {
+    configured ? (
+      <div
+        class="comments__root"
+        data-giscus-root
+        data-slug={slug}
+        data-locale={locale}
+        data-repo={giscus.repo}
+        data-repo-id={giscus.repoId}
+        data-category={giscus.category}
+        data-category-id={giscus.categoryId}
+        data-mapping={giscus.mapping}
+        data-msg-load-error={t(locale, 'comments.loadError')}
+      >
+        <button type="button" class="comments__load" data-giscus-load>{t(locale, 'comments.load')}</button>
+        <p class="comments__status" aria-live="polite" data-giscus-status></p>
+      </div>
+    ) : (
+      <p class="comments__disabled">{t(locale, 'comments.disabled')}</p>
+    )
+  }
+</section>
+
+<style>
+  .comments {
+    margin-top: var(--space-16);
+  }
+
+  .comments__load {
+    min-height: var(--target-min);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .comments__status,
+  .comments__disabled {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+</style>

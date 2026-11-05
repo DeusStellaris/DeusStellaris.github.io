@@ -1,0 +1,148 @@
+---
+import { type Locale, t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<!--
+  Perfil local: favoritos y preferencias. Lo gestiona src/features/profile/profile.ts.
+  El <dialog> modal aporta foco, Escape y retorno del foco de forma nativa.
+-->
+<dialog
+  class="profile"
+  data-profile-dialog
+  data-locale={locale}
+  aria-labelledby="profile-title"
+  data-msg-no-favorites={t(locale, 'profile.noFavorites')}
+  data-msg-unavailable={t(locale, 'favorites.unavailable')}
+  data-msg-remove={t(locale, 'profile.remove')}
+  data-msg-theme-light={t(locale, 'profile.themeLight')}
+  data-msg-theme-dark={t(locale, 'profile.themeDark')}
+  data-msg-lite-on={t(locale, 'profile.on')}
+  data-msg-lite-off={t(locale, 'profile.off')}
+>
+  <div class="profile__inner">
+    <header class="profile__header">
+      <h2 id="profile-title">{t(locale, 'profile.title')}</h2>
+      <button type="button" class="profile__close" data-profile-close>{t(locale, 'profile.close')}</button>
+    </header>
+
+    <p class="profile__privacy">{t(locale, 'profile.privacy')}</p>
+
+    <section class="profile__section" aria-labelledby="profile-favorites-heading">
+      <h3 id="profile-favorites-heading">{t(locale, 'profile.favoritesHeading')}</h3>
+      <div data-profile-favorites></div>
+      <button type="button" class="profile__clear" data-profile-clear>{t(locale, 'profile.clearAll')}</button>
+    </section>
+
+    <section class="profile__section" aria-labelledby="profile-prefs-heading">
+      <h3 id="profile-prefs-heading">{t(locale, 'profile.preferencesHeading')}</h3>
+      <dl class="profile__prefs">
+        <dt>{t(locale, 'profile.themeLabel')}</dt>
+        <dd data-profile-theme></dd>
+        <dt>{t(locale, 'profile.liteLabel')}</dt>
+        <dd data-profile-lite></dd>
+      </dl>
+    </section>
+  </div>
+</dialog>
+
+<style>
+  .profile {
+    width: min(92vw, 36rem);
+    max-height: 85dvh;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .profile::backdrop {
+    background: rgb(0 0 0 / 0.55);
+  }
+
+  .profile__inner {
+    display: grid;
+    gap: var(--space-6);
+    padding: var(--space-6);
+    overflow-y: auto;
+  }
+
+  .profile__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .profile__header h2 {
+    margin: 0;
+    font-size: var(--text-xl);
+  }
+
+  .profile__privacy {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .profile__section h3 {
+    font-size: var(--text-base);
+    font-weight: 600;
+  }
+
+  .profile__list {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .profile__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .profile__empty {
+    color: var(--color-text-muted);
+  }
+
+  .profile__prefs {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+  }
+
+  .profile__prefs dt {
+    color: var(--color-text-muted);
+  }
+
+  .profile__prefs dd {
+    margin: 0;
+  }
+
+  .profile__close,
+  .profile__clear,
+  .profile__remove {
+    min-height: var(--target-min);
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .profile__clear {
+    margin-top: var(--space-3);
+  }
+</style>

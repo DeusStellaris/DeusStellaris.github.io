@@ -13,7 +13,7 @@ Ningún valor de esta lista está inventado. Los placeholders del proyecto son `
 
 Pendiente: autenticación en la Fase 4 y API en la Fase 5.
 
-- **Worker de OAuth** para Decap (PKCE con GitHub). Secretos: `GITHUB_OAUTH_CLIENT_ID` y `GITHUB_OAUTH_CLIENT_SECRET`, cargados con `wrangler secret put`. Nunca en el repositorio ni en el cliente.
+- **Worker de autenticación** para Decap (`workers/decap-auth/`, PKCE con GitHub). Secretos: `GITHUB_CLIENT_SECRET_PROD` y `OAUTH_STATE_KEY`, cargados con `wrangler secret put`. El client ID de producción va en `wrangler.toml`. Nunca en el repositorio ni en el cliente. Procedimiento completo y URLs de la OAuth App en `workers/decap-auth/README.md`.
 - **Worker de la API** de likes y consentimientos. Secretos: `SUPABASE_SERVICE_ROLE_KEY` y `VISITOR_HASH_PEPPER`.
 - Al desplegarlo, su URL pública va en `src/config/services.json` → `apiBaseUrl`.
 

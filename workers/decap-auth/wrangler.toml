@@ -1,0 +1,18 @@
+# Configuración del Worker de autenticación de Decap CMS.
+#
+# Solo se guardan aquí valores PÚBLICOS. Los secretos (client_secret y clave de estado)
+# se definen con `wrangler secret put` o en .dev.vars para desarrollo local. Nunca en este archivo.
+#
+# Marcadores: los client_id vacíos hacen que el Worker responda 503 de forma explícita hasta
+# que se completen con los identificadores reales de las OAuth Apps (ver README.md).
+
+name = "deus-decap-auth"
+main = "src/index.js"
+compatibility_date = "2026-10-20"
+workers_dev = true
+
+[vars]
+# Identificador público de la OAuth App de producción (callback: https://<worker>/callback).
+GITHUB_CLIENT_ID_PROD = ""
+# Desactivado en producción. Solo se activa en .dev.vars para pruebas locales.
+DEV_OAUTH_ENABLED = "false"

@@ -3,9 +3,11 @@ import { Picture } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import type { ContentSectionId } from '../../config/sections';
 import { type Locale, t } from '../../i18n';
+import FavoriteButton from '../favorites/FavoriteButton.astro';
 
 interface Props {
   locale: Locale;
+  slug: string;
   href: string;
   title: string;
   summary: string;
@@ -16,11 +18,24 @@ interface Props {
   featured: boolean;
 }
 
-const { locale, href, title, summary, section, cover, publishedLabel, categoryLabel, featured } =
-  Astro.props;
+const {
+  locale,
+  slug,
+  href,
+  title,
+  summary,
+  section,
+  cover,
+  publishedLabel,
+  categoryLabel,
+  featured,
+} = Astro.props;
 ---
 
 <article class="project-card" data-card-section={section}>
+  <div class="project-card__favorite">
+    <FavoriteButton locale={locale} slug={slug} />
+  </div>
   <a class="project-card__link" href={href}>
     <div class="project-card__media">
       <Picture
@@ -48,12 +63,20 @@ const { locale, href, title, summary, section, cover, publishedLabel, categoryLa
 
 <style>
   .project-card {
+    position: relative;
     height: 100%;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     background: var(--color-surface);
     overflow: hidden;
     transition: border-color var(--duration-base) var(--ease-out);
+  }
+
+  .project-card__favorite {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+    z-index: 2;
   }
 
   .project-card:hover {

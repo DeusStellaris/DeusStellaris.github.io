@@ -1,6 +1,9 @@
 ---
 import { Picture } from 'astro:assets';
 import { render } from 'astro:content';
+import Comments from '../components/comments/Comments.astro';
+import FavoriteButton from '../components/favorites/FavoriteButton.astro';
+import LikeButton from '../components/likes/LikeButton.astro';
 import type { ContentSectionId } from '../config/sections';
 import { type Locale, type TranslationKey, t } from '../i18n';
 import { sectionHref } from '../i18n/routes';
@@ -68,6 +71,10 @@ const isFallback = sourceLocale !== locale;
       </p>
       <h1>{data.title}</h1>
       <p class="project__summary">{data.summary}</p>
+      <div class="project__actions">
+        <FavoriteButton locale={locale} slug={project.slug} />
+        <LikeButton locale={locale} slug={project.slug} />
+      </div>
       {isFallback && <p class="project__fallback">{t(locale, 'projects.fallbackNotice')}</p>}
     </header>
 
@@ -166,6 +173,7 @@ const isFallback = sourceLocale !== locale;
         </section>
       )
     }
+    <Comments locale={locale} slug={project.slug} />
   </article>
 </BaseLayout>
 
@@ -200,6 +208,14 @@ const isFallback = sourceLocale !== locale;
   .project__summary {
     color: var(--color-text-muted);
     font-size: var(--text-lg);
+  }
+
+  .project__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
   }
 
   .project__fallback {

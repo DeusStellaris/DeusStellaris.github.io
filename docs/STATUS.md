@@ -98,3 +98,30 @@ Buscador, panel de perfil, asistente, favoritos, rankings y likes, Giscus, Worke
 ## Nota sobre los textos
 
 Los textos en inglés (`src/i18n/en.ts`) son una primera redacción mía y deben revisarse antes de publicar. Los textos en español usan voseo rioplatense («podés», «buscás»), coherente con tu perfil.
+
+## Fase 5: buscador, perfil, favoritos, ranking, likes y comentarios
+
+**Construido y verificado sin credenciales:**
+
+- **Buscador** (`/buscar/`, `/en/search/`): índice estático generado en build (`/search-index.json`), búsqueda sin acentos y ponderada (título > categoría y etiquetas > resumen), filtro por sección y estados de carga, error con reintento, sin resultados y resultados. Núcleo puro probado con 9 pruebas.
+- **Asistente flotante** (esquina inferior derecha): `<dialog>` no modal que reutiliza el buscador. Escape lo cierra, devuelve el foco al botón y prioriza los resultados de la sección actual.
+- **Perfil local** (`<dialog>` modal): favoritos con enlaces y opción de quitarlos, resumen de preferencias y aviso explícito de que es anónimo y solo local.
+- **Favoritos**: `localStorage` con validación al leer (un valor corrupto se descarta). Si el navegador no permite guardar, se mantienen en memoria y se avisa al visitante.
+- **Ranking** (`/ranking/`, `/en/rankings/`): contadores por RPC de solo lectura y filtro por categoría. Sin configuración, muestra el estado "no disponible" en lugar de cifras inventadas.
+- **Me gusta**: el navegador envía un UUID anónimo al Worker de la API. El Worker valida, limita la frecuencia y guarda solo un HMAC del visitante.
+- **Giscus**: carga bajo demanda, tras pulsar el botón. Mientras `giscus.json` no tenga `repoId` y `categoryId`, muestra "comentarios no activos".
+- **Worker de la API** (`workers/api`): 16 pruebas. Documentado en `workers/api/README.md`.
+- **Migración SQL y pruebas RLS** (`supabase/`): verificadas contra PostgreSQL real (PGlite 0.5.11) con control negativo. Documentado en `supabase/README.md`.
+- **Tarjetas**: el favorito está junto al enlace, no dentro de él (un botón dentro de un `<a>` no es HTML válido).
+
+**Verificación:** `npm run ci` (lint, `astro check`, build y las tres suites de pruebas: 9 + 40 + 16). En el HTML generado con contenido de prueba (ya eliminado): controles de favorito y me gusta en la página de proyecto, índice con las versiones ES y EN, ranking y buscador presentes, sin atributos `style=`, sin scripts inline.
+
+**Pendiente (requiere tus credenciales o servicios reales):**
+
+- Crear el proyecto de Supabase, aplicar la migración y configurar `SUPABASE_URL`, `PUBLIC_SUPABASE_URL` y `PUBLIC_SUPABASE_ANON_KEY`. Hasta entonces, ranking y contadores muestran su estado sin configurar.
+- Desplegar el Worker de la API y poner su URL en `services.json` → `apiBaseUrl`.
+- Crear la discusión de Giscus y completar `giscus.json`.
+- Ejecutar las pruebas RLS contra el proyecto real y con la CLI de Supabase.
+- **Pruebas en navegador: siguen sin ejecutarse.** Tampoco he probado el asistente, el perfil ni el morfado en un navegador real.
+
+**Nota:** los nombres de los textos ES de esta fase usan voseo ("Buscá", "Intentalo", "Volvé"), como pediste.

@@ -1,9 +1,11 @@
 ---
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
+import AssistantButton from '../components/assistant/AssistantButton.astro';
 import IntroOverlay from '../components/layout/IntroOverlay.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
+import ProfileDialog from '../components/profile/ProfileDialog.astro';
 import type { SectionId } from '../config/sections';
 import siteConfig from '../config/site.json';
 import { DEFAULT_LOCALE, LOCALES, type Locale, t } from '../i18n';
@@ -85,6 +87,8 @@ const switchHrefs = switchTargets(paths ?? {});
       <slot />
     </main>
     <SiteFooter locale={locale} />
+    <ProfileDialog locale={locale} />
+    <AssistantButton locale={locale} context={section && section !== 'home' ? section : undefined} />
     <script>
       import '../features/bootstrap';
     </script>

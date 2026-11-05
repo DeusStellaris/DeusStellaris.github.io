@@ -31,10 +31,17 @@ GitHub Pages no permite configurar cabeceras HTTP. Consecuencias:
 - **AdSense (Fase 6):** necesitará `script-src` para sus dominios de carga y `frame-src` para sus iframes. Se añadirán solo cuando la publicidad esté habilitada en `src/config/ads.json`. El bloque inline de AdSense se tratará con hashes. Antes de habilitarlo hay que verificar la documentación vigente de Google.
 - **Decap CMS (`/admin`, Fase 4):** la página de administración tiene su propia CSP en `public/admin/index.html`. Es más permisiva que la del sitio en dos puntos, documentados aquí:
   - `style-src 'unsafe-inline'`: Decap genera estilos en línea en tiempo de ejecución.
-  - `connect-src`: `https://api.github.com` y `https://*.workers.dev` (el Worker de autenticación). Se debe acotar al dominio exacto cuando el Worker exista.
+  - `connect-src`: solo `https://api.github.com`. El login con GitHub es un popup (`window.open`), no una petición desde esta página.
     No hay `unsafe-eval` ni scripts de CDN: el bundle se sirve desde el propio sitio. La CSP del resto del sitio no cambia.
 - **Giscus (Fase 5):** `frame-src https://giscus.app` ya está. Su script se añadirá a `script-src` cuando se implemente.
 
 ## Verificación
 
 Tras cada build, comprobar en `dist/index.html` que no aparecen `unsafe-inline` ni `unsafe-eval`, y que no hay scripts inline sin hash. Esta comprobación se automatizará en la Fase 7.
+
+## Fase 5: cambios en la CSP del sitio
+
+- **script-src**: se añade `https://giscus.app` mediante `scriptDirective` (Astro 7 no admite `script-src` en `directives`). El script de Giscus solo se carga tras pulsar "Cargar comentarios".
+- **connect-src**: `https://*.supabase.co` para las lecturas de contadores y ranking. Además, el origen exacto de la API de me gusta, pero solo cuando `services.json` tiene `apiBaseUrl`. Sin URL, no se abre ningún dominio adicional.
+- **Sin `unsafe-inline` ni `unsafe-eval`** en ninguna página. El bootstrap de la interactividad es un módulo externo, así que no requiere hash.
+- **Verificado** en el HTML generado: `script-src` contiene `'self'`, `https://giscus.app` y solo hashes; `connect-src` contiene solo los orígenes indicados.

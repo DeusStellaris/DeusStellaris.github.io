@@ -11,6 +11,10 @@ export function sectionSegmentPath(section: SectionId, locale: Locale): string {
   return slug === '' ? '/' : `/${slug}/`;
 }
 
+/** Segmentos de URL de las páginas de búsqueda y de ranking, por idioma. */
+export const SEARCH_SEGMENT: Record<Locale, string> = { es: 'buscar', en: 'search' };
+export const RANKING_SEGMENT: Record<Locale, string> = { es: 'ranking', en: 'rankings' };
+
 /** Ruta sin prefijo de un proyecto. */
 export function projectSegmentPath(slug: string, locale: Locale): string {
   return `/${PROJECT_SEGMENT[locale]}/${slug}/`;

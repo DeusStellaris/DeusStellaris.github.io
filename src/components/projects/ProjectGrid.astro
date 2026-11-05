@@ -28,6 +28,7 @@ const cards = await Promise.all(
       <li>
         <ProjectCard
           locale={locale}
+          slug={item.slug}
           href={localizedHref(locale, projectSegmentPath(item.slug, locale))}
           title={item.entry.data.title}
           summary={item.entry.data.summary}

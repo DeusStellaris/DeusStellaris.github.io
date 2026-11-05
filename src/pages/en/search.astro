@@ -1,0 +1,19 @@
+---
+import SearchWidget from '../../components/search/SearchWidget.astro';
+import { type Locale, t } from '../../i18n';
+import { SEARCH_SEGMENT } from '../../i18n/routes';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const locale: Locale = 'en';
+---
+
+<BaseLayout
+  title={`${t(locale, 'search.heading')} · ${t(locale, 'common.siteName')}`}
+  description={t(locale, 'search.placeholder')}
+  locale={locale}
+  pagePaths={{ es: `/${SEARCH_SEGMENT.es}/`, en: `/${SEARCH_SEGMENT.en}/` }}
+>
+  <div class="container">
+    <SearchWidget locale={locale} variant="page" prefillFromUrl />
+  </div>
+</BaseLayout>
