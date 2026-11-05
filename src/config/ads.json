@@ -1,9 +1,17 @@
 {
-  "_nota": "Publicidad desactivada. No se carga ningún recurso de AdSense mientras enabled sea false. publisherId es un placeholder: no inventar identificadores.",
+  "_nota": "Publicidad desactivada. enabled es el interruptor general: con false no se renderiza ningún espacio ni se carga ningún recurso. publisherId y slotId son placeholders: no inventar valores; se completan con las credenciales reales de AdSense.",
   "enabled": false,
   "publisherId": null,
   "slots": {
-    "contentInline": { "enabled": false, "minHeight": 250 },
-    "sidebar": { "enabled": false, "minHeight": 600 }
+    "contentInline": {
+      "enabled": false,
+      "minHeight": 250,
+      "slotId": null
+    },
+    "sidebar": {
+      "enabled": false,
+      "minHeight": 600,
+      "slotId": null
+    }
   }
 }

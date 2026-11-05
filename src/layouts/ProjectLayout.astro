@@ -1,6 +1,7 @@
 ---
 import { Picture } from 'astro:assets';
 import { render } from 'astro:content';
+import AdSlot from '../components/ads/AdSlot.astro';
 import Comments from '../components/comments/Comments.astro';
 import FavoriteButton from '../components/favorites/FavoriteButton.astro';
 import LikeButton from '../components/likes/LikeButton.astro';
@@ -93,6 +94,7 @@ const isFallback = sourceLocale !== locale;
     <div class="prose">
       <Content />
     </div>
+    <AdSlot locale={locale} slot="contentInline" />
 
     {
       data.gallery.length > 0 && (

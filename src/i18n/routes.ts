@@ -57,3 +57,10 @@ export function projectPagePaths(
 ): Partial<Record<Locale, string>> {
   return Object.fromEntries(available.map((locale) => [locale, projectSegmentPath(slug, locale)]));
 }
+
+/** Segmentos de URL de los documentos legales, por idioma. */
+export const LEGAL_SEGMENT: Record<'terms' | 'privacy' | 'cookies', Record<Locale, string>> = {
+  terms: { es: 'terminos', en: 'terms' },
+  privacy: { es: 'privacidad', en: 'privacy' },
+  cookies: { es: 'cookies', en: 'cookies' },
+};

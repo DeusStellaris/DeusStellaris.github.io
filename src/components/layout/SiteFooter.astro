@@ -1,6 +1,6 @@
 ---
 import { type Locale, t } from '../../i18n';
-import { localizedHref, RANKING_SEGMENT, SEARCH_SEGMENT } from '../../i18n/routes';
+import { LEGAL_SEGMENT, localizedHref, RANKING_SEGMENT, SEARCH_SEGMENT } from '../../i18n/routes';
 
 interface Props {
   locale: Locale;
@@ -17,6 +17,9 @@ const year = new Date().getFullYear();
       <ul class="site-footer__links">
         <li><a href={localizedHref(locale, `/${SEARCH_SEGMENT[locale]}/`)}>{t(locale, 'nav.search')}</a></li>
         <li><a href={localizedHref(locale, `/${RANKING_SEGMENT[locale]}/`)}>{t(locale, 'nav.ranking')}</a></li>
+        <li><a href={localizedHref(locale, `/${LEGAL_SEGMENT.terms[locale]}/`)}>{t(locale, 'legal.footerTerms')}</a></li>
+        <li><a href={localizedHref(locale, `/${LEGAL_SEGMENT.privacy[locale]}/`)}>{t(locale, 'legal.footerPrivacy')}</a></li>
+        <li><a href={localizedHref(locale, `/${LEGAL_SEGMENT.cookies[locale]}/`)}>{t(locale, 'legal.footerCookies')}</a></li>
       </ul>
     </nav>
   </div>

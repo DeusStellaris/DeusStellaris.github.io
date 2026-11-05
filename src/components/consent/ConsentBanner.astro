@@ -1,0 +1,177 @@
+---
+import ads from '../../config/ads.json';
+import legal from '../../config/legal.json';
+import services from '../../config/services.json';
+import { type Locale, t } from '../../i18n';
+import { LEGAL_SEGMENT } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const adsEnabled = ads.enabled === true;
+const versions = legal.versions;
+const termsHref = `/${LEGAL_SEGMENT.terms[locale]}/`;
+const privacyHref = `/${LEGAL_SEGMENT.privacy[locale]}/`;
+const cookiesHref = `/${LEGAL_SEGMENT.cookies[locale]}/`;
+const apiBaseUrl = services.apiBaseUrl ?? '';
+---
+
+<!--
+  Aviso de consentimiento. No es modal: no bloquea la navegación. Las casillas obligatorias
+  están desmarcadas. Lo gestiona src/features/consent/consent.ts.
+-->
+<section
+  class="consent"
+  data-consent-banner
+  data-api={apiBaseUrl}
+  data-locale={locale}
+  data-versions={JSON.stringify(versions)}
+  data-msg-required={t(locale, 'consent.required')}
+  data-msg-registered={t(locale, 'consent.registered')}
+  data-msg-server-pending={t(locale, 'consent.serverPending')}
+  data-msg-server-unavailable={t(locale, 'consent.serverUnavailable')}
+  data-msg-local-saved={t(locale, 'consent.localSaved')}
+  aria-labelledby="consent-title"
+  hidden
+>
+  <h2 id="consent-title">{t(locale, 'consent.title')}</h2>
+  <p class="consent__intro">{t(locale, 'consent.intro')}</p>
+
+  <form class="consent__form" data-consent-form novalidate>
+    <p class="consent__links">
+      <a href={termsHref}>{t(locale, 'legal.footerTerms')}</a>
+      <span aria-hidden="true">·</span>
+      <a href={privacyHref}>{t(locale, 'legal.footerPrivacy')}</a>
+      <span aria-hidden="true">·</span>
+      <a href={cookiesHref}>{t(locale, 'legal.footerCookies')}</a>
+    </p>
+
+    <div class="consent__check">
+      <input id="consent-terms" type="checkbox" data-consent-terms />
+      <label for="consent-terms">{t(locale, 'consent.termsLabel')}</label>
+    </div>
+    <div class="consent__check">
+      <input id="consent-privacy" type="checkbox" data-consent-privacy />
+      <label for="consent-privacy">{t(locale, 'consent.privacyLabel')}</label>
+    </div>
+
+    {
+      adsEnabled && (
+        <div class="consent__check consent__check--optional">
+          <input id="consent-ads" type="checkbox" data-consent-ads />
+          <label for="consent-ads">{t(locale, 'consent.adsLabel')}</label>
+        </div>
+      )
+    }
+
+    <p class="consent__error" role="alert" data-consent-error hidden></p>
+    <p class="consent__status" role="status" aria-live="polite" data-consent-status></p>
+
+    <div class="consent__actions">
+      <button type="submit" class="consent__button consent__button--primary" data-consent-submit>
+        {t(locale, 'consent.submit')}
+      </button>
+      <button type="button" class="consent__button" data-consent-later>
+        {t(locale, 'consent.later')}
+      </button>
+    </div>
+  </form>
+</section>
+
+<style>
+  .consent {
+    position: fixed;
+    right: var(--gutter);
+    bottom: var(--gutter);
+    left: var(--gutter);
+    z-index: 30;
+    max-width: 34rem;
+    max-height: min(80dvh, 40rem);
+    margin-inline: auto;
+    padding: var(--space-4) var(--space-6);
+    overflow-y: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 0.3);
+  }
+
+  .consent[hidden] {
+    display: none;
+  }
+
+  .consent h2 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-lg);
+  }
+
+  .consent__intro,
+  .consent__links,
+  .consent__status {
+    margin: 0 0 var(--space-3);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .consent__form {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .consent__check {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .consent__check input {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.125rem;
+    flex-shrink: 0;
+  }
+
+  .consent__check--optional {
+    color: var(--color-text-muted);
+  }
+
+  .consent__error {
+    margin: 0;
+    padding: var(--space-2) var(--space-3);
+    border-left: 3px solid var(--color-accent-strong);
+    font-size: var(--text-sm);
+  }
+
+  .consent__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .consent__button {
+    min-height: var(--target-min);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .consent__button--primary {
+    border-color: var(--color-accent);
+    color: var(--color-accent-strong);
+  }
+
+  @media (min-width: 48em) {
+    .consent {
+      left: auto;
+      right: var(--space-6);
+      bottom: var(--space-6);
+    }
+  }
+</style>

@@ -1,5 +1,7 @@
+import { initAds } from './ads/ads';
 import { initAssistant } from './assistant/assistant';
 import { initComments } from './comments/giscus';
+import { initConsent } from './consent/consent';
 import { initFavorites } from './favorites/favorites';
 import { runIntro } from './intro/intro';
 import { initLikes, initRankings } from './likes/likes';
@@ -23,6 +25,8 @@ function initPage(): void {
   initLikes();
   initRankings();
   initComments();
+  initConsent();
+  initAds();
 }
 
 initThemePreferences();

@@ -1,0 +1,23 @@
+---
+import CookieManager from '../components/consent/CookieManager.astro';
+import LegalDocument from '../components/legal/LegalDocument.astro';
+import { type Locale, t } from '../i18n';
+import { LEGAL_SEGMENT } from '../i18n/routes';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { DOCUMENTS } from '../legal/documents';
+
+const locale: Locale = 'es';
+const title = DOCUMENTS.cookies[locale].title;
+---
+
+<BaseLayout
+  title={`${title} · ${t(locale, 'common.siteName')}`}
+  description={DOCUMENTS.cookies[locale].intro}
+  locale={locale}
+  pagePaths={{ es: `/${LEGAL_SEGMENT.cookies.es}/`, en: `/${LEGAL_SEGMENT.cookies.en}/` }}
+>
+  <div class="container">
+    <LegalDocument locale={locale} kind="cookies" />
+    <CookieManager locale={locale} />
+  </div>
+</BaseLayout>

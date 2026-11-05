@@ -1,0 +1,100 @@
+---
+import ads from '../../config/ads.json';
+import { type Locale, t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+  /** Clave de slots en src/config/ads.json. */
+  slot: 'contentInline' | 'sidebar';
+}
+
+const { locale, slot } = Astro.props;
+const config = ads.slots[slot];
+// Interruptor general apagado, o slot apagado: no se renderiza nada ni se reserva espacio.
+const rendered = ads.enabled === true && config.enabled === true;
+const publisherId = ads.publisherId;
+const slotId = config.slotId;
+const hasUnit = typeof publisherId === 'string' && typeof slotId === 'string';
+---
+
+<!--
+  Espacio publicitario. Reserva su altura con min-height por breakpoint para evitar CLS.
+  Lo gestiona src/features/ads/ads.ts (solo carga el script con consentimiento).
+-->
+{
+  rendered && (
+    <aside
+      class:list={['ad-slot', `ad-slot--${slot}`]}
+      data-ad-slot={slot}
+      data-ad-client={hasUnit ? publisherId : ''}
+      data-ad-unit={hasUnit ? slotId : ''}
+      aria-label={t(locale, 'ads.placeholder')}
+    >
+      <p class="ad-slot__label">{t(locale, 'ads.placeholder')}</p>
+      <p class="ad-slot__waiting" data-ad-waiting>{t(locale, 'ads.waiting')}</p>
+      {hasUnit && (
+        <ins
+          class="adsbygoogle ad-slot__unit"
+          data-ad-format="auto"
+          data-full-width-responsive="true"
+          data-ad-client={publisherId}
+          data-ad-slot={slotId}
+        />
+      )}
+    </aside>
+  )
+}
+
+<style>
+  .ad-slot {
+    display: grid;
+    place-items: center;
+    align-content: center;
+    gap: var(--space-2);
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 100px;
+    margin-block: var(--space-6);
+    padding: var(--space-3);
+    contain: layout style;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+
+  .ad-slot__label {
+    margin: 0;
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ad-slot__waiting {
+    margin: 0;
+    font-size: var(--text-xs);
+  }
+
+  .ad-slot__unit {
+    display: block;
+    width: 100%;
+  }
+
+  /* Alturas reservadas por breakpoint: mismas dimensiones antes y después de cargar el anuncio. */
+  .ad-slot--contentInline {
+    min-height: 100px;
+  }
+
+  @media (min-width: 48em) {
+    .ad-slot--contentInline {
+      min-height: 250px;
+    }
+  }
+
+  @media (min-width: 64em) {
+    .ad-slot--sidebar {
+      min-height: 600px;
+    }
+  }
+</style>

@@ -1,0 +1,21 @@
+---
+import LegalDocument from '../../components/legal/LegalDocument.astro';
+import { type Locale, t } from '../../i18n';
+import { LEGAL_SEGMENT } from '../../i18n/routes';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { DOCUMENTS } from '../../legal/documents';
+
+const locale: Locale = 'en';
+const title = DOCUMENTS.terms[locale].title;
+---
+
+<BaseLayout
+  title={`${title} · ${t(locale, 'common.siteName')}`}
+  description={DOCUMENTS.terms[locale].intro}
+  locale={locale}
+  pagePaths={{ es: `/${LEGAL_SEGMENT.terms.es}/`, en: `/${LEGAL_SEGMENT.terms.en}/` }}
+>
+  <div class="container">
+    <LegalDocument locale={locale} kind="terms" />
+  </div>
+</BaseLayout>

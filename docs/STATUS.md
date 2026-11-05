@@ -125,3 +125,34 @@ Los textos en inglés (`src/i18n/en.ts`) son una primera redacción mía y deben
 - **Pruebas en navegador: siguen sin ejecutarse.** Tampoco he probado el asistente, el perfil ni el morfado en un navegador real.
 
 **Nota:** los nombres de los textos ES de esta fase usan voseo ("Buscá", "Intentalo", "Volvé"), como pediste.
+
+## Fase 6: legalidad y AdSense
+
+**Construido:**
+
+- **Seis documentos legales** (términos, privacidad con referencias al RGPD, la CCPA y la Ley 25.326, y cookies), en español e inglés. Cada uno con el aviso «PENDIENTE DE REVISIÓN LEGAL — BORRADOR NO DEFINITIVO» visible y no ocultable. Los datos que faltan son marcadores visibles, no texto inventado.
+- **Inventario de 34 datos pendientes** generado a partir del HTML construido (`docs/legal/pending-data.md`).
+- **Consentimiento en tres decisiones independientes**: términos y privacidad obligatorios (casillas desmarcadas) y publicidad opcional. La aceptación solo se muestra como registrada si el servidor la confirma con su hora.
+- **Registro en servidor**: ruta `/consent` en el Worker de la API, versión validada contra la del servidor, hora asignada por PostgreSQL, y tabla `legal_consents` **inmutable** (migración `0002`).
+- **Gestor de preferencias de cookies** en la página de cookies, para cambiar la decisión de publicidad en cualquier momento.
+- **Espacios de AdSense** con interruptor general: apagados no se renderizan ni reservan espacio; encendidos reservan altura por breakpoint (CLS). El script solo se carga con identificador válido y consentimiento.
+- **CSP**: los dominios de Google se añaden solo si la publicidad está encendida.
+
+**Verificado:**
+
+- `npm run ci`: 0 errores, 0 avisos, 22 páginas. Suites: 30 unitarias, 40 + 28 de los Workers, 12 de build.
+- Migración `0002` y pruebas RLS con PostgreSQL real (PGlite), con control negativo. Incluyen casos positivos y negativos, y el trigger de inmutabilidad probado como superusuario.
+- Build con la publicidad encendida (temporal, restaurada): CSP correcta, sin unidades sin identificador, sin script insertado en el HTML.
+- Build con la publicidad apagada (estado actual): sin dominios de Google, sin marcado publicitario, CSP sin cambios.
+- Secretos: ninguno aparece en el sitio publicado.
+
+**No verificado:**
+
+- Pruebas en navegador (avisos, teclado, lectura de lectores de pantalla, responsive): no ejecutadas.
+- Espacio publicitario en página de proyecto con la publicidad encendida: no hay proyectos publicados en el repositorio.
+- Dominios de Google en la CSP: deben confirmarse con la documentación vigente antes de activar.
+- Registro real en Supabase y en el Worker: pendiente de tus credenciales.
+
+**Pendiente de tu parte:** datos del titular y los 34 marcadores; revisión profesional de los documentos; crear Supabase, aplicar `0001` y `0002`, desplegar el Worker de la API; decidir la activación de AdSense.
+
+Procedimiento: `docs/setup/consent-and-adsense.md`. Alcance legal: `docs/legal/README.md`.

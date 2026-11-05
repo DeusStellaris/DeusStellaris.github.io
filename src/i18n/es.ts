@@ -137,6 +137,42 @@ const es = {
     load: 'Cargar comentarios',
     loadError: 'No se pudieron cargar los comentarios. Podés intentarlo más tarde.',
   },
+  legal: {
+    draftNotice: 'PENDIENTE DE REVISIÓN LEGAL — BORRADOR NO DEFINITIVO',
+    version: 'Versión',
+    footerTerms: 'Términos',
+    footerPrivacy: 'Privacidad',
+    footerCookies: 'Cookies',
+    pendingTag: 'Dato pendiente',
+  },
+  consent: {
+    title: 'Términos, privacidad y cookies',
+    intro:
+      'Antes de usar las funciones que guardan datos o se conectan a servicios, revisá y aceptá los documentos. Las decisiones opcionales son independientes.',
+    termsLabel: 'He leído y acepto los Términos y condiciones de uso',
+    privacyLabel: 'He leído y acepto la Política de privacidad',
+    adsLabel: 'Acepto la publicidad no esencial cuando esté activa (opcional)',
+    required: 'Para continuar, marcá los dos documentos obligatorios.',
+    submit: 'Guardar mis decisiones',
+    later: 'Más tarde',
+    close: 'Cerrar',
+    registered: 'Aceptación registrada en el servidor.',
+    serverPending:
+      'No pudimos registrar tu aceptación en el servidor. Podés intentarlo de nuevo más tarde. El sitio no la da por registrada.',
+    serverUnavailable:
+      'El registro de aceptaciones todavía no está disponible. El sitio no la da por registrada.',
+    localSaved: 'Tus decisiones de cookies se guardaron en este navegador.',
+    open: 'Revisar consentimientos',
+    manageTitle: 'Preferencias de cookies',
+    manageIntro: 'Podés cambiar estas decisiones cuando quieras.',
+    adsDisabled: 'Actualmente no hay publicidad activa en el sitio.',
+    statusRegistered: 'Registrado',
+    statusPending: 'Pendiente de registro',
+  },
+  ads: {
+    placeholder: 'Espacio publicitario',
+    waiting: 'La publicidad se mostrará solo si aceptás la preferencia de publicidad.',
+  },
   notFound: {
     title: 'Página no encontrada',
     body: 'La dirección que buscás no existe o fue movida.',

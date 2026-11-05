@@ -14,6 +14,7 @@
 
 import { publishedSlugs } from './catalog.js';
 import { canonicalizeOrigin, readConfig } from './config.js';
+import { consentPreflight, handleConsent } from './consent.js';
 import { pseudonymize } from './hash.js';
 import { errorResponse, jsonResponse, preflightResponse } from './http.js';
 import { consumeRateLimit, countLikes, deleteLike, insertLike, SupabaseError } from './supabase.js';
@@ -98,10 +99,11 @@ export default {
     const origin = canonicalizeOrigin(request.headers.get('origin'));
 
     try {
-      if (url.pathname !== '/likes') {
+      if (url.pathname !== '/likes' && url.pathname !== '/consent') {
         return errorResponse(404, 'Recurso no encontrado.', origin);
       }
       if (request.method === 'OPTIONS') {
+        if (url.pathname === '/consent') return consentPreflight(request, env);
         const loaded = readConfig(env);
         const allowed = loaded.ok ? loaded.config.allowedOrigins : [];
         return allowed.includes(origin ?? '')
@@ -111,7 +113,9 @@ export default {
       if (request.method !== 'POST') {
         return errorResponse(405, 'Método no permitido.', origin, { Allow: 'POST, OPTIONS' });
       }
-      return await handleLikes(request, env);
+      return url.pathname === '/consent'
+        ? await handleConsent(request, env)
+        : await handleLikes(request, env);
     } catch (error) {
       // Error inesperado: respuesta genérica, sin detalles ni stack trace.
       console.error('api_unexpected', error instanceof Error ? error.name : 'unknown');

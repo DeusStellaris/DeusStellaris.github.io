@@ -106,3 +106,34 @@ export async function consumeRateLimit(config, { key, limit, windowSeconds }) {
   if (typeof allowed !== 'boolean') throw new SupabaseError('rate_limit_shape');
   return allowed;
 }
+
+const ISO_UTC = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|\+00:00)$/;
+
+/**
+ * Inserta un registro de consentimiento y devuelve la hora UTC que asigna la base de datos.
+ * Si la respuesta no trae una hora con el formato esperado, falla: nunca se inventa una hora.
+ * @param {{ url: string, serviceKey: string }} config
+ * @param {{ type: string, granted: boolean, documentVersion: string, locale: string, sessionHash: string }} row
+ * @returns {Promise<string>}
+ */
+export async function insertConsent(config, row) {
+  const response = await request(config, 'legal_consents', {
+    method: 'POST',
+    body: JSON.stringify([
+      {
+        consent_type: row.type,
+        granted: row.granted,
+        document_version: row.documentVersion,
+        locale: row.locale,
+        session_hash: row.sessionHash,
+      },
+    ]),
+    prefer: 'return=representation',
+  });
+  const rows = await response.json();
+  const acceptedAt = Array.isArray(rows) ? rows[0]?.accepted_at : undefined;
+  if (typeof acceptedAt !== 'string' || !ISO_UTC.test(acceptedAt)) {
+    throw new SupabaseError('consent_shape');
+  }
+  return acceptedAt;
+}

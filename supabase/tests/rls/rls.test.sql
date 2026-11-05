@@ -144,4 +144,75 @@ begin
   end;
 end $$;
 
+-- 9. legal_consents: anon no lee ni escribe.
+do $$
+begin
+  set local role anon;
+  begin
+    insert into public.legal_consents (consent_type, granted, document_version, locale, session_hash)
+    values ('terms', true, '1', 'es', repeat('d', 64));
+    raise exception 'FALLO: anon pudo insertar consentimientos';
+  exception when insufficient_privilege then
+    null;
+  end;
+  begin
+    perform 1 from public.legal_consents;
+    raise exception 'FALLO: anon pudo leer consentimientos';
+  exception when insufficient_privilege then
+    null;
+  end;
+  reset role;
+end $$;
+
+-- 10. legal_consents: service_role inserta y la base de datos asigna la hora (no el cliente).
+do $$
+declare
+  v_accepted timestamptz;
+begin
+  set local role service_role;
+  insert into public.legal_consents (consent_type, granted, document_version, locale, session_hash)
+  values ('privacy', true, '1', 'en', repeat('e', 64))
+  returning accepted_at into v_accepted;
+  if v_accepted is null then
+    raise exception 'FALLO: accepted_at no se asignó en la base de datos';
+  end if;
+  reset role;
+end $$;
+
+-- 11. legal_consents es inmutable: ni service_role puede modificar ni borrar.
+do $$
+begin
+  set local role service_role;
+  begin
+    update public.legal_consents set granted = false;
+    raise exception 'FALLO: se modificó un registro de consentimiento';
+  exception when insufficient_privilege then
+    null;
+  end;
+  begin
+    delete from public.legal_consents;
+    raise exception 'FALLO: se borró un registro de consentimiento';
+  exception when insufficient_privilege then
+    null;
+  end;
+  reset role;
+end $$;
+
+-- 12. El trigger de inmutabilidad bloquea incluso a un rol con permisos de escritura (superusuario).
+do $$
+begin
+  begin
+    update public.legal_consents set granted = false;
+    raise exception 'FALLO: el trigger de inmutabilidad no bloqueó el UPDATE';
+  exception when insufficient_privilege then
+    null;
+  end;
+  begin
+    delete from public.legal_consents;
+    raise exception 'FALLO: el trigger de inmutabilidad no bloqueó el DELETE';
+  exception when insufficient_privilege then
+    null;
+  end;
+end $$;
+
 rollback;

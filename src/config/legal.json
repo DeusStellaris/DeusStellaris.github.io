@@ -1,0 +1,41 @@
+{
+  "_nota": "Datos del titular y versiones de los documentos. Un valor null se muestra en el sitio como marcador PENDIENTE y debe completarse antes de publicar los documentos como definitivos. No inventar valores.",
+  "versions": {
+    "terms": "2026-11-05.1",
+    "privacy": "2026-11-05.1",
+    "cookies": "2026-11-05.1"
+  },
+  "controller": {
+    "name": null,
+    "legalForm": null,
+    "address": null,
+    "email": null,
+    "dataProtectionContact": null
+  },
+  "processors": [
+    {
+      "id": "github",
+      "name": "GitHub, Inc.",
+      "purpose": "Alojamiento del sitio (GitHub Pages), autenticación del panel de administración y comentarios (GitHub Discussions)"
+    },
+    {
+      "id": "cloudflare",
+      "name": "Cloudflare, Inc.",
+      "purpose": "Servicios de servidor (Workers) para la autenticación del panel y la API de me gusta y consentimientos"
+    },
+    {
+      "id": "supabase",
+      "name": "Supabase, Inc.",
+      "purpose": "Base de datos PostgreSQL para me gusta agregados y registro de consentimientos"
+    },
+    {
+      "id": "giscus",
+      "name": "giscus (servicio de comentarios sobre GitHub Discussions)",
+      "purpose": "Carga de comentarios, solo cuando el visitante lo solicita"
+    }
+  ],
+  "advertising": {
+    "provider": "Google LLC",
+    "active": false
+  }
+}

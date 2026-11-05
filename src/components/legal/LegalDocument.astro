@@ -1,0 +1,118 @@
+---
+import legal from '../../config/legal.json';
+import { type Locale, t } from '../../i18n';
+import { DOCUMENTS, type DocumentKind } from '../../legal/documents';
+import { type LegalLocale, parseLegalText } from '../../legal/segments';
+
+interface Props {
+  locale: Locale;
+  kind: DocumentKind;
+}
+
+const { locale, kind } = Astro.props;
+const content = DOCUMENTS[kind][locale as LegalLocale];
+const version = legal.versions[kind];
+const values = {
+  controllerName: legal.controller.name,
+  email: legal.controller.email,
+};
+
+// Renderiza un texto con sus marcadores: los datos pendientes se muestran visibles y etiquetados.
+const segmentsOf = (text: string) => parseLegalText(text, values, locale as LegalLocale);
+---
+
+<!--
+  Aviso de borrador: visible en la parte superior de cada documento, no ocultable por estilos
+  y repetido en ambos idiomas. No es un pie de página ni un elemento descartable.
+-->
+<article class="legal">
+  <p class="legal__notice" role="note">
+    <strong>{t(locale, 'legal.draftNotice')}</strong>
+  </p>
+
+  <header class="legal__header">
+    <h1>{content.title}</h1>
+    <p class="legal__intro">{content.intro}</p>
+    <p class="legal__version">{t(locale, 'legal.version')}: <time>{version}</time></p>
+  </header>
+
+  {
+    content.sections.map((section) => (
+      <section class="legal__section">
+        <h2>{section.heading}</h2>
+        {section.paragraphs.map((paragraph) => (
+          <p>
+            {segmentsOf(paragraph).map((segment) =>
+              segment.type === 'pending' ? (
+                <mark class="legal__pending" title={t(locale, 'legal.pendingTag')}>{segment.value}</mark>
+              ) : segment.type === 'value' ? (
+                <strong>{segment.value}</strong>
+              ) : (
+                segment.value
+              ),
+            )}
+          </p>
+        ))}
+        {section.items && (
+          <ul>
+            {section.items.map((item) => (
+              <li>
+                {segmentsOf(item).map((segment) =>
+                  segment.type === 'pending' ? (
+                    <mark class="legal__pending" title={t(locale, 'legal.pendingTag')}>{segment.value}</mark>
+                  ) : segment.type === 'value' ? (
+                    <strong>{segment.value}</strong>
+                  ) : (
+                    segment.value
+                  ),
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+    ))
+  }
+</article>
+
+<style>
+  .legal {
+    max-width: 46rem;
+    padding-block: var(--space-8) var(--space-24);
+  }
+
+  .legal__notice {
+    margin: 0 0 var(--space-6);
+    padding: var(--space-3) var(--space-4);
+    border: 2px solid var(--color-accent-strong);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+  }
+
+  .legal__intro,
+  .legal__version {
+    color: var(--color-text-muted);
+  }
+
+  .legal__version {
+    font-size: var(--text-sm);
+  }
+
+  .legal__section {
+    margin-top: var(--space-10);
+  }
+
+  .legal__section h2 {
+    font-size: var(--text-xl);
+  }
+
+  .legal__pending {
+    padding: 0 var(--space-1);
+    border-radius: var(--radius-sm);
+    background: var(--color-glow);
+    color: var(--color-accent-strong);
+    font-weight: 600;
+  }
+</style>

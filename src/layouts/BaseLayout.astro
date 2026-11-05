@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import AssistantButton from '../components/assistant/AssistantButton.astro';
+import ConsentBanner from '../components/consent/ConsentBanner.astro';
 import IntroOverlay from '../components/layout/IntroOverlay.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
@@ -88,6 +89,7 @@ const switchHrefs = switchTargets(paths ?? {});
     </main>
     <SiteFooter locale={locale} />
     <ProfileDialog locale={locale} />
+    <ConsentBanner locale={locale} />
     <AssistantButton locale={locale} context={section && section !== 'home' ? section : undefined} />
     <script>
       import '../features/bootstrap';

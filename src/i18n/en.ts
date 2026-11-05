@@ -140,6 +140,43 @@ const en: Partial<Dictionary> = {
     load: 'Load comments',
     loadError: 'Comments could not be loaded. You can try again later.',
   },
+  legal: {
+    draftNotice:
+      'PENDING LEGAL REVIEW — NON-FINAL DRAFT (PENDIENTE DE REVISIÓN LEGAL — BORRADOR NO DEFINITIVO)',
+    version: 'Version',
+    footerTerms: 'Terms',
+    footerPrivacy: 'Privacy',
+    footerCookies: 'Cookies',
+    pendingTag: 'Pending item',
+  },
+  consent: {
+    title: 'Terms, privacy and cookies',
+    intro:
+      'Before using features that store data or connect to services, please review and accept the documents. Optional choices are independent.',
+    termsLabel: 'I have read and accept the Terms and conditions of use',
+    privacyLabel: 'I have read and accept the Privacy policy',
+    adsLabel: 'I accept non-essential advertising when it is active (optional)',
+    required: 'To continue, check the two required documents.',
+    submit: 'Save my choices',
+    later: 'Later',
+    close: 'Close',
+    registered: 'Acceptance registered on the server.',
+    serverPending:
+      'We could not register your acceptance on the server. You can try again later. The site does not treat it as registered.',
+    serverUnavailable:
+      'Acceptance registration is not available yet. The site does not treat it as registered.',
+    localSaved: 'Your cookie choices were saved in this browser.',
+    open: 'Review consents',
+    manageTitle: 'Cookie preferences',
+    manageIntro: 'You can change these choices at any time.',
+    adsDisabled: 'There is currently no active advertising on the site.',
+    statusRegistered: 'Registered',
+    statusPending: 'Pending registration',
+  },
+  ads: {
+    placeholder: 'Advertising space',
+    waiting: 'Advertising will only be shown if you accept the advertising preference.',
+  },
   notFound: {
     title: 'Page not found',
     body: 'The address you are looking for does not exist or has moved.',

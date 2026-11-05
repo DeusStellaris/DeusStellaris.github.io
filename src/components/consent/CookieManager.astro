@@ -1,0 +1,96 @@
+---
+import ads from '../../config/ads.json';
+import legal from '../../config/legal.json';
+import services from '../../config/services.json';
+import { type Locale, t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const adsEnabled = ads.enabled === true;
+const apiBaseUrl = services.apiBaseUrl ?? '';
+---
+
+<!--
+  Gestor de preferencias de cookies. Permite cambiar la decisión de publicidad en cualquier
+  momento y volver a revisar los consentimientos. Lo gestiona src/features/consent/consent.ts.
+-->
+<section
+  class="cookie-manager"
+  data-consent-manager
+  data-api={apiBaseUrl}
+  data-locale={locale}
+  data-versions={JSON.stringify(legal.versions)}
+  data-msg-registered={t(locale, 'consent.registered')}
+  data-msg-local-saved={t(locale, 'consent.localSaved')}
+  aria-labelledby="cookie-manager-title"
+>
+  <h2 id="cookie-manager-title">{t(locale, 'consent.manageTitle')}</h2>
+  <p>{t(locale, 'consent.manageIntro')}</p>
+
+  {
+    adsEnabled ? (
+      <label class="cookie-manager__toggle">
+        <input type="checkbox" data-consent-manager-ads />
+        <span>{t(locale, 'consent.adsLabel')}</span>
+      </label>
+    ) : (
+      <p class="cookie-manager__disabled">{t(locale, 'consent.adsDisabled')}</p>
+    )
+  }
+
+  <p class="cookie-manager__status" role="status" aria-live="polite" data-consent-status></p>
+  <button type="button" class="cookie-manager__reopen" data-consent-reopen>
+    {t(locale, 'consent.open')}
+  </button>
+</section>
+
+<style>
+  .cookie-manager {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 40rem;
+    margin-top: var(--space-10);
+    padding: var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  .cookie-manager h2 {
+    margin: 0;
+    font-size: var(--text-lg);
+  }
+
+  .cookie-manager p,
+  .cookie-manager__toggle {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+
+  .cookie-manager__toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--target-min);
+    color: var(--color-text);
+  }
+
+  .cookie-manager__toggle input {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .cookie-manager__reopen {
+    justify-self: start;
+    min-height: var(--target-min);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+</style>

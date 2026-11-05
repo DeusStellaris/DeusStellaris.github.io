@@ -18,6 +18,19 @@ const services = JSON.parse(
 // Origen de la API de me gusta (Worker), solo si ya está configurado. Sin URL no se abre ningún dominio.
 const apiOrigins = services.apiBaseUrl ? [new URL(services.apiBaseUrl).origin] : [];
 
+// Publicidad (AdSense). Con el interruptor apagado no se añade ningún dominio de Google a la CSP.
+// Los dominios deben verificarse con la documentación vigente de Google antes de activarla.
+const ads = JSON.parse(readFileSync(new URL('./src/config/ads.json', import.meta.url), 'utf8'));
+const adsScriptHosts = ads.enabled === true ? ['https://pagead2.googlesyndication.com'] : [];
+const adsFrameHosts =
+  ads.enabled === true
+    ? ['https://googleads.g.doubleclick.net', 'https://tpc.googlesyndication.com']
+    : [];
+const adsImageHosts =
+  ads.enabled === true
+    ? ['https://pagead2.googlesyndication.com', 'https://tpc.googlesyndication.com']
+    : [];
+
 export default defineConfig({
   site: site.url,
   base: site.basePath,
@@ -52,15 +65,15 @@ export default defineConfig({
         "base-uri 'self'",
         "object-src 'none'",
         "form-action 'self'",
-        "img-src 'self' data: https://avatars.githubusercontent.com",
+        `img-src 'self' data: https://avatars.githubusercontent.com${adsImageHosts.map((h) => ` ${h}`).join('')}`,
         "font-src 'self'",
-        `connect-src 'self' https://*.supabase.co${apiOrigins.map((origin) => ` ${origin}`).join('')}`,
-        'frame-src https://giscus.app',
+        `connect-src 'self' https://*.supabase.co${apiOrigins.map((origin) => ` ${origin}`).join('')}${adsScriptHosts.map((h) => ` ${h}`).join('')}`,
+        `frame-src https://giscus.app${adsFrameHosts.map((h) => ` ${h}`).join('')}`,
       ],
       // Giscus carga su script desde giscus.app solo tras la acción del visitante (ver Comments.astro).
       // Astro 7 exige declarar script-src mediante scriptDirective; los hashes se añaden solos.
       scriptDirective: {
-        resources: ["'self'", 'https://giscus.app'],
+        resources: ["'self'", 'https://giscus.app', ...adsScriptHosts],
       },
     },
   },
