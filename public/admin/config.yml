@@ -1,0 +1,175 @@
+# Configuración de Decap CMS. Ver docs/setup/decap-cms.md.
+#
+# PENDIENTE DE CONFIGURAR (no inventar valores):
+#   - backend.base_url: URL del Cloudflare Worker de autenticación OAuth (PKCE).
+#     Mientras tenga el valor de marcador, el inicio de sesión falla de forma explícita.
+#
+# Las rutas de imágenes se escriben relativas al archivo de contenido, para que
+# Astro (image() en src/content.config.ts) las optimice al compilar.
+
+backend:
+  name: github
+  repo: DeusStellaris/DeusStellaris.github.io
+  branch: main
+  auth_type: pkce
+  base_url: https://REEMPLAZAR-worker-oauth.example.invalid
+  auth_endpoint: auth
+
+# Publicación directa: cada guardado es un commit en main y dispara el despliegue de GitHub Pages.
+# Un flujo editorial con revisión (publish_mode: editorial_workflow) requiere pull requests y
+# se puede activar más adelante sin cambiar las colecciones.
+publish_mode: simple
+
+media_folder: src/assets/uploads
+public_folder: /assets/uploads
+
+i18n:
+  structure: multiple_folders
+  locales: [es, en]
+  default_locale: es
+
+collections:
+  - name: projects
+    label: Proyectos
+    label_singular: Proyecto
+    folder: src/content/projects
+    i18n: true
+    create: true
+    slug: "{{slug}}"
+    media_folder: src/assets/uploads
+    public_folder: ../../../assets/uploads
+    summary: "{{title}} · {{section}} · {{status}}"
+    fields:
+      - { label: Título, name: title, widget: string, required: true }
+      - { label: Resumen (máximo 200 caracteres), name: summary, widget: text, required: true }
+      - label: Sección
+        name: section
+        widget: select
+        required: true
+        options:
+          - { label: Juegos, value: games }
+          - { label: Programas, value: programs }
+          - { label: Freelance, value: freelance }
+      - label: Categoría
+        name: category
+        widget: relation
+        collection: categories
+        search_fields: [label]
+        value_field: "{{slug}}"
+        display_fields: [label]
+        required: false
+      - { label: Etiquetas, name: tags, widget: list, required: false }
+      - label: Portada
+        name: cover
+        widget: object
+        required: true
+        fields:
+          - { label: Imagen, name: image, widget: image, required: true }
+          - {
+              label: Texto alternativo,
+              name: alt,
+              widget: string,
+              required: true,
+              hint: Describe la imagen para lectores de pantalla,
+            }
+      - label: Galería
+        name: gallery
+        widget: list
+        required: false
+        fields:
+          - { label: Imagen, name: image, widget: image, required: true }
+          - { label: Texto alternativo, name: alt, widget: string, required: true }
+      - {
+          label: Fecha de publicación,
+          name: published_at,
+          widget: datetime,
+          date_format: "YYYY-MM-DD",
+          time_format: false,
+          required: true,
+        }
+      - {
+          label: Fecha de actualización,
+          name: updated_at,
+          widget: datetime,
+          date_format: "YYYY-MM-DD",
+          time_format: false,
+          required: false,
+        }
+      - label: Estado
+        name: status
+        widget: select
+        default: draft
+        required: true
+        options:
+          - { label: Borrador (no se publica), value: draft }
+          - { label: Publicado, value: published }
+      - {
+          label: Destacado,
+          name: featured,
+          widget: boolean,
+          default: false,
+          hint: Marca el proyecto como destacado en su tarjeta,
+        }
+      - label: Colaboradores
+        name: collaborators
+        widget: relation
+        collection: collaborators
+        search_fields: [name]
+        value_field: "{{slug}}"
+        display_fields: [name]
+        multiple: true
+        required: false
+      - label: Enlaces externos
+        name: external_links
+        widget: list
+        required: false
+        fields:
+          - { label: Texto del enlace, name: label, widget: string, required: true }
+          - { label: URL (https), name: url, widget: string, required: true }
+      - { label: Contenido, name: body, widget: markdown, required: true }
+
+  - name: collaborators
+    label: Colaboradores
+    label_singular: Colaborador
+    folder: src/content/collaborators
+    create: true
+    slug: "{{slug}}"
+    media_folder: src/assets/uploads
+    public_folder: ../../assets/uploads
+    summary: "{{name}}"
+    fields:
+      - { label: Nombre, name: name, widget: string, required: true }
+      - { label: Alias o nombre artístico, name: alias, widget: string, required: false }
+      - {
+          label: Descripción breve (máximo 400 caracteres),
+          name: description,
+          widget: text,
+          required: false,
+        }
+      - { label: Avatar, name: avatar, widget: image, required: false }
+      - label: Enlaces
+        name: links
+        widget: list
+        required: false
+        fields:
+          - { label: Texto del enlace, name: label, widget: string, required: true }
+          - { label: URL (https), name: url, widget: string, required: true }
+
+  - name: categories
+    label: Categorías
+    label_singular: Categoría
+    folder: src/content/categories
+    create: true
+    slug: "{{slug}}"
+    summary: "{{label}} ({{section}})"
+    fields:
+      - { label: Nombre en español, name: label, widget: string, required: true }
+      - { label: Nombre en inglés, name: label_en, widget: string, required: false }
+      - label: Sección
+        name: section
+        widget: select
+        required: true
+        options:
+          - { label: Juegos, value: games }
+          - { label: Programas, value: programs }
+          - { label: Freelance, value: freelance }

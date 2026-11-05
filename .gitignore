@@ -26,3 +26,6 @@ npm-debug.log*
 
 # Estado local de herramientas (no es código del proyecto)
 .claude/
+
+# Copia local de Decap CMS generada por scripts/sync-decap.mjs (no versionar)
+public/admin/vendor/

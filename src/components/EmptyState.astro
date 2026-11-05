@@ -1,0 +1,20 @@
+---
+interface Props {
+  message: string;
+}
+
+const { message } = Astro.props;
+---
+
+<!-- Estado vacío: se muestra cuando no hay contenido publicado que listar. -->
+<p class="empty-state">{message}</p>
+
+<style>
+  .empty-state {
+    padding: var(--space-8) var(--space-6);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-text-muted);
+    text-align: center;
+  }
+</style>

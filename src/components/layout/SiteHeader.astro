@@ -11,9 +11,11 @@ import ThemeToggle from '../ui/ThemeToggle.astro';
 interface Props {
   locale: Locale;
   section: SectionId;
+  /** Destino del selector de idioma por cada locale (página equivalente). */
+  switchHrefs: Record<Locale, string>;
 }
 
-const { locale, section } = Astro.props;
+const { locale, section, switchHrefs } = Astro.props;
 
 const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
   games: 'nav.games',
@@ -53,7 +55,7 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
     <div class="site-header__controls">
       <LiteModeToggle locale={locale} />
       <ThemeToggle locale={locale} />
-      <LanguagePill locale={locale} section={section} />
+      <LanguagePill locale={locale} hrefs={switchHrefs} />
     </div>
   </div>
 </header>

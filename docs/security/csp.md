@@ -29,7 +29,10 @@ GitHub Pages no permite configurar cabeceras HTTP. Consecuencias:
 ## Excepciones pendientes
 
 - **AdSense (Fase 6):** necesitará `script-src` para sus dominios de carga y `frame-src` para sus iframes. Se añadirán solo cuando la publicidad esté habilitada en `src/config/ads.json`. El bloque inline de AdSense se tratará con hashes. Antes de habilitarlo hay que verificar la documentación vigente de Google.
-- **Decap CMS (Fase 4):** `/admin` cargará Decap desde CDN. Necesitará una política propia, sin relajar la CSP del resto del sitio.
+- **Decap CMS (`/admin`, Fase 4):** la página de administración tiene su propia CSP en `public/admin/index.html`. Es más permisiva que la del sitio en dos puntos, documentados aquí:
+  - `style-src 'unsafe-inline'`: Decap genera estilos en línea en tiempo de ejecución.
+  - `connect-src`: `https://api.github.com` y `https://*.workers.dev` (el Worker de autenticación). Se debe acotar al dominio exacto cuando el Worker exista.
+    No hay `unsafe-eval` ni scripts de CDN: el bundle se sirve desde el propio sitio. La CSP del resto del sitio no cambia.
 - **Giscus (Fase 5):** `frame-src https://giscus.app` ya está. Su script se añadirá a `script-src` cuando se implemente.
 
 ## Verificación

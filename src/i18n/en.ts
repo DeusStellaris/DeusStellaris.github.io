@@ -19,9 +19,6 @@ const en: Partial<Dictionary> = {
     contact: 'Contact',
     primaryLabel: 'Main navigation',
   },
-  pending: {
-    notice: 'Content in preparation. It will be published from the admin panel.',
-  },
   sections: {
     home: {
       title: 'Deus',
@@ -45,6 +42,21 @@ const en: Partial<Dictionary> = {
       intro: 'You can write to me by email or find me on my social networks.',
       noLinks: 'Contact details will be published soon.',
     },
+  },
+  projects: {
+    latestHeading: 'Latest projects',
+    emptyHome: 'No projects have been published yet. Check back soon.',
+    emptySection: 'No projects have been published in this section yet.',
+    viewProject: 'View project',
+    published: 'Published',
+    updated: 'Updated',
+    featured: 'Featured',
+    collaborators: 'Collaborators',
+    gallery: 'Gallery',
+    externalLinks: 'Links',
+    backToSection: 'Back to',
+    fallbackNotice: 'This version of the project is only available in Spanish.',
+    category: 'Category',
   },
   preferences: {
     themeToLight: 'Switch to light mode',

@@ -16,9 +16,6 @@ const es = {
     contact: 'Contacto',
     primaryLabel: 'Navegación principal',
   },
-  pending: {
-    notice: 'Contenido en preparación. Se publicará desde el panel de administración.',
-  },
   sections: {
     home: {
       title: 'Deus',
@@ -43,6 +40,21 @@ const es = {
       intro: 'Podés escribirme por correo o encontrarme en mis redes.',
       noLinks: 'Los medios de contacto se publicarán próximamente.',
     },
+  },
+  projects: {
+    latestHeading: 'Últimos proyectos',
+    emptyHome: 'Todavía no hay proyectos publicados. Volvé pronto.',
+    emptySection: 'Todavía no hay proyectos publicados en esta sección.',
+    viewProject: 'Ver proyecto',
+    published: 'Publicado',
+    updated: 'Actualizado',
+    featured: 'Destacado',
+    collaborators: 'Colaboradores',
+    gallery: 'Galería',
+    externalLinks: 'Enlaces',
+    backToSection: 'Volver a',
+    fallbackNotice: 'Esta versión del proyecto solo está disponible en español.',
+    category: 'Categoría',
   },
   preferences: {
     themeToLight: 'Activar modo claro',

@@ -1,0 +1,66 @@
+---
+import { type Locale, t } from '../../i18n';
+import { localizedHref, projectSegmentPath } from '../../i18n/routes';
+import { formatDate } from '../../lib/format';
+import type { ProjectSummary } from '../../services/projects';
+import { getCategoryLabel } from '../../services/projects';
+import ProjectCard from './ProjectCard.astro';
+
+interface Props {
+  locale: Locale;
+  items: ProjectSummary[];
+}
+
+const { locale, items } = Astro.props;
+
+// Las categorías se resuelven aquí, una vez por tarjeta, para que la tarjeta reciba solo texto.
+const cards = await Promise.all(
+  items.map(async (item) => ({
+    item,
+    categoryLabel: await getCategoryLabel(item.entry.data.category, locale),
+  })),
+);
+---
+
+<ul class="project-grid">
+  {
+    cards.map(({ item, categoryLabel }) => (
+      <li>
+        <ProjectCard
+          locale={locale}
+          href={localizedHref(locale, projectSegmentPath(item.slug, locale))}
+          title={item.entry.data.title}
+          summary={item.entry.data.summary}
+          section={item.entry.data.section}
+          cover={item.entry.data.cover}
+          publishedLabel={`${t(locale, 'projects.published')}: ${formatDate(item.entry.data.published_at, locale)}`}
+          categoryLabel={categoryLabel}
+          featured={item.entry.data.featured}
+        />
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .project-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 48em) {
+    .project-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 64em) {
+    .project-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

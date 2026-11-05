@@ -1,0 +1,287 @@
+---
+import { Picture } from 'astro:assets';
+import { render } from 'astro:content';
+import type { ContentSectionId } from '../config/sections';
+import { type Locale, type TranslationKey, t } from '../i18n';
+import { sectionHref } from '../i18n/routes';
+import { formatDate } from '../lib/format';
+import {
+  getCategoryLabel,
+  getProjectCollaborators,
+  type ProjectSummary,
+} from '../services/projects';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  locale: Locale;
+  project: ProjectSummary;
+  /** Rutas sin prefijo de la página en cada idioma en que existe. */
+  pagePaths: Partial<Record<Locale, string>>;
+}
+
+const { locale, project, pagePaths } = Astro.props;
+const { entry, sourceLocale } = project;
+const data = entry.data;
+const section: ContentSectionId = data.section;
+
+const { Content } = await render(entry);
+const categoryLabel = await getCategoryLabel(data.category, locale);
+const collaborators = await getProjectCollaborators(entry);
+
+const NAV_KEYS: Record<ContentSectionId, TranslationKey> = {
+  games: 'nav.games',
+  programs: 'nav.programs',
+  freelance: 'nav.freelance',
+  contact: 'nav.contact',
+};
+
+const isFallback = sourceLocale !== locale;
+---
+
+<BaseLayout
+  title={`${data.title} · ${t(locale, 'common.siteName')}`}
+  description={data.summary}
+  locale={locale}
+  section={section}
+  pagePaths={pagePaths}
+>
+  <article class="container project">
+    <nav class="project__back" aria-label={t(locale, 'nav.primaryLabel')}>
+      <a href={sectionHref(section, locale)}>
+        ← {t(locale, 'projects.backToSection')} {t(locale, NAV_KEYS[section])}
+      </a>
+    </nav>
+
+    <header class="project__header">
+      <p class="project__meta">
+        {categoryLabel && <span>{t(locale, 'projects.category')}: {categoryLabel}</span>}
+        <time datetime={data.published_at.toISOString()}>
+          {t(locale, 'projects.published')}: {formatDate(data.published_at, locale)}
+        </time>
+        {
+          data.updated_at && (
+            <time datetime={data.updated_at.toISOString()}>
+              {t(locale, 'projects.updated')}: {formatDate(data.updated_at, locale)}
+            </time>
+          )
+        }
+      </p>
+      <h1>{data.title}</h1>
+      <p class="project__summary">{data.summary}</p>
+      {isFallback && <p class="project__fallback">{t(locale, 'projects.fallbackNotice')}</p>}
+    </header>
+
+    <div class="project__cover">
+      <Picture
+        src={data.cover.image}
+        formats={['avif', 'webp']}
+        widths={[800, 1200, 1600]}
+        sizes="(min-width: 64em) 960px, 100vw"
+        alt={data.cover.alt}
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {
+      data.gallery.length > 0 && (
+        <section class="project__block" aria-labelledby="project-gallery-heading">
+          <h2 id="project-gallery-heading">{t(locale, 'projects.gallery')}</h2>
+          <ul class="project__gallery">
+            {data.gallery.map((item) => (
+              <li>
+                <Picture
+                  src={item.image}
+                  formats={['avif', 'webp']}
+                  widths={[480, 800]}
+                  sizes="(min-width: 48em) 50vw, 100vw"
+                  alt={item.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      collaborators.length > 0 && (
+        <section class="project__block" aria-labelledby="project-collaborators-heading">
+          <h2 id="project-collaborators-heading">{t(locale, 'projects.collaborators')}</h2>
+          <ul class="collaborators">
+            {collaborators.map(({ data: person }) => (
+              <li class="collaborator">
+                {person.avatar && (
+                  <Picture
+                    src={person.avatar}
+                    formats={['avif', 'webp']}
+                    widths={[96, 192]}
+                    sizes="96px"
+                    alt=""
+                    class="collaborator__avatar"
+                  />
+                )}
+                <div>
+                  <p class="collaborator__name">
+                    {person.name}
+                    {person.alias && <span class="collaborator__alias"> ({person.alias})</span>}
+                  </p>
+                  {person.description && <p class="collaborator__text">{person.description}</p>}
+                  {
+                    person.links.length > 0 && (
+                      <ul class="inline-links">
+                        {person.links.map((link) => (
+                          <li>
+                            <a href={link.url} rel="noopener noreferrer">{link.label}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    )
+                  }
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+
+    {
+      data.external_links.length > 0 && (
+        <section class="project__block" aria-labelledby="project-links-heading">
+          <h2 id="project-links-heading">{t(locale, 'projects.externalLinks')}</h2>
+          <ul class="inline-links">
+            {data.external_links.map((link) => (
+              <li>
+                <a href={link.url} rel="noopener noreferrer">{link.label}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .project {
+    padding-block: var(--space-8) var(--space-24);
+  }
+
+  .project__back a {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    color: var(--color-text-muted);
+    text-decoration: none;
+  }
+
+  .project__header {
+    max-width: 48rem;
+    padding-block: var(--space-8) var(--space-6);
+  }
+
+  .project__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project__summary {
+    color: var(--color-text-muted);
+    font-size: var(--text-lg);
+  }
+
+  .project__fallback {
+    padding: var(--space-2) var(--space-3);
+    border-left: 2px solid var(--color-accent);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .project__cover {
+    margin-block: var(--space-6);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: var(--color-surface-raised);
+  }
+
+  .project__cover img {
+    width: 100%;
+    height: auto;
+  }
+
+  .prose {
+    max-width: 44rem;
+  }
+
+  .project__block {
+    margin-top: var(--space-16);
+  }
+
+  .project__gallery {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 48em) {
+    .project__gallery {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .collaborators {
+    display: grid;
+    gap: var(--space-6);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .collaborator {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
+  }
+
+  .collaborator__avatar {
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .collaborator__name {
+    margin: 0;
+    font-weight: 600;
+  }
+
+  .collaborator__alias,
+  .collaborator__text {
+    color: var(--color-text-muted);
+    font-weight: 400;
+  }
+
+  .inline-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin: var(--space-2) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

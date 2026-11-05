@@ -7,7 +7,7 @@ import SiteHeader from '../components/layout/SiteHeader.astro';
 import type { SectionId } from '../config/sections';
 import siteConfig from '../config/site.json';
 import { DEFAULT_LOCALE, LOCALES, type Locale, t } from '../i18n';
-import { sectionAbsoluteUrl } from '../i18n/routes';
+import { absoluteLocalizedUrl, sectionPaths, switchTargets } from '../i18n/routes';
 import { publicAssetUrl } from '../lib/assets';
 
 interface Props {
@@ -15,18 +15,25 @@ interface Props {
   title: string;
   description: string;
   locale: Locale;
-  /**
-   * Sección que representa la página. Sin sección (p. ej. 404) no se emiten
-   * canonical, hreflang ni og:url, porque no hay URL indexable que declarar.
-   */
+  /** Sección que identifica la página (identidad visual y marcador de navegación). */
   section?: SectionId;
+  /**
+   * Ruta sin prefijo de la página en cada idioma (p. ej. { es: '/proyectos/x/', en: '/projects/x/' }).
+   * Si se omite y hay sección, se usan las rutas de la sección. Determina canonical,
+   * hreflang y el destino del selector de idioma.
+   */
+  pagePaths?: Partial<Record<Locale, string>>;
   noindex?: boolean;
 }
 
-const { title, description, locale, section, noindex = false } = Astro.props;
+const { title, description, locale, section, pagePaths, noindex = false } = Astro.props;
+
 const siteName = t(locale, 'common.siteName');
 const ogLocale = siteConfig.ogLocale[locale];
-const canonicalUrl = section ? sectionAbsoluteUrl(section, locale) : undefined;
+const paths: Partial<Record<Locale, string>> | undefined =
+  pagePaths ?? (section ? sectionPaths(section) : undefined);
+const canonicalUrl = paths?.[locale] ? absoluteLocalizedUrl(locale, paths[locale]) : undefined;
+const switchHrefs = switchTargets(paths ?? {});
 ---
 
 <!doctype html>
@@ -39,22 +46,24 @@ const canonicalUrl = section ? sectionAbsoluteUrl(section, locale) : undefined;
     {noindex && <meta name="robots" content="noindex" />}
 
     {
-      section && canonicalUrl && (
+      paths && canonicalUrl && (
         <>
           <link rel="canonical" href={canonicalUrl} />
-          {LOCALES.map((code) => (
-            <link rel="alternate" hreflang={code} href={sectionAbsoluteUrl(section, code)} />
+          {LOCALES.filter((code) => paths[code] !== undefined).map((code) => (
+            <link rel="alternate" hreflang={code} href={absoluteLocalizedUrl(code, paths[code] ?? '/')} />
           ))}
-          <link
-            rel="alternate"
-            hreflang="x-default"
-            href={sectionAbsoluteUrl(section, DEFAULT_LOCALE)}
-          />
+          {paths[DEFAULT_LOCALE] && (
+            <link
+              rel="alternate"
+              hreflang="x-default"
+              href={absoluteLocalizedUrl(DEFAULT_LOCALE, paths[DEFAULT_LOCALE])}
+            />
+          )}
         </>
       )
     }
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={pagePaths ? 'article' : 'website'} />
     <meta property="og:site_name" content={siteName} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
@@ -71,7 +80,7 @@ const canonicalUrl = section ? sectionAbsoluteUrl(section, locale) : undefined;
   <body data-section={section ?? 'home'}>
     <IntroOverlay />
     <a class="skip-link" href="#main">{t(locale, 'common.skipToContent')}</a>
-    <SiteHeader locale={locale} section={section ?? 'home'} />
+    <SiteHeader locale={locale} section={section ?? 'home'} switchHrefs={switchHrefs} />
     <main id="main" tabindex="-1">
       <slot />
     </main>

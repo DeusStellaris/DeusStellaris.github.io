@@ -1,9 +1,12 @@
 ---
+import EmptyState from '../components/EmptyState.astro';
+import ProjectGrid from '../components/projects/ProjectGrid.astro';
 import ContactLinks from '../components/sections/ContactLinks.astro';
 import SectionIntro from '../components/sections/SectionIntro.astro';
 import type { ContentSectionId } from '../config/sections';
 import { type Locale, t } from '../i18n';
 import { sectionCopy } from '../i18n/section-copy';
+import { listProjects } from '../services/projects';
 import BaseLayout from './BaseLayout.astro';
 
 interface Props {
@@ -13,6 +16,8 @@ interface Props {
 
 const { locale, section } = Astro.props;
 const copy = sectionCopy(locale, section);
+// Contacto no tiene proyectos: solo muestra sus medios de contacto.
+const projects = section === 'contact' ? [] : await listProjects(locale, { section });
 ---
 
 <BaseLayout
@@ -23,6 +28,14 @@ const copy = sectionCopy(locale, section);
 >
   <div class="container">
     <SectionIntro title={copy.title} intro={copy.intro} />
-    {section === 'contact' ? <ContactLinks locale={locale} /> : <p>{t(locale, 'pending.notice')}</p>}
+    {
+      section === 'contact' ? (
+        <ContactLinks locale={locale} />
+      ) : projects.length > 0 ? (
+        <ProjectGrid locale={locale} items={projects} />
+      ) : (
+        <EmptyState message={t(locale, 'projects.emptySection')} />
+      )
+    }
   </div>
 </BaseLayout>

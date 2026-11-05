@@ -1,14 +1,14 @@
 ---
-import type { SectionId } from '../../config/sections';
 import { LOCALE_NAMES, LOCALES, type Locale, t } from '../../i18n';
-import { sectionHref } from '../../i18n/routes';
 
 interface Props {
+  /** Idioma de la página actual. */
   locale: Locale;
-  section: SectionId;
+  /** Enlace de cada idioma: la página equivalente, o la portada si no existe. */
+  hrefs: Record<Locale, string>;
 }
 
-const { locale, section } = Astro.props;
+const { locale, hrefs } = Astro.props;
 ---
 
 <!--
@@ -22,7 +22,7 @@ const { locale, section } = Astro.props;
     LOCALES.map((code) => (
       <a
         class="lang-pill__option"
-        href={sectionHref(section, code)}
+        href={hrefs[code]}
         hreflang={code}
         lang={code}
         aria-current={code === locale ? 'true' : undefined}

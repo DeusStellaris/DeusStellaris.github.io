@@ -1,7 +1,9 @@
 // @ts-check
 import { readFileSync } from 'node:fs';
+import { satteri } from '@astrojs/markdown-satteri';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig, envField } from 'astro/config';
+import { noRawHtml } from './config/markdown/no-raw-html.mjs';
 
 /**
  * Configuración del sitio leída desde un único archivo.
@@ -74,6 +76,9 @@ export default defineConfig({
   // Resaltado de código desactivado: Shiki genera estilos inline incompatibles con la CSP.
   // Se reevaluará en la Fase 4 si el contenido de proyectos incluye bloques de código.
   markdown: {
+    // Procesador Sätteri (por defecto en Astro 7) con el plugin que elimina el HTML crudo.
+    // Resaltado de código desactivado: Shiki genera estilos en línea incompatibles con la CSP.
+    processor: satteri({ mdastPlugins: [noRawHtml] }),
     syntaxHighlight: false,
   },
 

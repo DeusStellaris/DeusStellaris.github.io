@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <!--
+      CSP propia de /admin. Es más permisiva que la del sitio porque Decap CMS usa estilos
+      en línea generados en tiempo de ejecución. Motivo documentado en docs/security/csp.md.
+      Scripts: solo el bundle local. Conexiones: GitHub API y el Worker de autenticación
+      (dominio exacto pendiente, ver docs/setup/external-configuration.md).
+    -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://avatars.githubusercontent.com https://raw.githubusercontent.com; font-src 'self'; connect-src 'self' https://api.github.com https://*.workers.dev; worker-src 'self' blob:; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"
+    />
+    <title>Administración · Deus</title>
+  </head>
+  <body>
+    <!-- Bundle local generado por scripts/sync-decap.mjs (versión fijada). Sin inline. -->
+    <script src="vendor/decap-cms-app.js"></script>
+  </body>
+</html>

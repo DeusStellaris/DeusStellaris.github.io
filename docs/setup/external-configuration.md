@@ -37,4 +37,4 @@ Pendiente de cuenta aprobada. Completar `publisherId` en `src/config/ads.json` y
 
 ## Decap CMS
 
-Pendiente de la Fase 4. El backend apuntará a `DeusStellaris/DeusStellaris.github.io` y al Worker de OAuth.
+Pendiente de la configuración del Worker de autenticación. Ver `docs/setup/decap-cms.md` para el procedimiento completo y los pasos concretos (OAuth App, secretos del Worker y sustitución de `base_url`).

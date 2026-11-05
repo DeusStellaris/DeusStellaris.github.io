@@ -1,6 +1,6 @@
 # Estado de implementación
 
-Última actualización: Fase 3 (diseño y componentes) en curso. Fase 2 cerrada con el commit 294dac6 (feat(core): complete Astro project foundation (Phase 2)).
+Última actualización: Fase 4 (contenido y CMS) en curso. Fases anteriores: 294dac6 (Fase 2) y 67b5094 (Fase 3).
 
 ## Verificado
 
@@ -28,6 +28,29 @@
 - Inventario, estados e interacciones en `docs/architecture/phase-3-components.md`.
 
 Verificado: `npm run ci` (0 errores, 0 avisos, 12 páginas); CSP sin estilos en atributos; hash del script inline en la CSP.
+
+## Fase 4: completado
+
+- **Colecciones tipadas** en `src/content.config.ts`: `projects` (por idioma), `collaborators` y `categories`. Ver `docs/architecture/content-model.md`.
+- **Relaciones normalizadas**: un proyecto guarda solo los ids de sus colaboradores y su categoría (`reference()`). Un colaborador roto hace fallar el build.
+- **Servicio de proyectos** (`src/services/projects.ts`): publicación (`status`), fallback de idioma, orden por fecha, feed de inicio (3 más recientes) y listados por sección.
+- **Páginas de detalle** en ES (`/proyectos/<slug>/`) y EN (`/en/projects/<slug>/`), con colaboradores, galería, enlaces externos y aviso de fallback.
+- **Portada y secciones** conectadas al contenido, con estados vacíos.
+- **Decap CMS** en `/admin/`: configuración de colecciones y campos (`public/admin/config.yml`), bundle 3.17.1 servido desde el propio sitio, y CSP propia para esa página.
+- **Seguridad del contenido**: sin HTML crudo en Markdown (plugin de Sätteri), solo enlaces `https://`, imágenes validadas por Astro.
+
+Verificado: `npm run ci` con contenido vacío (0 errores, 0 avisos, 12 páginas). Con contenido de prueba (ya eliminado): borradores excluidos, fallback de idioma, feed ordenado, HTML crudo eliminado, colaboradores y categorías resueltos, hreflang correcto, AVIF y WebP, sin atributos `style=`, hash de todos los scripts inline en la CSP.
+
+## Fase 4: pendiente y no verificado
+
+- **Autenticación de Decap: NO configurada.** Falta el Worker OAuth (PKCE). `base_url` es un marcador explícito. Sin el Worker no se puede editar contenido.
+- **Editor de Decap en navegador: no probado.** No he comprobado que la estructura `multiple_folders` de Decap 3.17.1 genere las rutas esperadas.
+- **Riesgo de dependencias: pendiente de tu aceptación.** Decap 3.17.1 introduce 30 avisos de auditoría dentro de su bundle (ver `docs/security/dependencies.md`). Producción sigue en 0.
+- **Contenido real**: no hay proyectos reales publicados. Los estados vacíos se muestran tal cual.
+
+## Fase 5 (asignada por la aprobación)
+
+Buscador, panel de perfil, asistente, favoritos, rankings y likes, Giscus, Worker de la API y RLS de Supabase.
 
 ## No verificado (pendiente)
 
