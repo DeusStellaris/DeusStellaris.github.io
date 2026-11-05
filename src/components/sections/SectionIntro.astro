@@ -1,0 +1,25 @@
+---
+interface Props {
+  title: string;
+  intro: string;
+}
+
+const { title, intro } = Astro.props;
+---
+
+<header class="section-intro">
+  <h1>{title}</h1>
+  <p class="section-intro__lead">{intro}</p>
+</header>
+
+<style>
+  .section-intro {
+    padding-block: var(--space-16) var(--space-8);
+  }
+
+  .section-intro__lead {
+    max-width: 40rem;
+    color: var(--color-text-muted);
+    font-size: var(--text-lg);
+  }
+</style>

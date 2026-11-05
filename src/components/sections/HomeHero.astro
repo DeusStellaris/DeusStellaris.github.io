@@ -1,0 +1,35 @@
+---
+import type { Locale } from '../../i18n';
+import { t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<div class="container home">
+  <header class="home__hero">
+    <h1>{t(locale, 'sections.home.title')}</h1>
+    <p class="home__subtitle">{t(locale, 'sections.home.subtitle')}</p>
+  </header>
+  <p class="home__pending">{t(locale, 'pending.notice')}</p>
+</div>
+
+<style>
+  .home__hero {
+    padding-block: var(--space-24) var(--space-12);
+  }
+
+  .home__subtitle {
+    max-width: 40rem;
+    color: var(--color-text-muted);
+    font-size: var(--text-lg);
+  }
+
+  .home__pending {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+</style>

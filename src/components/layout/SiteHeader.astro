@@ -1,0 +1,114 @@
+---
+import { NAV_SECTIONS, type NavSectionId, type SectionId } from '../../config/sections';
+import { LOCALE_NAMES, LOCALES, type Locale, type TranslationKey, t } from '../../i18n';
+import { sectionHref } from '../../i18n/routes';
+import Logo from '../ui/Logo.astro';
+
+interface Props {
+  locale: Locale;
+  section: SectionId;
+}
+
+const { locale, section } = Astro.props;
+
+const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
+  games: 'nav.games',
+  programs: 'nav.programs',
+  freelance: 'nav.freelance',
+  contact: 'nav.contact',
+};
+
+// Idioma alternativo: el selector lleva a la misma sección en el otro idioma.
+const otherLocale = LOCALES.find((code) => code !== locale) ?? locale;
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <Logo locale={locale} />
+
+    <nav class="site-nav" aria-label={t(locale, 'nav.primaryLabel')}>
+      <ul class="site-nav__list">
+        {
+          NAV_SECTIONS.map((item) => (
+            <li>
+              <a
+                class="site-nav__link"
+                href={sectionHref(item, locale)}
+                aria-current={item === section ? 'page' : undefined}
+              >
+                {t(locale, NAV_LABEL_KEYS[item])}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <a
+      class="lang-link"
+      href={sectionHref(section, otherLocale)}
+      hreflang={otherLocale}
+      lang={otherLocale}
+      aria-label={`${t(locale, 'common.languageSwitchLabel')}: ${LOCALE_NAMES[otherLocale]}`}
+    >
+      {otherLocale.toUpperCase()}
+    </a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2) var(--space-4);
+    padding-block: var(--space-2);
+  }
+
+  .site-nav__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-nav__link,
+  .lang-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    color: var(--color-text-muted);
+  }
+
+  .site-nav__link:hover,
+  .lang-link:hover {
+    color: var(--color-text);
+  }
+
+  .site-nav__link[aria-current='page'] {
+    color: var(--color-accent-strong);
+    background: var(--color-surface-raised);
+  }
+
+  .lang-link {
+    border: 1px solid var(--color-border);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+  }
+</style>

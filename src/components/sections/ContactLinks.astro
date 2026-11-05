@@ -1,0 +1,68 @@
+---
+import contact from '../../config/contact.json';
+import type { Locale } from '../../i18n';
+import { t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+// Solo se muestran enlaces con URL configurada. Los null son placeholders pendientes.
+const availableSocials = contact.socials.flatMap((social) =>
+  social.url === null ? [] : [{ label: social.label, url: social.url }],
+);
+---
+
+<section class="contact-links" aria-labelledby="contact-social-heading">
+  {
+    availableSocials.length === 0 ? (
+      <p class="contact-links__empty">{t(locale, 'sections.contact.noLinks')}</p>
+    ) : (
+      <>
+        <h2 id="contact-social-heading" class="visually-hidden">
+          {t(locale, 'nav.contact')}
+        </h2>
+        <ul class="contact-links__list">
+          {availableSocials.map((social) => (
+            <li>
+              <a class="contact-links__link" href={social.url} rel="me noopener noreferrer">
+                {social.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+</section>
+
+<style>
+  .contact-links__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .contact-links__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+  }
+
+  .contact-links__link:hover {
+    border-color: var(--color-accent);
+  }
+
+  .contact-links__empty {
+    color: var(--color-text-muted);
+  }
+</style>

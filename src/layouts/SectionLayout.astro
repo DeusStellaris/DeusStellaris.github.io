@@ -1,0 +1,28 @@
+---
+import ContactLinks from '../components/sections/ContactLinks.astro';
+import SectionIntro from '../components/sections/SectionIntro.astro';
+import type { ContentSectionId } from '../config/sections';
+import { type Locale, t } from '../i18n';
+import { sectionCopy } from '../i18n/section-copy';
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  locale: Locale;
+  section: ContentSectionId;
+}
+
+const { locale, section } = Astro.props;
+const copy = sectionCopy(locale, section);
+---
+
+<BaseLayout
+  title={`${copy.title} · ${t(locale, 'common.siteName')}`}
+  description={copy.intro}
+  locale={locale}
+  section={section}
+>
+  <div class="container">
+    <SectionIntro title={copy.title} intro={copy.intro} />
+    {section === 'contact' ? <ContactLinks locale={locale} /> : <p>{t(locale, 'pending.notice')}</p>}
+  </div>
+</BaseLayout>

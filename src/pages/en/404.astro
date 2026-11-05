@@ -1,0 +1,26 @@
+---
+import { type Locale, t } from '../../i18n';
+import { sectionHref } from '../../i18n/routes';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const locale: Locale = 'en';
+---
+
+<BaseLayout
+  title={`${t(locale, 'notFound.title')} · ${t(locale, 'common.siteName')}`}
+  description={t(locale, 'notFound.body')}
+  locale={locale}
+  noindex
+>
+  <div class="container not-found">
+    <h1>{t(locale, 'notFound.title')}</h1>
+    <p>{t(locale, 'notFound.body')}</p>
+    <p><a href={sectionHref('home', locale)}>{t(locale, 'notFound.back')}</a></p>
+  </div>
+</BaseLayout>
+
+<style>
+  .not-found {
+    padding-block: var(--space-24);
+  }
+</style>

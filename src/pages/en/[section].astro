@@ -1,0 +1,17 @@
+---
+import { CONTENT_SECTIONS, SECTION_SLUGS } from '../../config/sections';
+import type { Locale } from '../../i18n';
+import SectionLayout from '../../layouts/SectionLayout.astro';
+
+export function getStaticPaths() {
+  const locale: Locale = 'en';
+  return CONTENT_SECTIONS.map((section) => ({
+    params: { section: SECTION_SLUGS[section][locale] },
+    props: { section, locale },
+  }));
+}
+
+const { section, locale } = Astro.props;
+---
+
+<SectionLayout locale={locale} section={section} />

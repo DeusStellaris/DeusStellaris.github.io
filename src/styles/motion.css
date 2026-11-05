@@ -1,0 +1,32 @@
+/*
+ * Movimiento. Dos reglas:
+ * 1. prefers-reduced-motion: desactiva transiciones y transiciones de vista.
+ * 2. Lite Mode (clase html.lite-mode, añadida en la Fase 3) desactivará los efectos caros.
+ */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.001ms;
+  }
+
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none;
+  }
+}
+
+/* Transición de vista por defecto: fundido suave entre páginas. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--duration-base);
+  animation-timing-function: var(--ease-out);
+}

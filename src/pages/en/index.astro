@@ -1,0 +1,16 @@
+---
+import HomeHero from '../../components/sections/HomeHero.astro';
+import { type Locale, t } from '../../i18n';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const locale: Locale = 'en';
+---
+
+<BaseLayout
+  title={t(locale, 'common.siteName')}
+  description={t(locale, 'sections.home.subtitle')}
+  locale={locale}
+  section="home"
+>
+  <HomeHero locale={locale} />
+</BaseLayout>

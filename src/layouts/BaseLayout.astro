@@ -1,0 +1,78 @@
+---
+import '../styles/global.css';
+import { ClientRouter } from 'astro:transitions';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import type { SectionId } from '../config/sections';
+import siteConfig from '../config/site.json';
+import { DEFAULT_LOCALE, LOCALES, type Locale, t } from '../i18n';
+import { sectionAbsoluteUrl } from '../i18n/routes';
+import { publicAssetUrl } from '../lib/assets';
+
+interface Props {
+  /** Título completo de la pestaña, ya formateado por la página. */
+  title: string;
+  description: string;
+  locale: Locale;
+  /**
+   * Sección que representa la página. Sin sección (p. ej. 404) no se emiten
+   * canonical, hreflang ni og:url, porque no hay URL indexable que declarar.
+   */
+  section?: SectionId;
+  noindex?: boolean;
+}
+
+const { title, description, locale, section, noindex = false } = Astro.props;
+const siteName = t(locale, 'common.siteName');
+const ogLocale = siteConfig.ogLocale[locale];
+const canonicalUrl = section ? sectionAbsoluteUrl(section, locale) : undefined;
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    {
+      section && canonicalUrl && (
+        <>
+          <link rel="canonical" href={canonicalUrl} />
+          {LOCALES.map((code) => (
+            <link rel="alternate" hreflang={code} href={sectionAbsoluteUrl(section, code)} />
+          ))}
+          <link
+            rel="alternate"
+            hreflang="x-default"
+            href={sectionAbsoluteUrl(section, DEFAULT_LOCALE)}
+          />
+        </>
+      )
+    }
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+    <meta property="og:locale" content={ogLocale} />
+
+    <link rel="icon" href={publicAssetUrl('favicon.svg')} type="image/svg+xml" />
+
+    <!-- Tema antes del primer pintado. Script externo: no requiere 'unsafe-inline' en la CSP. -->
+    <script is:inline src={publicAssetUrl('js/theme-init.js')}></script>
+
+    <ClientRouter fallback="swap" />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t(locale, 'common.skipToContent')}</a>
+    <SiteHeader locale={locale} section={section ?? 'home'} />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <SiteFooter locale={locale} />
+  </body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "_nota": "Comentarios con GitHub Discussions en el repositorio del sitio. repoId y categoryId se obtienen en giscus.app y no se inventan. Mientras enabled sea false no se carga nada.",
+  "enabled": false,
+  "repo": "DeusStellaris/DeusStellaris.github.io",
+  "repoId": null,
+  "category": null,
+  "categoryId": null,
+  "mapping": "specific"
+}
