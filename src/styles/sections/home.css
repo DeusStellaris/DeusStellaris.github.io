@@ -1,0 +1,16 @@
+/* Identidad de Inicio: mármol profundo con iluminación ambiental discreta. Sigue el tema. */
+body[data-section="home"] {
+  background-color: var(--color-bg);
+  background-image:
+    radial-gradient(60rem 30rem at 50% -10%, var(--color-glow), transparent 70%),
+    url("../../assets/backgrounds/marble-placeholder.svg");
+  background-size:
+    auto,
+    400px 400px;
+  background-repeat: no-repeat, repeat;
+}
+
+body[data-section="home"] h1 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}

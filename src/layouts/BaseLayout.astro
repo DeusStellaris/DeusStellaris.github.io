@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
+import IntroOverlay from '../components/layout/IntroOverlay.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import type { SectionId } from '../config/sections';
@@ -62,17 +63,21 @@ const canonicalUrl = section ? sectionAbsoluteUrl(section, locale) : undefined;
 
     <link rel="icon" href={publicAssetUrl('favicon.svg')} type="image/svg+xml" />
 
-    <!-- Tema antes del primer pintado. Script externo: no requiere 'unsafe-inline' en la CSP. -->
-    <script is:inline src={publicAssetUrl('js/theme-init.js')}></script>
+    <!-- Tema y Lite Mode antes del primer pintado. Script externo: no requiere 'unsafe-inline' en la CSP. -->
+    <script is:inline src={publicAssetUrl('js/preferences-init.js')}></script>
 
     <ClientRouter fallback="swap" />
   </head>
-  <body>
+  <body data-section={section ?? 'home'}>
+    <IntroOverlay />
     <a class="skip-link" href="#main">{t(locale, 'common.skipToContent')}</a>
     <SiteHeader locale={locale} section={section ?? 'home'} />
     <main id="main" tabindex="-1">
       <slot />
     </main>
     <SiteFooter locale={locale} />
+    <script>
+      import '../features/bootstrap';
+    </script>
   </body>
 </html>

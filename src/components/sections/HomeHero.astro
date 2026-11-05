@@ -1,6 +1,9 @@
 ---
-import type { Locale } from '../../i18n';
-import { t } from '../../i18n';
+import { NAV_SECTIONS } from '../../config/sections';
+import { type Locale, t } from '../../i18n';
+import { sectionHref } from '../../i18n/routes';
+import { sectionCopy } from '../../i18n/section-copy';
+import SectionCard from '../ui/SectionCard.astro';
 
 interface Props {
   locale: Locale;
@@ -14,12 +17,25 @@ const { locale } = Astro.props;
     <h1>{t(locale, 'sections.home.title')}</h1>
     <p class="home__subtitle">{t(locale, 'sections.home.subtitle')}</p>
   </header>
-  <p class="home__pending">{t(locale, 'pending.notice')}</p>
+
+  <section class="home__explore" aria-labelledby="home-explore-heading">
+    <h2 id="home-explore-heading" class="home__heading">{t(locale, 'sections.home.exploreHeading')}</h2>
+    <div class="home__cards">
+      {
+        NAV_SECTIONS.map((section) => {
+          const copy = sectionCopy(locale, section);
+          return (
+            <SectionCard href={sectionHref(section, locale)} section={section} title={copy.title} intro={copy.intro} />
+          );
+        })
+      }
+    </div>
+  </section>
 </div>
 
 <style>
   .home__hero {
-    padding-block: var(--space-24) var(--space-12);
+    padding-block: var(--space-16) var(--space-12);
   }
 
   .home__subtitle {
@@ -28,8 +44,31 @@ const { locale } = Astro.props;
     font-size: var(--text-lg);
   }
 
-  .home__pending {
+  .home__heading {
+    font-size: var(--text-lg);
+    font-weight: 600;
     color: var(--color-text-muted);
-    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  .home__cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    padding-block: var(--space-4) var(--space-24);
+  }
+
+  /* Mobile-first: 1 columna; 2 desde md; 4 desde lg. */
+  @media (min-width: 48em) {
+    .home__cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 64em) {
+    .home__cards {
+      grid-template-columns: repeat(4, 1fr);
+    }
   }
 </style>

@@ -26,6 +26,7 @@ const en: Partial<Dictionary> = {
     home: {
       title: 'Deus',
       subtitle: 'Technical environments, content creation and custom development.',
+      exploreHeading: 'Explore the sections',
     },
     games: {
       title: 'Games',
@@ -44,6 +45,12 @@ const en: Partial<Dictionary> = {
       intro: 'You can write to me by email or find me on my social networks.',
       noLinks: 'Contact details will be published soon.',
     },
+  },
+  preferences: {
+    themeToLight: 'Switch to light mode',
+    themeToDark: 'Switch to dark mode',
+    liteMode: 'Performance mode',
+    liteModeHint: 'Reduces animations and visual effects',
   },
   notFound: {
     title: 'Page not found',

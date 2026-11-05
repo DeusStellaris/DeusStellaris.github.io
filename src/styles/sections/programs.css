@@ -1,0 +1,35 @@
+/*
+ * Identidad de Programas: terminal oscura. Paleta fija en cualquier tema.
+ * JetBrains Mono para jerarquía. La legibilidad es prioridad: texto claro sobre fondo casi negro.
+ */
+body[data-section="programs"] {
+  --color-bg: var(--color-terminal-bg);
+  --color-surface: var(--color-terminal-surface);
+  --color-surface-raised: #111513;
+  --color-text: var(--color-terminal-text);
+  --color-text-muted: var(--color-terminal-muted);
+  --color-border: var(--color-terminal-border);
+  --color-accent: var(--color-terminal-accent);
+  --color-accent-strong: var(--color-terminal-accent);
+  --color-focus: var(--color-terminal-accent);
+  --color-glow: rgb(127 220 154 / 0.12);
+
+  background-color: var(--color-terminal-bg);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+}
+
+body[data-section="programs"] h1,
+body[data-section="programs"] .section-intro__lead {
+  font-family: var(--font-mono);
+}
+
+/* Indicador de prompt antes del título: detalle de terminal, sin decoración superflua. */
+body[data-section="programs"] h1::before {
+  content: "$ ";
+  color: var(--color-terminal-accent);
+}
+
+body[data-section="programs"] .section-intro__lead {
+  font-size: var(--text-base);
+}

@@ -1,0 +1,28 @@
+/*
+ * Identidad de Freelance: mármol sobrio y composición editorial. Sigue el tema.
+ * Playfair Display en títulos, espaciado generoso y líneas finas.
+ */
+body[data-section="freelance"] {
+  background-color: var(--color-bg);
+  background-image: radial-gradient(50rem 26rem at 80% 0%, var(--color-glow), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+body[data-section="freelance"] h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: var(--text-3xl);
+  letter-spacing: -0.01em;
+}
+
+body[data-section="freelance"] .section-intro {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-12);
+}
+
+body[data-section="freelance"] .section-intro__lead {
+  max-width: 38rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: var(--text-xl);
+}

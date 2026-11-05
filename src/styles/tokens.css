@@ -26,6 +26,19 @@
   --color-accent-strong: #f3e3bd;
   --color-glow: rgb(227 207 160 / 0.18);
 
+  /* Identidades de sección (Juegos y Programas fijan su paleta oscura en cualquier tema) */
+  --color-blueprint-bg: #0a1220;
+  --color-blueprint-surface: #0f1a2e;
+  --color-blueprint-text: #e6eefc;
+  --color-blueprint-muted: #9fb3d1;
+  --color-blueprint-line: rgb(127 179 255 / 0.18);
+  --color-terminal-bg: #060708;
+  --color-terminal-surface: #0b0d0c;
+  --color-terminal-text: #d7e3d7;
+  --color-terminal-muted: #8fa892;
+  --color-terminal-accent: #7fdc9a;
+  --color-terminal-border: rgb(127 220 154 / 0.22);
+
   /* Foco visible y consistente en todo el sitio */
   --color-focus: #f3e3bd;
 
@@ -79,7 +92,7 @@
 }
 
 /*
- * Tema claro. `data-theme="light"` lo establece public/js/theme-init.js antes del
+ * Tema claro. `data-theme="light"` lo establece public/js/preferences-init.js antes del
  * primer pintado, según la elección guardada o la preferencia del sistema.
  */
 :root[data-theme="light"] {

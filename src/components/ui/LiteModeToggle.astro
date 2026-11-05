@@ -1,0 +1,47 @@
+---
+import { type Locale, t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const label = t(locale, 'preferences.liteMode');
+const hint = t(locale, 'preferences.liteModeHint');
+---
+
+<!--
+  Botón de Lite Mode (icono de rayo). aria-pressed indica el estado.
+  El comportamiento lo gestiona src/features/preferences/lite-mode.ts.
+-->
+<button
+  type="button"
+  class="icon-button lite-toggle"
+  data-lite-toggle
+  aria-pressed="false"
+  aria-label={label}
+  title={hint}
+>
+  <svg class="lite-toggle__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path
+      d="M13 2 4 14h7l-1 8 9-12h-7z"
+      fill="currentColor"
+      stroke="currentColor"
+      stroke-width="1"
+      stroke-linejoin="round"
+    />
+  </svg>
+</button>
+
+<style>
+  .lite-toggle__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .lite-toggle[aria-pressed='true'] {
+    color: var(--color-accent-strong);
+    border-color: var(--color-accent);
+    background: var(--color-glow);
+  }
+</style>

@@ -1,0 +1,72 @@
+---
+import type { ContentSectionId } from '../../config/sections';
+import SectionIcon from './SectionIcon.astro';
+
+interface Props {
+  href: string;
+  section: ContentSectionId;
+  title: string;
+  intro: string;
+}
+
+const { href, section, title, intro } = Astro.props;
+---
+
+<a class="section-card" href={href} data-card-section={section}>
+  <span class="section-card__icon"><SectionIcon section={section} /></span>
+  <span class="section-card__title">{title}</span>
+  <span class="section-card__intro">{intro}</span>
+</a>
+
+<style>
+  .section-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-height: 11rem;
+    padding: var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    text-decoration: none;
+    transition:
+      border-color var(--duration-base) var(--ease-out),
+      transform var(--duration-base) var(--ease-out);
+  }
+
+  .section-card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+  }
+
+  .section-card__icon {
+    display: inline-flex;
+    color: var(--color-accent-strong);
+  }
+
+  .section-card__title {
+    font-family: var(--font-sans);
+    font-size: var(--text-lg);
+    font-weight: 600;
+  }
+
+  .section-card__intro {
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  [data-card-section='games'] .section-card__title {
+    font-family: var(--font-pixel);
+    font-weight: 400;
+  }
+
+  [data-card-section='programs'] .section-card__title {
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+  }
+
+  [data-card-section='freelance'] .section-card__title {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+  }
+</style>

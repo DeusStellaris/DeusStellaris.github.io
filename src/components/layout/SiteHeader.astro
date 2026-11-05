@@ -1,8 +1,12 @@
 ---
 import { NAV_SECTIONS, type NavSectionId, type SectionId } from '../../config/sections';
-import { LOCALE_NAMES, LOCALES, type Locale, type TranslationKey, t } from '../../i18n';
+import { type Locale, type TranslationKey, t } from '../../i18n';
 import { sectionHref } from '../../i18n/routes';
+import LanguagePill from '../ui/LanguagePill.astro';
+import LiteModeToggle from '../ui/LiteModeToggle.astro';
 import Logo from '../ui/Logo.astro';
+import SectionIcon from '../ui/SectionIcon.astro';
+import ThemeToggle from '../ui/ThemeToggle.astro';
 
 interface Props {
   locale: Locale;
@@ -17,9 +21,6 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
   freelance: 'nav.freelance',
   contact: 'nav.contact',
 };
-
-// Idioma alternativo: el selector lleva a la misma sección en el otro idioma.
-const otherLocale = LOCALES.find((code) => code !== locale) ?? locale;
 ---
 
 <header class="site-header">
@@ -29,30 +30,31 @@ const otherLocale = LOCALES.find((code) => code !== locale) ?? locale;
     <nav class="site-nav" aria-label={t(locale, 'nav.primaryLabel')}>
       <ul class="site-nav__list">
         {
-          NAV_SECTIONS.map((item) => (
-            <li>
-              <a
-                class="site-nav__link"
-                href={sectionHref(item, locale)}
-                aria-current={item === section ? 'page' : undefined}
-              >
-                {t(locale, NAV_LABEL_KEYS[item])}
-              </a>
-            </li>
-          ))
+          NAV_SECTIONS.map((item) => {
+            const active = item === section;
+            return (
+              <li>
+                <a class="site-nav__link" href={sectionHref(item, locale)} aria-current={active ? 'page' : undefined}>
+                  {active && (
+                    // Marcador de sección: se desplaza hasta su posición con View Transitions.
+                    <span class="site-nav__marker" transition:name="section-marker">
+                      <SectionIcon section={item} />
+                    </span>
+                  )}
+                  <span>{t(locale, NAV_LABEL_KEYS[item])}</span>
+                </a>
+              </li>
+            );
+          })
         }
       </ul>
     </nav>
 
-    <a
-      class="lang-link"
-      href={sectionHref(section, otherLocale)}
-      hreflang={otherLocale}
-      lang={otherLocale}
-      aria-label={`${t(locale, 'common.languageSwitchLabel')}: ${LOCALE_NAMES[otherLocale]}`}
-    >
-      {otherLocale.toUpperCase()}
-    </a>
+    <div class="site-header__controls">
+      <LiteModeToggle locale={locale} />
+      <ThemeToggle locale={locale} />
+      <LanguagePill locale={locale} section={section} />
+    </div>
   </div>
 </header>
 
@@ -84,19 +86,19 @@ const otherLocale = LOCALES.find((code) => code !== locale) ?? locale;
     list-style: none;
   }
 
-  .site-nav__link,
-  .lang-link {
+  .site-nav__link {
     display: inline-flex;
     align-items: center;
+    gap: var(--space-2);
     min-height: var(--target-min);
     padding-inline: var(--space-3);
     border-radius: var(--radius-pill);
     text-decoration: none;
     color: var(--color-text-muted);
+    transition: color var(--duration-fast);
   }
 
-  .site-nav__link:hover,
-  .lang-link:hover {
+  .site-nav__link:hover {
     color: var(--color-text);
   }
 
@@ -105,10 +107,39 @@ const otherLocale = LOCALES.find((code) => code !== locale) ?? locale;
     background: var(--color-surface-raised);
   }
 
-  .lang-link {
+  .site-nav__marker {
+    display: inline-flex;
+    color: var(--color-accent-strong);
+  }
+
+  .site-header__controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  /* Botón circular compartido por los controles del header (≥ 44 px de objetivo táctil). */
+  :global(.icon-button) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--target-min);
+    min-height: var(--target-min);
     border: 1px solid var(--color-border);
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    color: var(--color-text);
+    cursor: pointer;
+    transition:
+      transform var(--duration-fast),
+      border-color var(--duration-fast);
+  }
+
+  :global(.icon-button:hover) {
+    border-color: var(--color-accent);
+  }
+
+  :global(.icon-button:active) {
+    transform: scale(0.94);
   }
 </style>

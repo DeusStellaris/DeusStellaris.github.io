@@ -1,0 +1,54 @@
+/*
+ * Identidad de Juegos: plano técnico. Paleta azul fija (no depende del tema).
+ * Silkscreen en títulos y VT323 como acento de datos. Sin interfaz de videojuego recargada.
+ */
+body[data-section="games"] {
+  --color-bg: var(--color-blueprint-bg);
+  --color-surface: var(--color-blueprint-surface);
+  --color-surface-raised: var(--color-blueprint-surface);
+  --color-text: var(--color-blueprint-text);
+  --color-text-muted: var(--color-blueprint-muted);
+  --color-border: var(--color-blueprint-line);
+  --color-accent: #7fb3ff;
+  --color-accent-strong: #bcd6ff;
+  --color-focus: #bcd6ff;
+  --color-glow: rgb(127 179 255 / 0.16);
+
+  background-color: var(--color-blueprint-bg);
+  background-image: url("../../assets/backgrounds/blueprint-grid-placeholder.svg");
+  background-size: 40px 40px;
+  color: var(--color-text);
+}
+
+body[data-section="games"] h1 {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+body[data-section="games"] .section-intro {
+  position: relative;
+  padding-block: var(--space-16) var(--space-8);
+}
+
+/* Línea de construcción: referencia horizontal bajo el encabezado. */
+body[data-section="games"] .section-intro::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--color-blueprint-line) 0 12px,
+    transparent 12px 20px
+  );
+}
+
+body[data-section="games"] .section-intro__lead {
+  font-family: var(--font-terminal);
+  font-size: var(--text-xl);
+  letter-spacing: 0.02em;
+}

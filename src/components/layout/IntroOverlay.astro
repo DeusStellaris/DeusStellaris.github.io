@@ -1,0 +1,33 @@
+---
+import { publicAssetUrl } from '../../lib/assets';
+
+// Overlay de bienvenida. Oculto por defecto: solo lo muestra intro.ts cuando corresponde,
+// así que sin JavaScript o con preferencias que lo desactivan no aparece ningún destello.
+---
+
+<div class="intro" data-intro hidden aria-hidden="true">
+  <img class="intro__logo" src={publicAssetUrl('assets/logo/deus-logo-placeholder.svg')} alt="" width="160" height="160" />
+</div>
+
+<style>
+  .intro {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    background: var(--color-bg);
+    /* No recibe eventos: la navegación nunca queda bloqueada durante la bienvenida. */
+    pointer-events: none;
+  }
+
+  .intro[hidden] {
+    display: none;
+  }
+
+  .intro__logo {
+    width: 10rem;
+    height: 10rem;
+    filter: drop-shadow(0 0 1.5rem var(--color-glow));
+  }
+</style>

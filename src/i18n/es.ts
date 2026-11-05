@@ -23,6 +23,7 @@ const es = {
     home: {
       title: 'Deus',
       subtitle: 'Entornos técnicos, creación de contenido y desarrollo a medida.',
+      exploreHeading: 'Explorá las secciones',
     },
     games: {
       title: 'Juegos',
@@ -42,6 +43,12 @@ const es = {
       intro: 'Podés escribirme por correo o encontrarme en mis redes.',
       noLinks: 'Los medios de contacto se publicarán próximamente.',
     },
+  },
+  preferences: {
+    themeToLight: 'Activar modo claro',
+    themeToDark: 'Activar modo oscuro',
+    liteMode: 'Modo rendimiento',
+    liteModeHint: 'Reduce animaciones y efectos visuales',
   },
   notFound: {
     title: 'Página no encontrada',

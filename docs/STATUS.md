@@ -1,6 +1,6 @@
 # Estado de implementación
 
-Última actualización: Fase 2 (fundación) completada en el repositorio local. No hay commits.
+Última actualización: Fase 3 (diseño y componentes) en curso. Fase 2 cerrada con el commit 294dac6 (feat(core): complete Astro project foundation (Phase 2)).
 
 ## Verificado
 
@@ -12,13 +12,26 @@
 | `astro build` (12 páginas)          | OK, sin avisos                                                               |
 | CSP en el HTML generado             | Presente, sin `unsafe-inline`, sin `unsafe-eval`; hashes generados por Astro |
 | `hreflang`, canonical, `x-default`  | Presentes y emparejados ES/EN                                                |
-| Scripts inline en páginas           | Ninguno (el tema es un script externo `/js/theme-init.js`)                   |
+| Scripts inline sin hash             | Ninguno. El único script inline (bootstrap) tiene hash en la CSP, verificado |
 | Source maps (`.map`)                | Ninguno en `dist/`                                                           |
 | 404 en español e inglés             | `noindex`, título en el idioma correcto                                      |
 
+## Fase 3: completado
+
+- Logotipo con bienvenida (centro → header, un destello, una vez por sesión; omitida en Lite Mode y con reduced-motion).
+- Selector de tema con morfado sol/luna, persistencia y seguimiento del sistema.
+- Selector de idioma tipo Sliding Pill (sin JavaScript).
+- Lite Mode: clase en <html> que desactiva animaciones, transiciones y transiciones de vista.
+- Identidades de Inicio, Juegos (plano), Programas (terminal) y Freelance (editorial).
+- Icono de sección que se desplaza en la navegación con View Transitions.
+- Tarjetas de sección en Inicio.
+- Inventario, estados e interacciones en `docs/architecture/phase-3-components.md`.
+
+Verificado: `npm run ci` (0 errores, 0 avisos, 12 páginas); CSP sin estilos en atributos; hash del script inline en la CSP.
+
 ## No verificado (pendiente)
 
-- **Pruebas en navegador** (responsive sin scroll horizontal, tema, fuentes, consola sin errores de CSP): **no ejecutadas**. El navegador de Playwright no está instalado y la descarga de Chromium falló en este entorno. Se harán en la Fase 7.
+- **Pruebas en navegador** (responsive sin scroll horizontal, bienvenida, morfado, Lite Mode, consola sin errores de CSP): **no ejecutadas**. El navegador de Playwright no está instalado y la descarga de Chromium falló. El navegador de Playwright no está instalado y la descarga de Chromium falló en este entorno. Se harán en la Fase 7.
 - Lighthouse, accesibilidad con axe, pruebas de red: Fase 7.
 
 ## Completado en la Fase 2
@@ -52,7 +65,7 @@
 
 ## Pendiente de fases siguientes
 
-- **Fase 3:** selector de tema e idioma (Sliding Pill), Lite Mode, animación de bienvenida con el logotipo, buscador, favoritos, perfil local, asistente, protección de correo, tarjetas y secciones con identidad propia.
+- **Fase 3 (pendiente):** buscador, panel de perfil local y asistente de interfaz. No están en los pasos aprobados 1 a 10, así que no los doy por terminados. Protección de correo en contacto.
 - **Fase 4:** Decap CMS (`public/admin/`), colecciones, páginas de proyecto, imágenes.
 - **Fase 5:** migraciones SQL, RLS, likes y rankings, rate limiting, Giscus, Worker de la API.
 - **Fase 6:** plantillas legales (GDPR, CCPA, Ley 25.326, términos, cookies) marcadas «PENDIENTE DE REVISIÓN LEGAL — BORRADOR NO DEFINITIVO», registro de consentimiento y componente AdSense.

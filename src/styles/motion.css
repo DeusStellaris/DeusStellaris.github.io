@@ -1,7 +1,7 @@
 /*
  * Movimiento. Dos reglas:
  * 1. prefers-reduced-motion: desactiva transiciones y transiciones de vista.
- * 2. Lite Mode (clase html.lite-mode, añadida en la Fase 3) desactivará los efectos caros.
+ * 2. Lite Mode (clase html.lite-mode, activada por el visitante) desactiva los efectos caros.
  */
 
 @media (prefers-reduced-motion: reduce) {
@@ -29,4 +29,26 @@
 ::view-transition-new(root) {
   animation-duration: var(--duration-base);
   animation-timing-function: var(--ease-out);
+}
+
+/*
+ * Lite Mode (html.lite-mode, activado por el visitante). Desactiva animaciones,
+ * transiciones y transiciones de vista. La especificidad (html + universal) supera a
+ * las reglas de componente sin necesidad de !important.
+ */
+html.lite-mode {
+  scroll-behavior: auto;
+}
+
+html.lite-mode *,
+html.lite-mode *::before,
+html.lite-mode *::after {
+  animation: none;
+  transition: none;
+}
+
+html.lite-mode ::view-transition-group(*),
+html.lite-mode ::view-transition-old(*),
+html.lite-mode ::view-transition-new(*) {
+  animation: none;
 }
