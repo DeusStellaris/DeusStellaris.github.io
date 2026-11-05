@@ -12,7 +12,12 @@
       "!**/.astro",
       "!**/node_modules",
       "!**/public/admin/vendor",
-      "!**/public/assets/**/*.svg"
+      "!**/public/assets/**/*.svg",
+      "!**/src/content",
+      "!**/tests/fixtures",
+      "!**/tests/e2e/.report",
+      "!**/tests/e2e/.results",
+      "!**/tests/perf/.reports"
     ]
   },
   "formatter": {

@@ -12,6 +12,7 @@ const locale: Locale = 'es';
   description={t(locale, 'search.placeholder')}
   locale={locale}
   pagePaths={{ es: `/${SEARCH_SEGMENT.es}/`, en: `/${SEARCH_SEGMENT.en}/` }}
+  assistant={false}
 >
   <div class="container">
     <SearchWidget locale={locale} variant="page" prefillFromUrl />

@@ -9,3 +9,37 @@
 @import "@fontsource/silkscreen/400.css";
 @import "@fontsource/vt323/400.css";
 @import "@fontsource/jetbrains-mono/400.css";
+
+/*
+ * Fuentes de respaldo con métricas ajustadas. Mientras la web font no ha cargado,
+ * el texto usa esta cara local; al llegar la fuente real, el texto ya tiene
+ * el mismo ancho y alto de línea y no se producen saltos de maquetación (CLS).
+ * Valores medidos en el navegador: size-adjust = ancho(fuente) / ancho(respaldo);
+ * ascent/descent-override = métrica(fuente) / size-adjust.
+ */
+@font-face {
+  font-family: "Deus Inter Fallback";
+  src: local("Segoe UI"), local("Arial");
+  size-adjust: 108.2%;
+  ascent-override: 89.6%;
+  descent-override: 22.2%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Deus Playfair Fallback";
+  src: local("Georgia");
+  size-adjust: 89.5%;
+  ascent-override: 120.7%;
+  descent-override: 27.9%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: "Deus JetBrains Fallback";
+  src: local("Consolas");
+  size-adjust: 109.1%;
+  ascent-override: 93.5%;
+  descent-override: 27.5%;
+  line-gap-override: 0%;
+}

@@ -156,3 +156,25 @@ Los textos en inglés (`src/i18n/en.ts`) son una primera redacción mía y deben
 **Pendiente de tu parte:** datos del titular y los 34 marcadores; revisión profesional de los documentos; crear Supabase, aplicar `0001` y `0002`, desplegar el Worker de la API; decidir la activación de AdSense.
 
 Procedimiento: `docs/setup/consent-and-adsense.md`. Alcance legal: `docs/legal/README.md`.
+
+## Fase 7: verificación y auditoría
+
+**Entorno de navegador resuelto.** Playwright 1.64.1 usa Microsoft Edge (`channel: msedge`). Ver `docs/testing/browser.md`.
+
+**Pruebas de navegador.** `npm run test:e2e`: 312 pruebas pasan (3 proyectos: escritorio, tableta, móvil). `npm run test:e2e:content`: 39 pruebas pasan, con los fixtures copiados y eliminados al terminar.
+
+**Lighthouse 13.5.0** (`docs/testing/lighthouse-results.md`). CLS final: 0.000 a 0.021 en todas las páginas medidas.
+
+**Corrección de estabilidad visual (CLS).** Causa confirmada: el cambio de fuente (`font-display: swap`) reemplazaba el texto de la cabecera y de `main`, con métricas distintas a las del respaldo del sistema. Medido: CLS 0.2928 con fuentes, 0 sin fuentes. Corrección: fuentes de respaldo (`Deus Inter/Playfair/JetBrains Fallback`) con `size-adjust` y overrides de métricas calibrados en el navegador. Resultado: CLS 0.0002 en portada y `/terminos/`.
+
+**Otras correcciones.**
+
+- Biome: las supresiones `biome-ignore` de `motion.css` estaban sobre el selector y no sobre cada declaración `!important`; ahora van por declaración.
+- Salidas generadas (`tests/e2e/.report`, `tests/e2e/.results`, `tests/perf/.reports`) añadidas a `.gitignore` y excluidas de Biome.
+- Eliminados scripts de diagnóstico temporales (`diagnose-main-top.mjs`, `diagnose-consent.mjs`, `diagnose-consent2.mjs`). Se conserva `diagnose-cls.mjs`.
+
+**npm audit.** Dependencias de producción: 0 vulnerabilidades. Desarrollo: 32 avisos (1 bajo, 24 moderados, 7 altos), todos en el árbol de `decap-cms-app`. Aceptados en Fase 4 (entonces eran 30; hay 2 más sin revisar). `npm audit fix` propone bajar a 3.16.0; no se aplica. Los Workers no tienen lockfile, así que no se han auditado.
+
+**npm run ci.** Exit 0. Pruebas unitarias (`tests/unit`) 32/32; Workers: decap-auth 40/40 y api 28/28; pruebas de build (`tests/build`) 12/12.
+
+**Pendiente de decisión del usuario:** ninguna prueba manual de navegador ni credenciales reales, según lo acordado.

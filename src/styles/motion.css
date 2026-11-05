@@ -9,12 +9,21 @@
     scroll-behavior: auto;
   }
 
+  /*
+   * La preferencia de movimiento reducido del sistema debe vencer a cualquier transición de componente
+   * (WCAG 2.3.3). Sin !important, las declaraciones de componente con más especificidad la anulaban;
+   * la prueba en navegador lo detectó (0,15 s en lugar de 0,001 ms).
+   * Biome exige una supresión por declaración: cada !important lleva la suya.
+   */
   *,
   *::before,
   *::after {
-    animation-duration: 0.001ms;
-    animation-iteration-count: 1;
-    transition-duration: 0.001ms;
+    /* biome-ignore lint/complexity/noImportantStyles: preferencia de accesibilidad del sistema (WCAG 2.3.3) */
+    animation-duration: 0.001ms !important;
+    /* biome-ignore lint/complexity/noImportantStyles: preferencia de accesibilidad del sistema (WCAG 2.3.3) */
+    animation-iteration-count: 1 !important;
+    /* biome-ignore lint/complexity/noImportantStyles: preferencia de accesibilidad del sistema (WCAG 2.3.3) */
+    transition-duration: 0.001ms !important;
   }
 
   ::view-transition-group(*),
@@ -32,9 +41,10 @@
 }
 
 /*
- * Lite Mode (html.lite-mode, activado por el visitante). Desactiva animaciones,
- * transiciones y transiciones de vista. La especificidad (html + universal) supera a
- * las reglas de componente sin necesidad de !important.
+ * Lite Mode (html.lite-mode, activado por el visitante). Desactiva animaciones, transiciones y
+ * transiciones de vista. Requiere !important: las reglas de componente de Astro tienen especificidad
+ * (0,2,0) o superior por sus atributos data-astro-cid, y una regla de (0,1,1) no las vence.
+ * El análisis en navegador lo detectó: sin !important, los componentes conservaban 0,15 s de transición.
  */
 html.lite-mode {
   scroll-behavior: auto;
@@ -43,12 +53,15 @@ html.lite-mode {
 html.lite-mode *,
 html.lite-mode *::before,
 html.lite-mode *::after {
-  animation: none;
-  transition: none;
+  /* biome-ignore lint/complexity/noImportantStyles: la preferencia del visitante debe vencer a cualquier estilo de componente */
+  animation: none !important;
+  /* biome-ignore lint/complexity/noImportantStyles: la preferencia del visitante debe vencer a cualquier estilo de componente */
+  transition: none !important;
 }
 
 html.lite-mode ::view-transition-group(*),
 html.lite-mode ::view-transition-old(*),
 html.lite-mode ::view-transition-new(*) {
-  animation: none;
+  /* biome-ignore lint/complexity/noImportantStyles: transiciones de vista desactivadas por la misma preferencia */
+  animation: none !important;
 }

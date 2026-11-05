@@ -29,3 +29,8 @@ npm-debug.log*
 
 # Copia local de Decap CMS generada por scripts/sync-decap.mjs (no versionar)
 public/admin/vendor/
+
+# Salidas generadas por las pruebas y Lighthouse (no versionar)
+tests/e2e/.report/
+tests/e2e/.results/
+tests/perf/.reports/

@@ -27,9 +27,19 @@ interface Props {
    */
   pagePaths?: Partial<Record<Locale, string>>;
   noindex?: boolean;
+  /** El asistente flotante se oculta en páginas que ya son un buscador (evita dos buscadores). */
+  assistant?: boolean;
 }
 
-const { title, description, locale, section, pagePaths, noindex = false } = Astro.props;
+const {
+  title,
+  description,
+  locale,
+  section,
+  pagePaths,
+  noindex = false,
+  assistant = true,
+} = Astro.props;
 
 const siteName = t(locale, 'common.siteName');
 const ogLocale = siteConfig.ogLocale[locale];
@@ -90,7 +100,11 @@ const switchHrefs = switchTargets(paths ?? {});
     <SiteFooter locale={locale} />
     <ProfileDialog locale={locale} />
     <ConsentBanner locale={locale} />
-    <AssistantButton locale={locale} context={section && section !== 'home' ? section : undefined} />
+    {
+      assistant && (
+        <AssistantButton locale={locale} context={section && section !== 'home' ? section : undefined} />
+      )
+    }
     <script>
       import '../features/bootstrap';
     </script>

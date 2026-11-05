@@ -40,7 +40,7 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
                 <a class="site-nav__link" href={sectionHref(item, locale)} aria-current={active ? 'page' : undefined}>
                   {active && (
                     // Marcador de sección: se desplaza hasta su posición con View Transitions.
-                    <span class="site-nav__marker" transition:name="section-marker">
+                    <span class="site-nav__marker">
                       <SectionIcon section={item} />
                     </span>
                   )}
@@ -111,7 +111,13 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
     background: var(--color-surface-raised);
   }
 
+  /*
+   * Marcador de sección: se desplaza entre enlaces con View Transitions. Se declara con CSS
+   * (view-transition-name) en lugar de transition:name de Astro, que inyecta un <style> en línea
+   * que la CSP no puede verificar con hash.
+   */
   .site-nav__marker {
+    view-transition-name: section-marker;
     display: inline-flex;
     color: var(--color-accent-strong);
   }

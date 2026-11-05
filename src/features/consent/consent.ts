@@ -191,6 +191,11 @@ function laterBanner(root: HTMLElement): void {
 function initBanner(root: HTMLElement): void {
   if (root.dataset.consentReady === 'true') return;
   root.dataset.consentReady = 'true';
+
+  // El envío se escucha en el propio formulario: así se ejecuta antes que el ClientRouter de Astro,
+  // que intercepta los envíos no cancelados en document y navegaría (reemplazando el aviso).
+  const form = root.querySelector<HTMLFormElement>('[data-consent-form]');
+  form?.addEventListener('submit', (event) => void submitBanner(root, event));
   const context = readContext(root);
   const record = loadConsentRecord();
   const dismissed = (() => {
@@ -249,12 +254,6 @@ let listenersBound = false;
 function bindOnce(): void {
   if (listenersBound) return;
   listenersBound = true;
-  document.addEventListener('submit', (event) => {
-    const form = event.target instanceof HTMLFormElement ? event.target : null;
-    const root = form?.closest<HTMLElement>(BANNER_SELECTOR);
-    if (root && form?.hasAttribute('data-consent-form'))
-      void submitBanner(root, event as SubmitEvent);
-  });
   document.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return;
     const root = event.target.closest<HTMLElement>(BANNER_SELECTOR);

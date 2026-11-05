@@ -22,7 +22,9 @@
     "test:unit": "node --test tests/unit/",
     "test:workers": "npm --prefix workers/decap-auth test && npm --prefix workers/api test",
     "test": "npm run test:unit && npm run test:workers",
-    "test:build": "node --test tests/build/"
+    "test:build": "node --test tests/build/",
+    "test:e2e": "playwright test",
+    "test:e2e:content": "node scripts/e2e-content.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",
@@ -36,8 +38,11 @@
   "devDependencies": {
     "@astrojs/check": "0.9.12",
     "@astrojs/markdown-satteri": "0.4.3",
+    "@axe-core/playwright": "4.14.0",
     "@biomejs/biome": "2.6.5",
+    "@playwright/test": "1.64.1",
     "decap-cms-app": "3.17.1",
+    "lighthouse": "13.5.0",
     "typescript": "5.9.3"
   }
 }

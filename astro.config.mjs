@@ -90,10 +90,19 @@ export default defineConfig({
     },
   },
 
+  // Hojas de estilo y recursos como archivos externos, nunca incrustados en el HTML ni como data:.
+  // Así style-src y font-src se cumplen con 'self', sin hashes de estilos que Astro calcula
+  // antes de la transformación final (la comprobación en navegador lo detectó).
+  build: {
+    inlineStylesheets: 'never',
+  },
+
   vite: {
     build: {
       // Sin source maps publicados en producción.
       sourcemap: false,
+      // Fuentes y SVG como archivos: font-src 'self' no admite data: URIs.
+      assetsInlineLimit: 0,
     },
   },
 

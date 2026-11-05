@@ -86,9 +86,13 @@ const apiBaseUrl = services.apiBaseUrl ?? '';
     right: var(--gutter);
     bottom: var(--gutter);
     left: var(--gutter);
+    right: var(--gutter);
+    box-sizing: border-box;
+    width: auto;
     z-index: 30;
     max-width: 34rem;
-    max-height: min(80dvh, 40rem);
+    /* En móvil no ocupa más del 45 % de la pantalla: el contenido de la página sigue alcanzable. */
+    max-height: min(45dvh, 26rem);
     margin-inline: auto;
     padding: var(--space-4) var(--space-6);
     overflow-y: auto;
@@ -168,6 +172,10 @@ const apiBaseUrl = services.apiBaseUrl ?? '';
   }
 
   @media (min-width: 48em) {
+    .consent {
+      max-height: min(80dvh, 40rem);
+    }
+
     .consent {
       left: auto;
       right: var(--space-6);
