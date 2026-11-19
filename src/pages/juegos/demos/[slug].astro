@@ -1,0 +1,49 @@
+---
+import DemoPlayer from '../../../components/demos/DemoPlayer.astro';
+import Reviews from '../../../components/demos/Reviews.astro';
+import { type Locale, t } from '../../../i18n';
+import { demoPaths, sectionHref } from '../../../i18n/routes';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { listDemos } from '../../../services/demos';
+
+export function getStaticPaths() {
+  return listDemos().map((demo) => ({ params: { slug: demo.slug }, props: { demo } }));
+}
+
+const locale: Locale = 'es';
+const { demo } = Astro.props;
+---
+
+<BaseLayout
+  title={`${demo.title[locale]} · ${t(locale, 'common.siteName')}`}
+  description={demo.description[locale]}
+  locale={locale}
+  section="games"
+  pagePaths={demoPaths(demo.slug)}
+>
+  <div class="container demo-page">
+    <p><a href={sectionHref('games', locale)}>{t(locale, 'demos.backToGames')}</a></p>
+    <h1>{demo.title[locale]}</h1>
+    <p class="demo-page__lead">{demo.description[locale]}</p>
+    <DemoPlayer locale={locale} demo={demo} />
+    <Reviews locale={locale} slug={demo.slug} />
+  </div>
+</BaseLayout>
+
+<style>
+  .demo-page {
+    display: grid;
+    gap: var(--space-4);
+    padding-block: var(--space-12) var(--space-16);
+  }
+
+  .demo-page h1 {
+    margin: 0;
+  }
+
+  .demo-page__lead {
+    max-width: 40rem;
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+</style>

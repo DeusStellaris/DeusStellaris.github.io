@@ -1,4 +1,6 @@
 ---
+import DemoCards from '../components/demos/DemoCards.astro';
+import DeckFeatured from '../components/deusdeck/DeckFeatured.astro';
 import EmptyState from '../components/EmptyState.astro';
 import ProjectGrid from '../components/projects/ProjectGrid.astro';
 import ContactLinks from '../components/sections/ContactLinks.astro';
@@ -6,6 +8,7 @@ import SectionIntro from '../components/sections/SectionIntro.astro';
 import type { ContentSectionId } from '../config/sections';
 import { type Locale, t } from '../i18n';
 import { sectionCopy } from '../i18n/section-copy';
+import { listDemos } from '../services/demos';
 import { listProjects } from '../services/projects';
 import BaseLayout from './BaseLayout.astro';
 
@@ -18,6 +21,7 @@ const { locale, section } = Astro.props;
 const copy = sectionCopy(locale, section);
 // Contacto no tiene proyectos: solo muestra sus medios de contacto.
 const projects = section === 'contact' ? [] : await listProjects(locale, { section });
+const demos = section === 'games' ? listDemos() : [];
 ---
 
 <BaseLayout
@@ -28,6 +32,8 @@ const projects = section === 'contact' ? [] : await listProjects(locale, { secti
 >
   <div class="container">
     <SectionIntro title={copy.title} intro={copy.intro} />
+    {section === 'programs' && <DeckFeatured locale={locale} />}
+    {demos.length > 0 && <DemoCards locale={locale} demos={demos} />}
     {
       section === 'contact' ? (
         <ContactLinks locale={locale} />

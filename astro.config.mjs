@@ -68,7 +68,7 @@ export default defineConfig({
         `img-src 'self' data: https://avatars.githubusercontent.com${adsImageHosts.map((h) => ` ${h}`).join('')}`,
         "font-src 'self'",
         `connect-src 'self' https://*.supabase.co${apiOrigins.map((origin) => ` ${origin}`).join('')}${adsScriptHosts.map((h) => ` ${h}`).join('')}`,
-        `frame-src https://giscus.app${adsFrameHosts.map((h) => ` ${h}`).join('')}`,
+        `frame-src 'self' https://giscus.app${adsFrameHosts.map((h) => ` ${h}`).join('')}`,
       ],
       // Giscus carga su script desde giscus.app solo tras la acción del visitante (ver Comments.astro).
       // Astro 7 exige declarar script-src mediante scriptDirective; los hashes se añaden solos.

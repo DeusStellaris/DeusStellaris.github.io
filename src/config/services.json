@@ -1,4 +1,5 @@
 {
   "_nota": "URL pública del Cloudflare Worker (API de likes y consentimientos y proxy OAuth de Decap). Es pública; los secretos viven solo en el Worker. Null hasta desplegarlo.",
-  "apiBaseUrl": null
+  "apiBaseUrl": null,
+  "accountsEnabled": false
 }

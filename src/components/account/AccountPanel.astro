@@ -1,0 +1,88 @@
+---
+import { type Locale, t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+  api: string;
+}
+
+const { locale, api } = Astro.props;
+const messageKeys = [
+  'working',
+  'registered',
+  'loggedIn',
+  'invalid',
+  'wrongCredentials',
+  'taken',
+  'rateLimited',
+  'error',
+] as const;
+const messages = JSON.stringify(
+  Object.fromEntries(messageKeys.map((key) => [key, t(locale, `account.${key}`)])),
+);
+---
+
+<!--
+  Cuenta opcional para respaldar el perfil. Solo se incluye en el perfil cuando services.json tiene
+  accountsEnabled en true (apagada por defecto). Lo gestiona src/features/accounts/accounts.ts.
+-->
+<section class="account" data-account data-api={api} data-messages={messages} aria-labelledby="account-title">
+  <h3 id="account-title">{t(locale, 'account.heading')}</h3>
+  <p class="account__intro">{t(locale, 'account.intro')}</p>
+  <form class="account__form" data-account-form novalidate>
+    <label for="account-email">{t(locale, 'account.emailLabel')}</label>
+    <input id="account-email" name="email" type="email" autocomplete="email" maxlength="254" required />
+    <label for="account-password">{t(locale, 'account.passwordLabel')}</label>
+    <input id="account-password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" required />
+    <p class="account__hint">{t(locale, 'account.passwordHint')}</p>
+    <p class="account__status" role="status" data-account-status></p>
+    <div class="account__actions">
+      <button type="submit" data-account-action="login" data-tooltip={t(locale, 'account.loginTooltip')}>
+        {t(locale, 'account.login')}
+      </button>
+      <button type="submit" data-account-action="register" data-tooltip={t(locale, 'account.registerTooltip')}>
+        {t(locale, 'account.register')}
+      </button>
+    </div>
+  </form>
+</section>
+
+<style>
+  .account__form {
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .account__intro,
+  .account__hint,
+  .account__status {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .account input {
+    min-height: var(--target-min);
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .account__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .account__actions button {
+    min-height: var(--target-min);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+</style>

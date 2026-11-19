@@ -1,8 +1,12 @@
+import { initAccounts } from './accounts/accounts';
 import { initAds } from './ads/ads';
 import { initAssistant } from './assistant/assistant';
 import { initComments } from './comments/giscus';
 import { initConsent } from './consent/consent';
+import { initDemoPlayers } from './demos/demo-player';
+import { initDeckProduct } from './deusdeck/product';
 import { initFavorites } from './favorites/favorites';
+import { initHubGallery } from './hub/hub';
 import { runIntro } from './intro/intro';
 import { initLikes, initRankings } from './likes/likes';
 import { initLiteMode } from './preferences/lite-mode';
@@ -10,6 +14,7 @@ import { initThemePreferences } from './preferences/theme';
 import { initProfile } from './profile/profile';
 import { initPushPanel } from './push/push-panel';
 import { registerServiceWorker } from './pwa/register';
+import { initReviews } from './reviews/reviews';
 import { initSearchWidgets } from './search/search-widget';
 
 /**
@@ -30,6 +35,11 @@ function initPage(): void {
   initComments();
   initConsent();
   initAds();
+  initDeckProduct();
+  initHubGallery();
+  initDemoPlayers();
+  initReviews();
+  initAccounts();
 }
 
 registerServiceWorker();

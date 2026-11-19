@@ -13,6 +13,9 @@ const ROUTES = [
   { es: '/terminos/', en: '/en/terms/' },
   { es: '/privacidad/', en: '/en/privacy/' },
   { es: '/cookies/', en: '/en/cookies/' },
+  { es: '/programas/deusdeck/', en: '/en/programs/deusdeck/' },
+  { es: '/programas/deusdeck/hub/', en: '/en/programs/deusdeck/hub/' },
+  { es: '/programas/deusdeck/eula/', en: '/en/programs/deusdeck/eula/' },
 ];
 
 for (const route of ROUTES) {

@@ -1,0 +1,256 @@
+---
+import { type Locale, t } from '../../i18n';
+import { publicAssetUrl } from '../../lib/assets';
+import { fill } from '../../lib/fill';
+import type { Demo } from '../../services/demos';
+
+interface Props {
+  locale: Locale;
+  demo: Demo;
+}
+
+const { locale, demo } = Astro.props;
+const title = demo.title[locale];
+const controls = [
+  demo.controls.keyboard && t(locale, 'demos.keyboard'),
+  demo.controls.mouse && t(locale, 'demos.mouse'),
+  demo.controls.touch && t(locale, 'demos.touch'),
+].filter(Boolean);
+const messages = JSON.stringify({
+  iframeTitle: fill(t(locale, 'demos.iframeTitle'), { title }),
+  fullscreen: t(locale, 'demos.fullscreen'),
+  exitFullscreen: t(locale, 'demos.exitFullscreen'),
+});
+---
+
+<!--
+  Click-to-Play: el juego no se pide hasta pulsar «Jugar demo». Lo gestiona src/features/demos/demo-player.ts,
+  que crea un iframe aislado (sandbox sin allow-same-origin, solo scripts y puntero) con el juego de
+  public/demos/<slug>/. Los botones táctiles envían las teclas al juego con postMessage
+  ({ type: 'deus-input', key, pressed }); ver docs/setup/demos.md.
+-->
+<section
+  class="player"
+  data-demo-player
+  data-src={publicAssetUrl(`demos/${demo.slug}/index.html`)}
+  data-messages={messages}
+  aria-label={title}
+>
+  <div class="player__stage" data-player-stage>
+    <div class="player__poster" data-player-poster>
+      <img
+        src={publicAssetUrl(demo.cover)}
+        alt={fill(t(locale, 'demos.coverAlt'), { title })}
+        width="960"
+        height="540"
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="player__overlay">
+        <ul class="player__facts">
+          <li data-tooltip={t(locale, 'demos.sizeLabel')}>
+            {t(locale, 'demos.sizeLabel')}: ≈ {demo.sizeMb} MB
+          </li>
+          {controls.length > 0 && <li>{t(locale, 'demos.controlsLabel')}: {controls.join(' · ')}</li>}
+        </ul>
+        <button type="button" class="player__play" data-player-play data-tooltip={t(locale, 'demos.playTooltip')}>
+          {t(locale, 'demos.play')}
+        </button>
+        <p class="player__note">{t(locale, 'demos.loadNote')}</p>
+      </div>
+    </div>
+
+    <div class="player__live" data-player-live hidden>
+      <div class="player__bar">
+        <strong>{title}</strong>
+        <div class="player__tools">
+          <button type="button" class="player__tool" data-player-fullscreen data-tooltip={t(locale, 'demos.fullscreenTooltip')}>
+            {t(locale, 'demos.fullscreen')}
+          </button>
+          <button type="button" class="player__tool" data-player-restart data-tooltip={t(locale, 'demos.restartTooltip')}>
+            {t(locale, 'demos.restart')}
+          </button>
+          <button type="button" class="player__tool" data-player-close data-tooltip={t(locale, 'demos.closeTooltip')}>
+            {t(locale, 'demos.close')}
+          </button>
+        </div>
+      </div>
+      <div class="player__viewport" data-player-viewport></div>
+      {
+        demo.touchControls.length > 0 && (
+          <div class="player__touch" role="group" aria-label={t(locale, 'demos.touchLabel')} data-player-touch>
+            {demo.touchControls.map((control) => (
+              <button type="button" class="player__pad" data-key={control.key}>{control.label}</button>
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .player__stage {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-bg);
+    overflow: hidden;
+  }
+
+  .player__stage:fullscreen,
+  .player__stage.is-pseudo-fullscreen {
+    border-radius: 0;
+  }
+
+  .player__stage.is-pseudo-fullscreen {
+    position: fixed;
+    inset: 0;
+    z-index: 70;
+  }
+
+  .player__poster {
+    position: relative;
+    aspect-ratio: 16 / 9;
+  }
+
+  .player__poster[hidden] {
+    display: none;
+  }
+
+  .player__poster img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .player__overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: end;
+    justify-items: start;
+    gap: var(--space-3);
+    padding: var(--space-6);
+    background: linear-gradient(to top, rgb(11 9 20 / 0.92), rgb(11 9 20 / 0.1) 70%);
+    color: #f8f6fc;
+  }
+
+  .player__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-sm);
+  }
+
+  .player__play {
+    min-height: var(--target-min);
+    padding-inline: var(--space-8);
+    border: 1px solid #d4af37;
+    border-radius: var(--radius-pill);
+    background: #7c3aed;
+    color: #f8f6fc;
+    font-size: var(--text-lg);
+    cursor: pointer;
+  }
+
+  .player__note {
+    margin: 0;
+    font-size: var(--text-sm);
+    opacity: 0.85;
+  }
+
+  .player__live {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    height: 100%;
+  }
+
+  .player__live[hidden] {
+    display: none;
+  }
+
+  .player__stage:fullscreen .player__live,
+  .player__stage.is-pseudo-fullscreen .player__live {
+    height: 100dvh;
+  }
+
+  .player__bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+
+  .player__tools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .player__tool {
+    min-height: var(--target-min);
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    cursor: pointer;
+  }
+
+  .player__viewport {
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+    background: #000;
+  }
+
+  .player__stage:fullscreen .player__viewport,
+  .player__stage.is-pseudo-fullscreen .player__viewport {
+    aspect-ratio: auto;
+  }
+
+  .player__viewport :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+
+  /* Los controles táctiles solo aparecen en pantallas táctiles. */
+  .player__touch {
+    display: none;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding: var(--space-3);
+    background: var(--color-surface);
+    touch-action: none;
+  }
+
+  @media (pointer: coarse) {
+    .player__touch {
+      display: flex;
+    }
+  }
+
+  .player__pad {
+    min-width: 3.5rem;
+    min-height: 3.5rem;
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    font-size: var(--text-lg);
+    user-select: none;
+  }
+
+  .player__pad:active {
+    background: var(--color-glow);
+  }
+</style>

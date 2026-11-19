@@ -257,4 +257,86 @@ begin
   reset role;
 end $;
 
+-- 14. reviews: anon no lee ni escribe; service_role guarda; el comentario con etiquetas y la reseña duplicada se rechazan.
+do $$
+begin
+  set local role anon;
+  begin
+    insert into public.reviews (demo_slug, visitor_hash, rating, locale) values ('demo', repeat('a', 64), 5, 'es');
+    raise exception 'FALLO: anon pudo insertar reseñas';
+  exception when insufficient_privilege then
+    null;
+  end;
+  begin
+    perform 1 from public.reviews;
+    raise exception 'FALLO: anon pudo leer reseñas';
+  exception when insufficient_privilege then
+    null;
+  end;
+  begin
+    perform public.review_stats('demo');
+    raise exception 'FALLO: anon pudo ejecutar review_stats';
+  exception when insufficient_privilege then
+    null;
+  end;
+  reset role;
+
+  set local role service_role;
+  insert into public.reviews (demo_slug, visitor_hash, rating, comment, locale)
+  values ('demo', repeat('a', 64), 4, 'Muy buena', 'es');
+  begin
+    insert into public.reviews (demo_slug, visitor_hash, rating, locale) values ('demo', repeat('a', 64), 5, 'es');
+    raise exception 'FALLO: se aceptó una segunda reseña del mismo visitante';
+  exception when unique_violation then
+    null;
+  end;
+  begin
+    insert into public.reviews (demo_slug, visitor_hash, rating, comment, locale)
+    values ('demo', repeat('b', 64), 5, '<script>alert(1)</script>', 'es');
+    raise exception 'FALLO: se aceptó un comentario con etiquetas';
+  exception when check_violation then
+    null;
+  end;
+  begin
+    insert into public.reviews (demo_slug, visitor_hash, rating, locale) values ('demo', repeat('c', 64), 6, 'es');
+    raise exception 'FALLO: se aceptó una puntuación fuera de rango';
+  exception when check_violation then
+    null;
+  end;
+  if (select review_count from public.review_stats('demo')) <> 1 then
+    raise exception 'FALLO: review_stats no cuenta la reseña publicada';
+  end if;
+  reset role;
+end $$;
+
+-- 15. accounts: anon no accede; la base rechaza contraseñas que no sean hashes Argon2id.
+do $$
+begin
+  set local role anon;
+  begin
+    perform 1 from public.accounts;
+    raise exception 'FALLO: anon pudo leer cuentas';
+  exception when insufficient_privilege then
+    null;
+  end;
+  reset role;
+
+  set local role service_role;
+  begin
+    insert into public.accounts (email_hash, password_hash) values (repeat('d', 64), 'contraseña-en-texto-plano');
+    raise exception 'FALLO: se aceptó una contraseña que no es un hash Argon2id';
+  exception when check_violation then
+    null;
+  end;
+  insert into public.accounts (email_hash, password_hash)
+  values (repeat('d', 64), '$argon2id$v=19$m=19456,t=2,p=1$c2FsdHNhbHRzYWx0c2E$aGFzaGhhc2hoYXNoaGFzaGhhc2hoYXNoaGFzaGhhc2g');
+  insert into public.profile_backups (account_id, payload)
+  select id, '{"favorites": ["deusdeck"]}'::jsonb from public.accounts where email_hash = repeat('d', 64);
+  delete from public.accounts where email_hash = repeat('d', 64);
+  if exists (select 1 from public.profile_backups) then
+    raise exception 'FALLO: el respaldo no se borró con la cuenta';
+  end if;
+  reset role;
+end $$;
+
 rollback;

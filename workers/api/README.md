@@ -87,3 +87,15 @@ Debe responder `200` con el contador. Repite con `Origin: https://evil.example` 
 - El límite por IP usa `CF-Connecting-IP`. Los límites de una sola instancia no son globales: la base de datos sí los aplica de forma compartida.
 - Sin CAPTCHA. Si aparece abuso sostenido, activar Cloudflare Turnstile delante de `/likes` (requiere cambiar el cliente).
 - Un visitante que borra su almacenamiento local obtiene un nuevo identificador y puede volver a dar like. Es una limitación aceptada de un sistema sin cuentas.
+
+## Reseñas y cuentas (Etapa 2)
+
+Detalle completo en `docs/setup/etapa2-deusdeck.md`.
+
+| Ruta                                          | Qué hace                                                                     |
+| --------------------------------------------- | ---------------------------------------------------------------------------- |
+| `GET /reviews?slug=` · `POST /reviews`        | Reseñas reales de demos. Exige `DEMOS_INDEX_URL` (público, `wrangler.toml`). |
+| `POST /accounts/register` · `/accounts/login` | Cuentas con Argon2id. Apagadas: 404 salvo `ACCOUNTS_ENABLED=true`.           |
+| `GET` · `PUT /accounts/backup`                | Respaldo del perfil (JSON de hasta 32 KB) con token de sesión.               |
+
+Variables nuevas: `DEMOS_INDEX_URL` (público), `ACCOUNTS_ENABLED` (público), `ACCOUNT_TOKEN_SECRET` (**secreto**, 32 caracteres o más) y, opcionales, `ARGON2_MEMORY_KIB` y `ARGON2_ITERATIONS`.

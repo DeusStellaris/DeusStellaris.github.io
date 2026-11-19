@@ -1,0 +1,36 @@
+{
+  "demos": [
+    {
+      "slug": "demo-test",
+      "title": {
+        "es": "Demo de prueba",
+        "en": "Test demo"
+      },
+      "description": {
+        "es": "Demo mínima usada solo por las pruebas de navegador.",
+        "en": "Minimal demo used only by the browser tests."
+      },
+      "cover": "demos/demo-test/cover.svg",
+      "sizeMb": 12,
+      "controls": {
+        "keyboard": true,
+        "mouse": true,
+        "touch": true
+      },
+      "touchControls": [
+        {
+          "label": "←",
+          "key": "ArrowLeft"
+        },
+        {
+          "label": "→",
+          "key": "ArrowRight"
+        },
+        {
+          "label": "A",
+          "key": "a"
+        }
+      ]
+    }
+  ]
+}

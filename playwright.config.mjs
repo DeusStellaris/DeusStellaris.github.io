@@ -19,7 +19,7 @@ export default defineConfig({
   outputDir: './tests/e2e/.results',
   fullyParallel: true,
   // Las pruebas de contenido necesitan fixtures copiados por scripts/e2e-content.mjs.
-  testIgnore: process.env.E2E_CONTENT ? undefined : /content.spec.mjs/,
+  testIgnore: process.env.E2E_CONTENT ? undefined : /(content|demos).spec.mjs/,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 1 : 0,
   reporter: [['list'], ['html', { outputFolder: './tests/e2e/.report', open: 'never' }]],

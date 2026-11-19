@@ -1,5 +1,7 @@
 ---
+import services from '../../config/services.json';
 import { type Locale, t } from '../../i18n';
+import AccountPanel from '../account/AccountPanel.astro';
 
 interface Props {
   locale: Locale;
@@ -48,6 +50,8 @@ const { locale } = Astro.props;
         <dd data-profile-lite></dd>
       </dl>
     </section>
+
+    {services.accountsEnabled === true && <AccountPanel locale={locale} api={services.apiBaseUrl ?? ''} />}
   </div>
 </dialog>
 

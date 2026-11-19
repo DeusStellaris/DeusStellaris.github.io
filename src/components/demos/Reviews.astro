@@ -1,0 +1,217 @@
+---
+import services from '../../config/services.json';
+import { type Locale, t } from '../../i18n';
+import { fill } from '../../lib/fill';
+
+interface Props {
+  locale: Locale;
+  slug: string;
+}
+
+const { locale, slug } = Astro.props;
+const api = services.apiBaseUrl ?? '';
+const messageKeys = [
+  'summary',
+  'summaryOne',
+  'none',
+  'star',
+  'counter',
+  'sending',
+  'thanks',
+  'ratingRequired',
+  'rateLimited',
+  'error',
+  'loadError',
+] as const;
+const messages = JSON.stringify(
+  Object.fromEntries(messageKeys.map((key) => [key, t(locale, `reviews.${key}`)])),
+);
+---
+
+<!--
+  Reseñas reales de una demo (Zero Fake Reviews): vienen del Worker de la API, una por visitante.
+  Lo gestiona src/features/reviews/reviews.ts, que pinta todo como texto plano.
+-->
+<section class="reviews" data-reviews data-api={api} data-slug={slug} data-locale={locale} data-messages={messages} aria-labelledby="reviews-title">
+  <h2 id="reviews-title">{t(locale, 'reviews.heading')}</h2>
+  <p class="reviews__real">{t(locale, 'reviews.realOnly')}</p>
+
+  {
+    api === '' ? (
+      <p class="reviews__unavailable" data-reviews-unavailable>{t(locale, 'reviews.unavailable')}</p>
+    ) : (
+      <>
+        <p class="reviews__summary" role="status" data-reviews-summary></p>
+        <ul class="reviews__list" data-reviews-list></ul>
+
+        <form class="reviews__form" data-reviews-form novalidate>
+          <fieldset class="reviews__rating">
+            <legend>{t(locale, 'reviews.ratingLabel')}</legend>
+            {[1, 2, 3, 4, 5].map((value) => (
+              <label class="reviews__star" data-tooltip={fill(t(locale, 'reviews.starTooltip'), { n: value })}>
+                <input type="radio" name="rating" value={String(value)} />
+                <span aria-hidden="true">★</span>
+                <span class="reviews__sr">{fill(t(locale, 'reviews.star'), { n: value })}</span>
+              </label>
+            ))}
+          </fieldset>
+
+          <label class="reviews__label" for="review-comment">{t(locale, 'reviews.commentLabel')}</label>
+          <textarea
+            id="review-comment"
+            name="comment"
+            rows="4"
+            maxlength="500"
+            data-tooltip={t(locale, 'reviews.commentTooltip')}
+            aria-describedby="review-hint"
+          ></textarea>
+          <p id="review-hint" class="reviews__hint">
+            {t(locale, 'reviews.commentHint')} <span data-reviews-counter>{fill(t(locale, 'reviews.counter'), { n: 0 })}</span>
+          </p>
+
+          <p class="reviews__feedback" role="status" data-reviews-feedback></p>
+          <button type="submit" class="reviews__submit" data-tooltip={t(locale, 'reviews.submitTooltip')}>
+            {t(locale, 'reviews.submit')}
+          </button>
+        </form>
+      </>
+    )
+  }
+</section>
+
+<style>
+  .reviews {
+    display: grid;
+    gap: var(--space-4);
+    margin-top: var(--space-8);
+  }
+
+  .reviews h2 {
+    margin: 0;
+    font-size: var(--text-xl);
+  }
+
+  .reviews__real,
+  .reviews__hint,
+  .reviews__summary,
+  .reviews__unavailable {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .reviews__list {
+    display: grid;
+    gap: var(--space-3);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .reviews__list :global(li) {
+    padding: var(--space-3) var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  .reviews__list :global(.reviews__item-stars) {
+    color: var(--color-accent-strong);
+    letter-spacing: 0.1em;
+  }
+
+  .reviews__list :global(p) {
+    margin: var(--space-1) 0 0;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+  }
+
+  .reviews__form {
+    display: grid;
+    gap: var(--space-3);
+    max-width: 36rem;
+  }
+
+  .reviews__rating {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .reviews__rating legend {
+    padding: 0 0 var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .reviews__star {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--target-min);
+    min-height: var(--target-min);
+    color: var(--color-text-muted);
+    font-size: 1.75rem;
+    cursor: pointer;
+  }
+
+  .reviews__star input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .reviews__star:has(input:checked),
+  .reviews__star.is-lit {
+    color: var(--color-accent-strong);
+  }
+
+  .reviews__star:has(input:focus-visible) {
+    outline: 2px solid var(--color-accent-strong);
+    outline-offset: 2px;
+  }
+
+  .reviews__sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .reviews textarea {
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    resize: vertical;
+  }
+
+  .reviews__feedback {
+    min-height: 1.5em;
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  .reviews__submit {
+    justify-self: start;
+    min-height: var(--target-min);
+    padding-inline: var(--space-6);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-accent-strong);
+    cursor: pointer;
+  }
+
+  .reviews__submit:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+</style>

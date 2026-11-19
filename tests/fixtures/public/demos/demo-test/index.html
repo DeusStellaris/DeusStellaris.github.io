@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>demo-test</title>
+  </head>
+  <body>
+    <p id="status">ready</p>
+    <p id="last-key">none</p>
+    <script>
+      window.addEventListener('message', (event) => {
+        const data = event.data;
+        if (data && data.type === 'deus-input') {
+          document.getElementById('last-key').textContent = data.key + ':' + data.pressed;
+        }
+      });
+    </script>
+  </body>
+</html>

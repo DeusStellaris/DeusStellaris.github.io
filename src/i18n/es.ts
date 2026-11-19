@@ -2,7 +2,15 @@
 // Es el diccionario completo: cualquier clave nueva debe añadirse aquí primero.
 // El tipo `Dictionary` se exporta para validar el resto de idiomas.
 
+import { deckEs, hubEs } from './modules/deck';
+import { accountEs, demosEs, reviewsEs } from './modules/demos';
+
 const es = {
+  deck: deckEs,
+  hub: hubEs,
+  demos: demosEs,
+  reviews: reviewsEs,
+  account: accountEs,
   common: {
     skipToContent: 'Saltar al contenido',
     siteName: 'Deus',

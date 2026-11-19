@@ -2,7 +2,7 @@
  * Worker de la API de likes del portafolio Deus.
  *
  *   POST /likes  { slug, visitorId, action: "like" | "unlike" }  →  { slug, likes, liked }
- *   POST /consent, POST /push/subscribe, POST /push/unsubscribe  (ver consent.js y push.js)
+ *   POST /consent, /push/*, /reviews y /accounts/*  (ver consent.js, push.js, reviews.js y accounts.js)
  *
  * Capas de defensa, en orden:
  *   1. Origen: solo los orígenes del sitio (lista explícita) reciben CORS. Sin origen permitido → 403.
@@ -13,12 +13,14 @@
  *   6. Persistencia: solo HMAC del visitante y de la IP (pseudónimos), nunca datos en claro.
  */
 
+import { handleBackup, handleLogin, handleRegister } from './accounts.js';
 import { publishedSlugs } from './catalog.js';
 import { canonicalizeOrigin, readConfig } from './config.js';
 import { handleConsent } from './consent.js';
 import { pseudonymize } from './hash.js';
 import { errorResponse, jsonResponse, preflight } from './http.js';
 import { handlePushSubscribe, handlePushUnsubscribe } from './push.js';
+import { handleReviewsRead, handleReviewsWrite } from './reviews.js';
 import { consumeRateLimit, countLikes, deleteLike, insertLike, SupabaseError } from './supabase.js';
 import { parseLikeBody, readJsonBody } from './validation.js';
 
@@ -91,12 +93,16 @@ async function handleLikes(request, env) {
   }
 }
 
-/** Rutas POST de la API. */
+/** Rutas de la API: ruta → método → manejador. */
 const ROUTES = {
-  '/likes': handleLikes,
-  '/consent': handleConsent,
-  '/push/subscribe': handlePushSubscribe,
-  '/push/unsubscribe': handlePushUnsubscribe,
+  '/likes': { POST: handleLikes },
+  '/consent': { POST: handleConsent },
+  '/push/subscribe': { POST: handlePushSubscribe },
+  '/push/unsubscribe': { POST: handlePushUnsubscribe },
+  '/reviews': { GET: handleReviewsRead, POST: handleReviewsWrite },
+  '/accounts/register': { POST: handleRegister },
+  '/accounts/login': { POST: handleLogin },
+  '/accounts/backup': { GET: handleBackup, PUT: handleBackup },
 };
 
 export default {
@@ -107,15 +113,20 @@ export default {
   async fetch(request, env) {
     const { pathname } = new URL(request.url);
     const origin = canonicalizeOrigin(request.headers.get('origin'));
-    const handler = Object.hasOwn(ROUTES, pathname)
-      ? ROUTES[/** @type {keyof typeof ROUTES} */ (pathname)]
+    const methods = Object.hasOwn(ROUTES, pathname)
+      ? /** @type {Record<string, (request: Request, env: Record<string, string | undefined>) => Promise<Response>>} */ (
+          ROUTES[/** @type {keyof typeof ROUTES} */ (pathname)]
+        )
       : null;
 
     try {
-      if (!handler) return errorResponse(404, 'Recurso no encontrado.', origin);
+      if (!methods) return errorResponse(404, 'Recurso no encontrado.', origin);
       if (request.method === 'OPTIONS') return preflight(request, env);
-      if (request.method !== 'POST') {
-        return errorResponse(405, 'Método no permitido.', origin, { Allow: 'POST, OPTIONS' });
+      const handler = Object.hasOwn(methods, request.method) ? methods[request.method] : null;
+      if (!handler) {
+        return errorResponse(405, 'Método no permitido.', origin, {
+          Allow: `${Object.keys(methods).join(', ')}, OPTIONS`,
+        });
       }
       return await handler(request, env);
     } catch (error) {

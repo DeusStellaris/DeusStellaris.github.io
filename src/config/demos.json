@@ -1,0 +1,4 @@
+{
+  "_nota": "Demos jugables en el navegador. Cada demo vive en public/demos/<slug>/index.html. Vacío hasta que exista una demo real. Forma de cada demo en src/services/demos.ts.",
+  "demos": []
+}

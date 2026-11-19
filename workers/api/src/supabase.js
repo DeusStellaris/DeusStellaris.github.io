@@ -174,3 +174,125 @@ export async function deletePushSubscription(config, endpointHash) {
     prefer: 'return=minimal',
   });
 }
+
+/**
+ * Reseñas publicadas de una demo, más recientes primero. Nunca devuelve el hash del visitante.
+ * @param {{ url: string, serviceKey: string }} config
+ * @param {string} slug
+ * @param {number} limit
+ * @returns {Promise<Array<{ rating: number, comment: string, locale: string, createdAt: string }>>}
+ */
+export async function listReviews(config, slug, limit) {
+  const query = new URLSearchParams({
+    demo_slug: `eq.${slug}`,
+    status: 'eq.published',
+    select: 'rating,comment,locale,created_at',
+    order: 'created_at.desc',
+    limit: String(limit),
+  });
+  const rows = await (await request(config, `reviews?${query.toString()}`)).json();
+  if (!Array.isArray(rows)) throw new SupabaseError('reviews_shape');
+  return rows.map((row) => ({
+    rating: row.rating,
+    comment: row.comment,
+    locale: row.locale,
+    createdAt: row.created_at,
+  }));
+}
+
+/**
+ * Promedio y cantidad de reseñas publicadas (función SQL review_stats).
+ * @param {{ url: string, serviceKey: string }} config
+ * @param {string} slug
+ * @returns {Promise<{ count: number, average: number | null }>}
+ */
+export async function reviewStats(config, slug) {
+  const response = await request(config, 'rpc/review_stats', {
+    method: 'POST',
+    body: JSON.stringify({ p_slug: slug }),
+  });
+  const row = (await response.json())?.[0];
+  if (!row || !Number.isInteger(row.review_count)) throw new SupabaseError('stats_shape');
+  return { count: row.review_count, average: row.average_rating ?? null };
+}
+
+/**
+ * Crea o actualiza la reseña del visitante (una por demo).
+ * @param {{ url: string, serviceKey: string }} config
+ * @param {{ slug: string, visitorHash: string, rating: number, comment: string, locale: string }} row
+ */
+export async function upsertReview(config, row) {
+  await request(config, 'reviews?on_conflict=demo_slug,visitor_hash', {
+    method: 'POST',
+    body: JSON.stringify([
+      {
+        demo_slug: row.slug,
+        visitor_hash: row.visitorHash,
+        rating: row.rating,
+        comment: row.comment,
+        locale: row.locale,
+      },
+    ]),
+    prefer: 'resolution=merge-duplicates,return=minimal',
+  });
+}
+
+/**
+ * Crea una cuenta. Un correo repetido falla con http_409 (restricción única).
+ * @param {{ url: string, serviceKey: string }} config
+ * @param {{ emailHash: string, passwordHash: string }} row
+ * @returns {Promise<string>} Id de la cuenta.
+ */
+export async function insertAccount(config, { emailHash, passwordHash }) {
+  const response = await request(config, 'accounts', {
+    method: 'POST',
+    body: JSON.stringify([{ email_hash: emailHash, password_hash: passwordHash }]),
+    prefer: 'return=representation',
+  });
+  const id = (await response.json())?.[0]?.id;
+  if (typeof id !== 'string') throw new SupabaseError('account_shape');
+  return id;
+}
+
+/**
+ * @param {{ url: string, serviceKey: string }} config
+ * @param {string} emailHash
+ * @returns {Promise<{ id: string, passwordHash: string } | null>}
+ */
+export async function findAccount(config, emailHash) {
+  const query = new URLSearchParams({
+    email_hash: `eq.${emailHash}`,
+    select: 'id,password_hash',
+    limit: '1',
+  });
+  const row = (await (await request(config, `accounts?${query.toString()}`)).json())?.[0];
+  return row ? { id: row.id, passwordHash: row.password_hash } : null;
+}
+
+/**
+ * @param {{ url: string, serviceKey: string }} config
+ * @param {string} accountId
+ * @returns {Promise<{ payload: unknown, updatedAt: string } | null>}
+ */
+export async function getBackup(config, accountId) {
+  const query = new URLSearchParams({
+    account_id: `eq.${accountId}`,
+    select: 'payload,updated_at',
+    limit: '1',
+  });
+  const row = (await (await request(config, `profile_backups?${query.toString()}`)).json())?.[0];
+  return row ? { payload: row.payload, updatedAt: row.updated_at } : null;
+}
+
+/**
+ * @param {{ url: string, serviceKey: string }} config
+ * @param {string} accountId
+ * @param {object} payload
+ */
+export async function putBackup(config, accountId, payload) {
+  await request(config, 'profile_backups?on_conflict=account_id', {
+    method: 'POST',
+    body: JSON.stringify([{ account_id: accountId, payload }]),
+    prefer: 'resolution=merge-duplicates,return=minimal',
+  });
+}

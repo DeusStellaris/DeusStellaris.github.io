@@ -11,5 +11,8 @@
     "test": "node --test test/",
     "dev": "npx wrangler@4.151.3 dev",
     "deploy": "npx wrangler@4.151.3 deploy"
+  },
+  "dependencies": {
+    "@noble/hashes": "2.0.1"
   }
 }

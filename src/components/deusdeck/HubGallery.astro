@@ -1,0 +1,362 @@
+---
+import { HUB_CATEGORIES } from '../../features/hub/hub-core';
+import { type Locale, type TranslationKey, t } from '../../i18n';
+import { deckPaths, localizedHref } from '../../i18n/routes';
+import { publicAssetUrl } from '../../lib/assets';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const MESSAGE_KEYS = [
+  'hub.count',
+  'hub.loading',
+  'hub.loadError',
+  'hub.noResults',
+  'hub.by',
+  'hub.version',
+  'hub.compat',
+  'hub.details',
+  'hub.download',
+  'hub.install',
+  'hub.noPreview',
+  'hub.previewAlt',
+  'hub.categories.themes',
+  'hub.categories.icons',
+  'hub.categories.emoji',
+  'hub.categories.plugins',
+] as const satisfies readonly TranslationKey[];
+const messages = JSON.stringify(
+  Object.fromEntries(MESSAGE_KEYS.map((key) => [key, t(locale, key)])),
+);
+const categories = ['all', ...HUB_CATEGORIES] as const;
+---
+
+<section class="hub" data-hub data-locale={locale} data-src={publicAssetUrl('hub-resources.json')} data-messages={messages}>
+  <header class="hub__header">
+    <p class="hub__crumb">
+      <a href={localizedHref(locale, deckPaths()[locale])}>DeusDeck</a>
+    </p>
+    <h1>{t(locale, 'hub.title')}</h1>
+    <p class="hub__lead">{t(locale, 'hub.lead')}</p>
+  </header>
+
+  <div class="hub__toolbar" data-hub-toolbar hidden>
+    <div class="hub__search">
+      <label for="hub-search">{t(locale, 'hub.searchLabel')}</label>
+      <input
+        id="hub-search"
+        type="search"
+        autocomplete="off"
+        maxlength="80"
+        placeholder={t(locale, 'hub.searchPlaceholder')}
+        data-hub-search
+        data-tooltip={t(locale, 'hub.searchTooltip')}
+      />
+    </div>
+    <fieldset class="hub__chips">
+      <legend>{t(locale, 'hub.categoryLabel')}</legend>
+      {
+        categories.map((category) => (
+          <label class="hub__chip" data-tooltip={t(locale, 'hub.categoryTooltip')}>
+            <input type="radio" name="hub-category" value={category} checked={category === 'all'} />
+            <span>{t(locale, `hub.categories.${category}`)}</span>
+          </label>
+        ))
+      }
+    </fieldset>
+  </div>
+
+  <p class="hub__status" role="status" data-hub-status>{t(locale, 'hub.loading')}</p>
+
+  <div class="hub__empty" data-hub-empty hidden>
+    <h2>{t(locale, 'hub.emptyTitle')}</h2>
+    <p>{t(locale, 'hub.emptyBody')}</p>
+  </div>
+
+  <ul class="hub__grid" data-hub-grid></ul>
+
+  <template data-hub-card-template>
+    <li class="hub__card">
+      <div class="hub__preview">
+        <img alt="" width="320" height="180" loading="lazy" decoding="async" hidden />
+        <span data-f="nopreview"></span>
+      </div>
+      <div class="hub__body">
+        <p class="hub__category" data-f="category"></p>
+        <h3 data-f="name"></h3>
+        <p class="hub__author" data-f="author"></p>
+        <p class="hub__compat" data-f="compat" data-tooltip={t(locale, 'hub.compatTooltip')}></p>
+        <button type="button" class="hub__button" data-f="details" data-tooltip={t(locale, 'hub.detailsTooltip')}></button>
+      </div>
+    </li>
+  </template>
+
+  <dialog class="hub__dialog" data-hub-dialog aria-labelledby="hub-dialog-title">
+    <div class="hub__dialog-inner">
+      <header>
+        <h2 id="hub-dialog-title" data-f="name"></h2>
+        <button type="button" class="hub__button" data-hub-close>{t(locale, 'hub.close')}</button>
+      </header>
+      <div class="hub__preview hub__preview--large">
+        <img alt="" width="640" height="360" decoding="async" hidden />
+        <span data-f="nopreview"></span>
+      </div>
+      <p data-f="description"></p>
+      <p class="hub__author" data-f="meta"></p>
+      <p class="hub__compat" data-f="compat" data-tooltip={t(locale, 'hub.compatTooltip')}></p>
+      <div class="hub__actions">
+        <a class="hub__button hub__button--primary" data-f="install" data-tooltip={t(locale, 'hub.installTooltip')} hidden></a>
+        <a class="hub__button" data-f="download" data-tooltip={t(locale, 'hub.downloadTooltip')} download hidden></a>
+      </div>
+    </div>
+  </dialog>
+</section>
+
+<style>
+  .hub {
+    display: grid;
+    gap: var(--space-6);
+    padding-block: var(--space-12) var(--space-16);
+  }
+
+  .hub h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(2.25rem, 6vw, 3.5rem);
+  }
+
+  .hub__crumb {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-sm);
+  }
+
+  .hub__lead,
+  .hub__status {
+    max-width: 40rem;
+    margin: var(--space-3) 0 0;
+    color: var(--color-text-muted);
+  }
+
+  .hub__toolbar {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .hub__toolbar[hidden],
+  .hub__empty[hidden] {
+    display: none;
+  }
+
+  .hub__search {
+    display: grid;
+    gap: var(--space-1);
+    max-width: 28rem;
+  }
+
+  .hub__search input {
+    min-height: var(--target-min);
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .hub__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .hub__chips legend {
+    padding: 0 0 var(--space-2);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .hub__chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    cursor: pointer;
+  }
+
+  .hub__chip input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .hub__chip:has(input:checked) {
+    border-color: var(--color-accent);
+    color: var(--color-accent-strong);
+  }
+
+  .hub__chip:has(input:focus-visible) {
+    outline: 2px solid var(--color-accent-strong);
+    outline-offset: 2px;
+  }
+
+  .hub__empty {
+    padding: var(--space-8);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  .hub__empty h2 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-lg);
+  }
+
+  .hub__empty p {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+
+  .hub__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hub__card {
+    display: grid;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  .hub__preview {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    background: var(--color-surface-raised);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .hub__preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hub__preview img[hidden] {
+    display: none;
+  }
+
+  .hub__body {
+    display: grid;
+    gap: var(--space-1);
+    padding: var(--space-4);
+  }
+
+  .hub__body h3 {
+    margin: 0;
+    font-size: var(--text-base);
+  }
+
+  .hub__category,
+  .hub__author,
+  .hub__compat {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .hub__category {
+    color: var(--color-accent-strong);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .hub__compat {
+    width: fit-content;
+    padding: 0 var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+  }
+
+  .hub__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--target-min);
+    margin-top: var(--space-2);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .hub__button[hidden] {
+    display: none;
+  }
+
+  .hub__button--primary {
+    border-color: var(--color-accent);
+    color: var(--color-accent-strong);
+  }
+
+  .hub__dialog {
+    width: min(94vw, 40rem);
+    max-height: 90dvh;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .hub__dialog::backdrop {
+    background: rgb(0 0 0 / 0.55);
+  }
+
+  .hub__dialog-inner {
+    display: grid;
+    gap: var(--space-3);
+    padding: var(--space-6);
+  }
+
+  .hub__dialog-inner header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .hub__dialog-inner h2 {
+    margin: 0;
+    font-size: var(--text-xl);
+  }
+
+  .hub__dialog-inner p {
+    margin: 0;
+  }
+
+  .hub__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+import { type Locale, t } from '../../i18n';
+import { deckPaths, localizedHref } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<a class="featured" href={localizedHref(locale, deckPaths()[locale])}>
+  <span class="featured__badge">{t(locale, 'deck.badge')}</span>
+  <span class="featured__name">DeusDeck</span>
+  <span class="featured__lead">{t(locale, 'deck.lead')}</span>
+</a>
+
+<style>
+  .featured {
+    display: grid;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    text-decoration: none;
+  }
+
+  .featured__badge {
+    width: fit-content;
+    padding: 0 var(--space-3);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-pill);
+    color: var(--color-accent-strong);
+    font-size: var(--text-sm);
+  }
+
+  .featured__name {
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+  }
+
+  .featured__lead {
+    max-width: 40rem;
+    color: var(--color-text-muted);
+  }
+</style>

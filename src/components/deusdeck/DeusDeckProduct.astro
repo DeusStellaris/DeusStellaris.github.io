@@ -1,0 +1,326 @@
+---
+import deck from '../../config/deusdeck.json';
+import { type Locale, t } from '../../i18n';
+import { deckPaths, localizedHref } from '../../i18n/routes';
+import { formatDate } from '../../lib/format';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const FEATURES = ['lan', 'obs', 'emoji', 'soundboard', 'pc', 'setups'] as const;
+const href = (sub: 'hub' | 'eula') => localizedHref(locale, deckPaths(sub)[locale]);
+const legalLinks = [
+  {
+    href: href('eula'),
+    label: t(locale, 'deck.legalEula'),
+    tip: t(locale, 'deck.legalEulaTooltip'),
+  },
+  {
+    href: localizedHref(locale, locale === 'es' ? '/privacidad/' : '/privacy/'),
+    label: t(locale, 'deck.legalPrivacy'),
+    tip: t(locale, 'deck.legalPrivacyTooltip'),
+  },
+  {
+    href: localizedHref(locale, locale === 'es' ? '/terminos/' : '/terms/'),
+    label: t(locale, 'deck.legalTerms'),
+    tip: t(locale, 'deck.legalTermsTooltip'),
+  },
+];
+const releases = deck.releases;
+const osNames = JSON.stringify({
+  windows: t(locale, 'deck.os.windows'),
+  mac: t(locale, 'deck.os.mac'),
+  linux: t(locale, 'deck.os.linux'),
+  other: t(locale, 'deck.os.other'),
+});
+---
+
+<article class="deck" data-deck-product data-os-names={osNames}>
+  <header class="deck__hero">
+    <p class="deck__eyebrow">
+      <span>{t(locale, 'deck.programsLabel')}</span>
+      <span class="deck__badge" data-tooltip={t(locale, 'deck.statusBody')}>{t(locale, 'deck.badge')}</span>
+    </p>
+    <h1>DeusDeck</h1>
+    <p class="deck__lead">{t(locale, 'deck.lead')}</p>
+  </header>
+
+  <section class="deck__status" aria-labelledby="deck-status-title">
+    <h2 id="deck-status-title">{t(locale, 'deck.statusTitle')}</h2>
+    <p>{t(locale, 'deck.statusBody')}</p>
+  </section>
+
+  <section aria-labelledby="deck-features-title">
+    <h2 id="deck-features-title">{t(locale, 'deck.featuresHeading')}</h2>
+    <ol class="deck__features">
+      {
+        FEATURES.map((id, index) => (
+          <li class="deck__feature">
+            <span class="deck__index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+            <h3>{t(locale, `deck.features.${id}.title`)}</h3>
+            <p>{t(locale, `deck.features.${id}.body`)}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="deck__download" aria-labelledby="deck-download-title">
+    <h2 id="deck-download-title">{t(locale, 'deck.downloadHeading')}</h2>
+    <p class="deck__os">
+      {t(locale, 'deck.detectedOs')}: <strong data-deck-os>{t(locale, 'deck.os.windows')}</strong>
+    </p>
+    <p class="deck__notice" data-deck-unsupported hidden>{t(locale, 'deck.windowsOnly')}</p>
+
+    <div class="deck__version">
+      <label for="deck-version">{t(locale, 'deck.versionLabel')}</label>
+      <select id="deck-version" data-deck-version data-tooltip={t(locale, 'deck.versionTooltip')}>
+        {releases.map((release, index) => <option value={release.version} selected={index === 0}>{release.version}</option>)}
+      </select>
+    </div>
+
+    {
+      releases.map((release, index) => (
+        <div class="deck__release" data-deck-release={release.version} hidden={index !== 0}>
+          <div class="deck__installers" data-deck-installers>
+            {(['msi', 'exe'] as const).map((kind) => {
+              const url = release.installers.windows[kind];
+              const label = t(locale, kind === 'msi' ? 'deck.installerMsi' : 'deck.installerExe');
+              return url ? (
+                <a class="deck__button deck__button--primary" href={url} data-tooltip={t(locale, kind === 'msi' ? 'deck.installerMsiTooltip' : 'deck.installerExeTooltip')}>
+                  {label}
+                </a>
+              ) : (
+                <button type="button" class="deck__button" disabled data-deck-installer={kind} data-tooltip={t(locale, 'deck.downloadPrivateTooltip')}>
+                  {label}
+                </button>
+              );
+            })}
+          </div>
+          <p class="deck__private-note">{t(locale, 'deck.downloadPrivate')}</p>
+
+          <h3>{t(locale, 'deck.notesHeading')}</h3>
+          <p class="deck__date">
+            {release.date ? `${t(locale, 'deck.releaseDate')} ${formatDate(new Date(release.date), locale)}` : t(locale, 'deck.noDate')}
+          </p>
+          <ul class="deck__notes">
+            {release.notes[locale].map((note) => <li>{note}</li>)}
+          </ul>
+        </div>
+      ))
+    }
+  </section>
+
+  <section class="deck__hub" aria-labelledby="deck-hub-title">
+    <h2 id="deck-hub-title">{t(locale, 'deck.hubTitle')}</h2>
+    <p>{t(locale, 'deck.hubBody')}</p>
+    <a class="deck__button deck__button--primary" href={href('hub')} data-tooltip={t(locale, 'deck.hubTooltip')}>
+      {t(locale, 'deck.hubLink')}
+    </a>
+  </section>
+
+  <section aria-labelledby="deck-legal-title">
+    <h2 id="deck-legal-title">{t(locale, 'deck.legalHeading')}</h2>
+    <nav class="deck__legal" aria-label={t(locale, 'deck.legalHeading')}>
+      {legalLinks.map((link) => <a class="deck__button" href={link.href} data-tooltip={link.tip}>{link.label}</a>)}
+    </nav>
+    <p class="deck__legal-note">{t(locale, 'deck.legalNote')}</p>
+  </section>
+
+</article>
+
+<style>
+  .deck {
+    display: grid;
+    gap: var(--space-12);
+    padding-block: var(--space-12) var(--space-16);
+  }
+
+  .deck h1 {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: clamp(3rem, 9vw, 5.5rem);
+    line-height: 1;
+    letter-spacing: 0.01em;
+  }
+
+  .deck h2 {
+    margin: 0 0 var(--space-4);
+    font-size: var(--text-xl);
+  }
+
+  .deck h3 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-base);
+  }
+
+  .deck__eyebrow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin: 0 0 var(--space-3);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .deck__badge {
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-pill);
+    color: var(--color-accent-strong);
+    letter-spacing: 0.06em;
+  }
+
+  .deck__lead {
+    max-width: 38rem;
+    margin: var(--space-4) 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-lg);
+  }
+
+  .deck__status {
+    padding: var(--space-4) var(--space-6);
+    border-left: 3px solid var(--color-accent);
+    background: var(--color-glow);
+    border-radius: var(--radius-md);
+  }
+
+  .deck__status h2 {
+    font-size: var(--text-base);
+  }
+
+  .deck__status p {
+    margin: 0;
+  }
+
+  .deck__features {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .deck__feature {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    column-gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .deck__feature h3,
+  .deck__feature p {
+    grid-column: 2;
+  }
+
+  .deck__feature p {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+
+  .deck__index {
+    grid-row: 1 / span 2;
+    color: var(--color-accent-strong);
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+  }
+
+  @media (min-width: 48em) {
+    .deck__features {
+      grid-template-columns: 1fr 1fr;
+      column-gap: var(--space-8);
+    }
+  }
+
+  .deck__os {
+    margin: 0 0 var(--space-3);
+  }
+
+  .deck__notice {
+    margin: 0 0 var(--space-3);
+    padding: var(--space-3);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-md);
+  }
+
+  .deck__version {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+
+  .deck__version select {
+    min-height: var(--target-min);
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+  }
+
+  .deck__installers[hidden],
+  .deck__notice[hidden] {
+    display: none;
+  }
+
+  .deck__installers,
+  .deck__legal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .deck__private-note,
+  .deck__date,
+  .deck__legal-note {
+    margin: var(--space-2) 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .deck__notes {
+    margin: 0;
+    padding-left: var(--space-6);
+  }
+
+  .deck__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--target-min);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .deck__button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .deck__button--primary {
+    border-color: var(--color-accent);
+    color: var(--color-accent-strong);
+  }
+
+  .deck__hub p {
+    max-width: 38rem;
+    margin: 0 0 var(--space-4);
+    color: var(--color-text-muted);
+  }
+</style>

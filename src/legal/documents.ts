@@ -6,7 +6,7 @@ import type { LegalLocale } from './segments';
  * Ningún documento afirma cumplimiento normativo ni sustituye asesoramiento profesional.
  */
 
-export type DocumentKind = 'terms' | 'privacy' | 'cookies' | 'refund';
+export type DocumentKind = 'terms' | 'privacy' | 'cookies' | 'refund' | 'eula';
 
 export interface LegalSection {
   heading: string;
@@ -102,8 +102,98 @@ const REFUND: Record<LegalLocale, LegalDocumentContent> = {
   },
 };
 
+/*
+ * EULA de DeusDeck, basado en la plantilla de _Deus_Assets/legal/EULA_TEMPLATE.md. Incluye la cláusula
+ * AS-IS. Es un borrador: la versión del instalador y la revisión jurídica quedan marcadas como pendientes.
+ */
+const EULA: Record<LegalLocale, LegalDocumentContent> = {
+  es: {
+    title: 'EULA de DeusDeck',
+    intro:
+      'Acuerdo de licencia de usuario final de DeusDeck. Titular: Noé Ezequiel Martinez (Deus). {{PENDING:versión del instalador a la que aplica este acuerdo y fecha de entrada en vigor}}',
+    sections: [
+      {
+        heading: '1. Licencia',
+        paragraphs: [
+          'Se concede al usuario una licencia personal, no exclusiva e intransferible para instalar y usar el software conforme a este acuerdo.',
+        ],
+      },
+      {
+        heading: '2. Restricciones',
+        paragraphs: [
+          'El usuario no debe descompilar, redistribuir ni sublicenciar el software, salvo lo permitido por las licencias de código abierto de sus componentes.',
+        ],
+      },
+      {
+        heading: '3. Provisto «tal cual» (AS-IS)',
+        paragraphs: [
+          'EL SOFTWARE SE ENTREGA «TAL CUAL» Y «SEGÚN DISPONIBILIDAD», SIN GARANTÍAS DE NINGÚN TIPO, EXPRESAS O IMPLÍCITAS, INCLUIDAS LAS DE COMERCIABILIDAD, IDONEIDAD PARA UN FIN PARTICULAR Y NO INFRACCIÓN.',
+        ],
+      },
+      {
+        heading: '4. Limitación de responsabilidad',
+        paragraphs: [
+          'EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY, EL TITULAR NO SERÁ RESPONSABLE POR DAÑOS DIRECTOS, INDIRECTOS, INCIDENTALES O PÉRDIDA DE DATOS DERIVADOS DEL USO O LA IMPOSIBILIDAD DE USO DEL SOFTWARE.',
+        ],
+      },
+      {
+        heading: '5. Privacidad',
+        paragraphs: ['El tratamiento de datos se rige por la Política de privacidad del sitio.'],
+      },
+      {
+        heading: '6. Ley aplicable',
+        paragraphs: [
+          'Este acuerdo se rige por las leyes de la República Argentina. Jurisdicción: tribunales ordinarios de la Ciudad Autónoma de Buenos Aires. {{PENDING:revisión legal de este acuerdo}}',
+        ],
+      },
+    ],
+  },
+  en: {
+    title: 'DeusDeck EULA',
+    intro:
+      'End user license agreement for DeusDeck. Licensor: Noé Ezequiel Martinez (Deus). {{PENDING:installer version this agreement applies to and effective date}}',
+    sections: [
+      {
+        heading: '1. License',
+        paragraphs: [
+          'The user is granted a personal, non-exclusive, non-transferable license to install and use the software under this agreement.',
+        ],
+      },
+      {
+        heading: '2. Restrictions',
+        paragraphs: [
+          'The user must not decompile, redistribute or sublicense the software, except as allowed by the open-source licenses of its components.',
+        ],
+      },
+      {
+        heading: '3. Provided "AS-IS"',
+        paragraphs: [
+          'THE SOFTWARE IS PROVIDED "AS IS" AND "AS AVAILABLE", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.',
+        ],
+      },
+      {
+        heading: '4. Limitation of liability',
+        paragraphs: [
+          'TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE LICENSOR SHALL NOT BE LIABLE FOR ANY DIRECT, INDIRECT OR INCIDENTAL DAMAGES OR LOSS OF DATA ARISING FROM THE USE OR INABILITY TO USE THE SOFTWARE.',
+        ],
+      },
+      {
+        heading: '5. Privacy',
+        paragraphs: ['Data handling is governed by the Privacy policy of this site.'],
+      },
+      {
+        heading: '6. Governing law',
+        paragraphs: [
+          'This agreement is governed by the laws of the Argentine Republic. Venue: ordinary courts of the Autonomous City of Buenos Aires. {{PENDING:legal review of this agreement}}',
+        ],
+      },
+    ],
+  },
+};
+
 export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentContent>> = {
   refund: REFUND,
+  eula: EULA,
   terms: {
     es: {
       title: 'Términos y condiciones de uso',

@@ -13,6 +13,8 @@ workers_dev = true
 ALLOWED_ORIGINS = "https://DeusStellaris.github.io"
 # Indice de busqueda publicado: fuente del catalogo de proyectos.
 SITE_INDEX_URL = "https://DeusStellaris.github.io/search-index.json"
+# Indice de demos publicadas: fuente de las demos que admiten resenas.
+DEMOS_INDEX_URL = "https://DeusStellaris.github.io/demos-index.json"
 # URL del proyecto de Supabase. No es secreta: la seguridad depende de RLS y de los secretos.
 # Marcador vacio hasta crear el proyecto; sin valor el Worker responde 503 de forma controlada.
 SUPABASE_URL = ""

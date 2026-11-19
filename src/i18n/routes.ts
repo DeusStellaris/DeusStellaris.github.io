@@ -68,3 +68,24 @@ export const LEGAL_SEGMENT: Record<
   cookies: { es: 'cookies', en: 'cookies' },
   refund: { es: 'reembolso', en: 'refunds' },
 };
+
+/** Segmentos de la ficha de DeusDeck (dentro de Programas) y de las demos jugables (dentro de Juegos). */
+const DECK_SEGMENT = 'deusdeck';
+const DEMO_SEGMENT = 'demos';
+
+/** Rutas de la ficha de DeusDeck o de una de sus subpáginas ('hub' o 'eula'), por idioma. */
+export function deckPaths(sub?: 'hub' | 'eula'): Record<Locale, string> {
+  const tail = sub ? `${sub}/` : '';
+  return {
+    es: `${sectionSegmentPath('programs', 'es')}${DECK_SEGMENT}/${tail}`,
+    en: `${sectionSegmentPath('programs', 'en')}${DECK_SEGMENT}/${tail}`,
+  };
+}
+
+/** Rutas de una demo jugable, por idioma. */
+export function demoPaths(slug: string): Record<Locale, string> {
+  return {
+    es: `${sectionSegmentPath('games', 'es')}${DEMO_SEGMENT}/${slug}/`,
+    en: `${sectionSegmentPath('games', 'en')}${DEMO_SEGMENT}/${slug}/`,
+  };
+}

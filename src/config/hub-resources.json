@@ -1,0 +1,4 @@
+{
+  "_nota": "Catálogo del DeusDeck Hub. Vacío hasta que existan recursos reales: no se siembran datos de ejemplo. Forma de cada recurso en src/features/hub/hub-core.ts.",
+  "resources": []
+}

@@ -1,0 +1,20 @@
+---
+import HubGallery from '../../../../../components/deusdeck/HubGallery.astro';
+import { type Locale, t } from '../../../../../i18n';
+import { deckPaths } from '../../../../../i18n/routes';
+import BaseLayout from '../../../../../layouts/BaseLayout.astro';
+
+const locale: Locale = 'en';
+---
+
+<BaseLayout
+  title={`${t(locale, 'hub.title')} · ${t(locale, 'common.siteName')}`}
+  description={t(locale, 'hub.lead')}
+  locale={locale}
+  section="programs"
+  pagePaths={deckPaths('hub')}
+>
+  <div class="container">
+    <HubGallery locale={locale} />
+  </div>
+</BaseLayout>

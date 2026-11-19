@@ -1,4 +1,6 @@
 import type { Dictionary } from './es';
+import { deckEn, hubEn } from './modules/deck';
+import { accountEn, demosEn, reviewsEn } from './modules/demos';
 
 // Diccionario de interfaz en inglés.
 // Es parcial a propósito: las claves que falten caen al español en `index.ts`,
@@ -6,6 +8,11 @@ import type { Dictionary } from './es';
 // TRADUCCIÓN PENDIENTE DE REVISIÓN por el titular del sitio.
 
 const en: Partial<Dictionary> = {
+  deck: deckEn,
+  hub: hubEn,
+  demos: demosEn,
+  reviews: reviewsEn,
+  account: accountEn,
   common: {
     skipToContent: 'Skip to content',
     siteName: 'Deus',

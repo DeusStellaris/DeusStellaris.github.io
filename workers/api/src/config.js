@@ -63,6 +63,7 @@ export function readConfig(env) {
       },
       pepper: /** @type {string} */ (env.VISITOR_HASH_PEPPER),
       siteIndexUrl: /** @type {string} */ (env.SITE_INDEX_URL),
+      demosIndexUrl: env.DEMOS_INDEX_URL || null,
       allowedOrigins,
     },
   };
@@ -73,5 +74,6 @@ export function readConfig(env) {
  * @property {{ url: string, serviceKey: string }} supabase
  * @property {string} pepper
  * @property {string} siteIndexUrl
+ * @property {string | null} demosIndexUrl Índice de demos publicadas; sin valor las reseñas responden 503.
  * @property {string[]} allowedOrigins
  */

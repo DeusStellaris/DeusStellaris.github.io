@@ -1,0 +1,66 @@
+---
+import { type Locale, t } from '../../i18n';
+import { demoPaths, localizedHref } from '../../i18n/routes';
+import { publicAssetUrl } from '../../lib/assets';
+import type { Demo } from '../../services/demos';
+
+interface Props {
+  locale: Locale;
+  demos: Demo[];
+}
+
+const { locale, demos } = Astro.props;
+---
+
+<ul class="demos">
+  {
+    demos.map((demo) => (
+      <li>
+        <a class="demos__card" href={localizedHref(locale, demoPaths(demo.slug)[locale])}>
+          <img src={publicAssetUrl(demo.cover)} alt="" width="480" height="270" loading="lazy" decoding="async" />
+          <span class="demos__title">{demo.title[locale]}</span>
+          <span class="demos__meta">{t(locale, 'demos.play')} · {t(locale, 'demos.sizeLabel')}: ≈ {demo.sizeMb} MB</span>
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .demos {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+    gap: var(--space-4);
+    margin: 0 0 var(--space-8);
+    padding: 0;
+    list-style: none;
+  }
+
+  .demos__card {
+    display: grid;
+    gap: var(--space-1);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    text-decoration: none;
+    overflow: hidden;
+  }
+
+  .demos__card img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
+
+  .demos__title {
+    padding-inline: var(--space-4);
+    font-weight: 600;
+  }
+
+  .demos__meta {
+    padding: 0 var(--space-4) var(--space-4);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+</style>
