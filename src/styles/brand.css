@@ -1,0 +1,59 @@
+/*
+ * Marca Deus: logotipo del samurái con un destello ocasional de luz metálica.
+ * Compartido por el encabezado (Logo.astro) y la bienvenida (IntroOverlay.astro).
+ * El archivo original de la imagen no se modifica: el destello es un pseudo-elemento.
+ */
+.brand-mark {
+  position: relative;
+  display: inline-flex;
+  overflow: hidden;
+  border-radius: 50%;
+  isolation: isolate;
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/*
+ * Reflejo: una banda diagonal cruza el logotipo una vez cada 7 s (~1 s de barrido y ~6 s de pausa).
+ * Solo transforma (composición en GPU) y queda recortada por el círculo. Fuera del barrido la banda
+ * está fuera del área visible, así que el logotipo se ve normal la mayor parte del tiempo.
+ */
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    transparent 40%,
+    rgb(255 255 255 / 0.55) 50%,
+    transparent 60%
+  );
+  transform: translateX(-100%);
+  animation: brand-glint 7s var(--ease-out) infinite;
+}
+
+@keyframes brand-glint {
+  0% {
+    transform: translateX(-100%);
+  }
+  14%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Accesibilidad: con movimiento reducido el destello se desactiva por completo. Lite Mode lo
+   desactiva en motion.css mediante html.lite-mode *::after. */
+@media (prefers-reduced-motion: reduce) {
+  .brand-mark::after {
+    animation: none;
+    transform: translateX(100%);
+  }
+}

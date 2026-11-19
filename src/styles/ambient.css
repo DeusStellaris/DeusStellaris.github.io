@@ -1,0 +1,245 @@
+/*
+ * Ecosistema de microanimaciones ambientales. CSS puro: @keyframes, pseudo-elementos, opacity y
+ * transform. Sin JavaScript, sin dependencias. Cada efecto está acotado a selectores concretos:
+ *
+ *  - Borde trazador (.section-card::before): hilo dorado-violeta que recorre el contorno cada 10 s.
+ *  - Respiración de nebulosa (.section-card::after): halo violeta-dorado que alterna lentamente.
+ *  - Micro-destellos (.section-card__dust i): cuatro puntos de polvo estelar en las esquinas.
+ *  - Reflejo Kintsugi (body[data-section=home|freelance]::before): banda diagonal tenue sobre el mármol.
+ *  - Destello del samurái: en brand.css (.brand-mark::after), compartido con la bienvenida.
+ *
+ * Todos son decorativos: no reciben eventos y se desactivan con prefers-reduced-motion y Lite Mode.
+ * Los tonos viven en tokens.css (--ambient-*) y cambian con el tema.
+ */
+
+/* Ángulo registrado para poder animarlo con @keyframes (el recorrido del trazador). */
+@property --trace-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+/* Tarjetas principales de Inicio: base de posicionamiento y de apilamiento para sus efectos. */
+.section-card {
+  position: relative;
+  isolation: isolate;
+}
+
+/* Borde trazador: solo el anillo de 1 px del borde (máscara exclude) recorrido por un cono de luz. */
+.section-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 1px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from var(--trace-angle),
+    transparent 0deg 300deg,
+    var(--ambient-trace) 345deg,
+    var(--ambient-violet) 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  pointer-events: none;
+  opacity: 0;
+  animation: border-trace 10s linear infinite;
+}
+
+/* Recorrido de una vuelta en ~2 s y 8 s de calma. */
+@keyframes border-trace {
+  0% {
+    --trace-angle: 0deg;
+    opacity: 0;
+  }
+  2% {
+    opacity: 1;
+  }
+  18% {
+    --trace-angle: 360deg;
+    opacity: 1;
+  }
+  20%,
+  100% {
+    --trace-angle: 360deg;
+    opacity: 0;
+  }
+}
+
+/* Las tarjetas no trazan el borde a la vez: se desfasan entre sí. */
+.section-card:nth-child(2)::before {
+  animation-delay: -2.5s;
+}
+
+.section-card:nth-child(3)::before {
+  animation-delay: -5s;
+}
+
+.section-card:nth-child(4)::before {
+  animation-delay: -7.5s;
+}
+
+/*
+ * Respiración de nebulosa: un halo de sombra fuera de la tarjeta. El pseudo-elemento no tiene fondo,
+ * así que la sombra se dibuja solo fuera del borde; al animar solo opacity no se repinta la sombra.
+ */
+.section-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    0 0 28px 0 var(--ambient-violet),
+    0 0 14px -2px var(--ambient-gold-glow);
+  opacity: 0.2;
+  animation: nebula-breath 4.5s ease-in-out infinite alternate;
+}
+
+@keyframes nebula-breath {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 0.8;
+  }
+}
+
+/* Micro-destellos: cuatro puntos en las esquinas, cada uno con su propio ritmo asíncrono. */
+.section-card__dust {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.section-card__dust i {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--ambient-dust);
+  box-shadow: 0 0 6px 1px var(--ambient-dust);
+  opacity: 0;
+  animation: stardust 6s ease-in-out infinite;
+}
+
+.section-card__dust i:nth-child(1) {
+  top: 0.75rem;
+  left: 0.75rem;
+  animation-duration: 5.2s;
+  animation-delay: -1.1s;
+}
+
+.section-card__dust i:nth-child(2) {
+  top: 0.75rem;
+  right: 0.75rem;
+  animation-duration: 6.8s;
+  animation-delay: -4.2s;
+}
+
+.section-card__dust i:nth-child(3) {
+  bottom: 0.75rem;
+  left: 0.75rem;
+  animation-duration: 7.4s;
+  animation-delay: -2.3s;
+}
+
+.section-card__dust i:nth-child(4) {
+  bottom: 0.75rem;
+  right: 0.75rem;
+  animation-duration: 5.9s;
+  animation-delay: -5.1s;
+}
+
+@keyframes stardust {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  10%,
+  24% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  36% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+}
+
+/*
+ * Reflejo Kintsugi: una banda diagonal muy tenue cruza el mármol cada 9 s. Es una capa fija de
+ * ancho limitado que solo se desplaza con transform; no toca los JPG ni las vetas.
+ */
+body[data-section="home"]::before,
+body[data-section="freelance"]::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 40vw;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(105deg, transparent 0%, var(--ambient-shimmer) 50%, transparent 100%);
+  opacity: 0;
+  transform: translateX(-100vw);
+  animation: marble-shimmer 9s ease-in-out infinite;
+}
+
+@keyframes marble-shimmer {
+  0% {
+    transform: translateX(-100vw);
+    opacity: 0;
+  }
+  3% {
+    opacity: 1;
+  }
+  18% {
+    transform: translateX(260vw);
+    opacity: 1;
+  }
+  19%,
+  100% {
+    transform: translateX(260vw);
+    opacity: 0;
+  }
+}
+
+/* Contenido y pie por encima de la capa del reflejo (solo en las páginas de mármol). */
+body[data-section="home"] main,
+body[data-section="freelance"] main,
+body[data-section="home"] .site-footer,
+body[data-section="freelance"] .site-footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* Reduced motion: se eliminan los efectos por completo, sin ciclos ni capas residuales. */
+@media (prefers-reduced-motion: reduce) {
+  .section-card::before,
+  .section-card::after,
+  .section-card__dust i,
+  body[data-section="home"]::before,
+  body[data-section="freelance"]::before {
+    display: none;
+    animation: none;
+  }
+}
+
+/* Lite Mode: mismo resultado que reduced motion; el visitante pidió menos efectos. */
+html.lite-mode .section-card::before,
+html.lite-mode .section-card::after,
+html.lite-mode .section-card__dust i,
+html.lite-mode body[data-section="home"]::before,
+html.lite-mode body[data-section="freelance"]::before {
+  display: none;
+  animation: none;
+}

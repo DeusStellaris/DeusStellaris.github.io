@@ -215,4 +215,46 @@ begin
   end;
 end $$;
 
+-- 13. push_subscriptions: anon no lee ni escribe; service_role guarda y borra; las restricciones rechazan datos inválidos.
+do $
+begin
+  set local role anon;
+  begin
+    insert into public.push_subscriptions (endpoint_hash, endpoint, p256dh, auth, mode, locale)
+    values (repeat('e', 64), 'https://fcm.googleapis.com/fcm/send/x1234567890123', repeat('A', 87), repeat('B', 22), 'all', 'es');
+    raise exception 'FALLO: anon pudo insertar suscripciones push';
+  exception when insufficient_privilege then
+    null;
+  end;
+  begin
+    perform 1 from public.push_subscriptions;
+    raise exception 'FALLO: anon pudo leer suscripciones push';
+  exception when insufficient_privilege then
+    null;
+  end;
+  reset role;
+
+  set local role service_role;
+  insert into public.push_subscriptions (endpoint_hash, endpoint, p256dh, auth, mode, categories, projects, locale)
+  values (repeat('f', 64), 'https://fcm.googleapis.com/fcm/send/y1234567890123', repeat('A', 87), repeat('B', 22),
+          'projects', '{}', array['deusdeck'], 'es');
+  begin
+    insert into public.push_subscriptions (endpoint_hash, endpoint, p256dh, auth, mode, locale)
+    values (repeat('9', 64), 'http://inseguro.example/push-endpoint-1234', repeat('A', 87), repeat('B', 22), 'all', 'es');
+    raise exception 'FALLO: se aceptó un endpoint que no es https';
+  exception when check_violation then
+    null;
+  end;
+  begin
+    insert into public.push_subscriptions (endpoint_hash, endpoint, p256dh, auth, mode, categories, locale)
+    values (repeat('8', 64), 'https://fcm.googleapis.com/fcm/send/z1234567890123', repeat('A', 87), repeat('B', 22),
+            'categories', array['inexistente'], 'es');
+    raise exception 'FALLO: se aceptó una categoría inexistente';
+  exception when check_violation then
+    null;
+  end;
+  delete from public.push_subscriptions where endpoint_hash = repeat('f', 64);
+  reset role;
+end $;
+
 rollback;

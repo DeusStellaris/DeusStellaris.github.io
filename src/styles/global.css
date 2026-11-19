@@ -1,6 +1,10 @@
 /* Punto de entrada de estilos globales. Orden importante: tokens antes que base e identidades. */
 @import "./fonts.css";
 @import "./tokens.css";
+@import "./textures.css";
+@import "./brand.css";
+@import "./tooltip.css";
+@import "./ambient.css";
 @import "./base.css";
 @import "./motion.css";
 @import "./prose.css";

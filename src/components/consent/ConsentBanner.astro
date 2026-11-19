@@ -40,13 +40,17 @@ const apiBaseUrl = services.apiBaseUrl ?? '';
   <p class="consent__intro">{t(locale, 'consent.intro')}</p>
 
   <form class="consent__form" data-consent-form novalidate>
-    <p class="consent__links">
-      <a href={termsHref}>{t(locale, 'legal.footerTerms')}</a>
-      <span aria-hidden="true">·</span>
-      <a href={privacyHref}>{t(locale, 'legal.footerPrivacy')}</a>
-      <span aria-hidden="true">·</span>
-      <a href={cookiesHref}>{t(locale, 'legal.footerCookies')}</a>
-    </p>
+    <nav class="consent__links" aria-label={t(locale, 'consent.docsLabel')}>
+      <a class="consent__button" href={termsHref} data-tooltip={t(locale, 'consent.tooltipTerms')}>
+        {t(locale, 'legal.footerTerms')}
+      </a>
+      <a class="consent__button" href={privacyHref} data-tooltip={t(locale, 'consent.tooltipPrivacy')}>
+        {t(locale, 'legal.footerPrivacy')}
+      </a>
+      <a class="consent__button" href={cookiesHref} data-tooltip={t(locale, 'consent.tooltipCookies')}>
+        {t(locale, 'legal.footerCookies')}
+      </a>
+    </nav>
 
     <div class="consent__check">
       <input id="consent-terms" type="checkbox" data-consent-terms />
@@ -66,14 +70,52 @@ const apiBaseUrl = services.apiBaseUrl ?? '';
       )
     }
 
+    {
+      adsEnabled && (
+        <div class="consent__optional" role="group" aria-labelledby="consent-optional-label">
+          <p id="consent-optional-label" class="consent__optional-label">
+            {t(locale, 'consent.optionalLabel')}
+          </p>
+          <div class="consent__actions">
+            <button
+              type="button"
+              class="consent__button"
+              data-consent-optional="accept"
+              data-tooltip={t(locale, 'consent.tooltipAccept')}
+            >
+              {t(locale, 'consent.optionalAccept')}
+            </button>
+          </div>
+        </div>
+      )
+    }
+
     <p class="consent__error" role="alert" data-consent-error hidden></p>
     <p class="consent__status" role="status" aria-live="polite" data-consent-status></p>
 
     <div class="consent__actions">
-      <button type="submit" class="consent__button consent__button--primary" data-consent-submit>
+      <button
+        type="submit"
+        class="consent__button consent__button--primary"
+        data-consent-submit
+        data-tooltip={t(locale, 'consent.tooltipSubmit')}
+      >
         {t(locale, 'consent.submit')}
       </button>
-      <button type="button" class="consent__button" data-consent-later>
+      <button
+        type="button"
+        class="consent__button"
+        data-consent-optional="reject"
+        data-tooltip={t(locale, 'consent.tooltipReject')}
+      >
+        {t(locale, 'consent.optionalReject')}
+      </button>
+      <button
+        type="button"
+        class="consent__button"
+        data-consent-later
+        data-tooltip={t(locale, 'consent.tooltipLater')}
+      >
         {t(locale, 'consent.later')}
       </button>
     </div>
@@ -113,7 +155,6 @@ const apiBaseUrl = services.apiBaseUrl ?? '';
   }
 
   .consent__intro,
-  .consent__links,
   .consent__status {
     margin: 0 0 var(--space-3);
     color: var(--color-text-muted);
@@ -150,6 +191,7 @@ const apiBaseUrl = services.apiBaseUrl ?? '';
     font-size: var(--text-sm);
   }
 
+  .consent__links,
   .consent__actions {
     display: flex;
     flex-wrap: wrap;
@@ -157,13 +199,26 @@ const apiBaseUrl = services.apiBaseUrl ?? '';
   }
 
   .consent__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-height: var(--target-min);
+    text-decoration: none;
+    font-size: var(--text-sm);
     padding-inline: var(--space-4);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-pill);
     background: var(--color-surface-raised);
     color: var(--color-text);
     cursor: pointer;
+  }
+
+  /* El aviso recorta lo que sobresale: el tooltip se abre hacia arriba y dentro de sus bordes. */
+  .consent__button[data-tooltip]::after {
+    top: auto;
+    bottom: calc(100% + var(--space-2));
+    inset-inline: 0 auto;
+    max-width: min(14rem, 70vw);
   }
 
   .consent__button--primary {

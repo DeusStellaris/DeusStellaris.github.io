@@ -19,8 +19,8 @@ const hint = t(locale, 'preferences.liteModeHint');
   class="icon-button lite-toggle"
   data-lite-toggle
   aria-pressed="false"
-  aria-label={label}
-  title={hint}
+  aria-label={`${label}. ${hint}`}
+  data-tooltip={hint}
 >
   <svg class="lite-toggle__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <path

@@ -2,10 +2,11 @@
  * Worker de la API de likes del portafolio Deus.
  *
  *   POST /likes  { slug, visitorId, action: "like" | "unlike" }  →  { slug, likes, liked }
+ *   POST /consent, POST /push/subscribe, POST /push/unsubscribe  (ver consent.js y push.js)
  *
  * Capas de defensa, en orden:
  *   1. Origen: solo los orígenes del sitio (lista explícita) reciben CORS. Sin origen permitido → 403.
- *   2. Método y ruta: solo POST /likes y el preflight OPTIONS.
+ *   2. Método y ruta: solo las rutas POST de ROUTES y el preflight OPTIONS.
  *   3. Cuerpo: JSON, tamaño máximo, formato de slug, UUID de visitante y acción permitida.
  *   4. Existencia: el slug debe estar publicado en el índice del sitio.
  *   5. Frecuencia: límite por IP y por visitante, atómico en la base de datos.
@@ -14,9 +15,10 @@
 
 import { publishedSlugs } from './catalog.js';
 import { canonicalizeOrigin, readConfig } from './config.js';
-import { consentPreflight, handleConsent } from './consent.js';
+import { handleConsent } from './consent.js';
 import { pseudonymize } from './hash.js';
-import { errorResponse, jsonResponse, preflightResponse } from './http.js';
+import { errorResponse, jsonResponse, preflight } from './http.js';
+import { handlePushSubscribe, handlePushUnsubscribe } from './push.js';
 import { consumeRateLimit, countLikes, deleteLike, insertLike, SupabaseError } from './supabase.js';
 import { parseLikeBody, readJsonBody } from './validation.js';
 
@@ -89,33 +91,33 @@ async function handleLikes(request, env) {
   }
 }
 
+/** Rutas POST de la API. */
+const ROUTES = {
+  '/likes': handleLikes,
+  '/consent': handleConsent,
+  '/push/subscribe': handlePushSubscribe,
+  '/push/unsubscribe': handlePushUnsubscribe,
+};
+
 export default {
   /**
    * @param {Request} request
    * @param {Record<string, string | undefined>} env
    */
   async fetch(request, env) {
-    const url = new URL(request.url);
+    const { pathname } = new URL(request.url);
     const origin = canonicalizeOrigin(request.headers.get('origin'));
+    const handler = Object.hasOwn(ROUTES, pathname)
+      ? ROUTES[/** @type {keyof typeof ROUTES} */ (pathname)]
+      : null;
 
     try {
-      if (url.pathname !== '/likes' && url.pathname !== '/consent') {
-        return errorResponse(404, 'Recurso no encontrado.', origin);
-      }
-      if (request.method === 'OPTIONS') {
-        if (url.pathname === '/consent') return consentPreflight(request, env);
-        const loaded = readConfig(env);
-        const allowed = loaded.ok ? loaded.config.allowedOrigins : [];
-        return allowed.includes(origin ?? '')
-          ? preflightResponse(/** @type {string} */ (origin))
-          : errorResponse(403, 'Origen no permitido.', null);
-      }
+      if (!handler) return errorResponse(404, 'Recurso no encontrado.', origin);
+      if (request.method === 'OPTIONS') return preflight(request, env);
       if (request.method !== 'POST') {
         return errorResponse(405, 'Método no permitido.', origin, { Allow: 'POST, OPTIONS' });
       }
-      return url.pathname === '/consent'
-        ? await handleConsent(request, env)
-        : await handleLikes(request, env);
+      return await handler(request, env);
     } catch (error) {
       // Error inesperado: respuesta genérica, sin detalles ni stack trace.
       console.error('api_unexpected', error instanceof Error ? error.name : 'unknown');

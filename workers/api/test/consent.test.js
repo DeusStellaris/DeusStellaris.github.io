@@ -87,13 +87,19 @@ afterEach(() => {
 test('la versión del servidor coincide con src/config/legal.json del sitio', () => {
   const here = dirname(fileURLToPath(import.meta.url));
   const legal = JSON.parse(readFileSync(join(here, '../../../src/config/legal.json'), 'utf8'));
+  // Solo los documentos con consentimiento registrado en el servidor. La política de reembolso
+  // figura en legal.versions para mostrar su versión, pero no es un consentimiento.
   assert.deepEqual(
     {
       terms: LEGAL_VERSIONS.terms,
       privacy: LEGAL_VERSIONS.privacy,
       cookies: LEGAL_VERSIONS.cookies,
     },
-    legal.versions,
+    {
+      terms: legal.versions.terms,
+      privacy: legal.versions.privacy,
+      cookies: legal.versions.cookies,
+    },
   );
 });
 

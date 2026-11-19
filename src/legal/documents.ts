@@ -6,7 +6,7 @@ import type { LegalLocale } from './segments';
  * Ningún documento afirma cumplimiento normativo ni sustituye asesoramiento profesional.
  */
 
-export type DocumentKind = 'terms' | 'privacy' | 'cookies';
+export type DocumentKind = 'terms' | 'privacy' | 'cookies' | 'refund';
 
 export interface LegalSection {
   heading: string;
@@ -20,7 +20,90 @@ export interface LegalDocumentContent {
   sections: LegalSection[];
 }
 
+/*
+ * Política de reembolso: borrador preparado para una futura actividad comercial. No define productos,
+ * precios, plazos ni garantías porque hoy el sitio no cobra nada. Cualquier condición real se redacta
+ * y revisa antes de cobrar por primera vez.
+ */
+const REFUND: Record<LegalLocale, LegalDocumentContent> = {
+  es: {
+    title: 'Política de reembolso',
+    intro:
+      'Este sitio es un portafolio personal. Hoy no vende productos ni cobra servicios a través de sus páginas, así que esta política no define condiciones de compra todavía.',
+    sections: [
+      {
+        heading: '1. Estado actual',
+        paragraphs: [
+          'En este momento el sitio no procesa pagos ni ofrece compras en línea. Los encargos freelance se coordinan por el canal de contacto y no tienen un cobro automático en el sitio.',
+        ],
+      },
+      {
+        heading: '2. Encargos freelance',
+        paragraphs: [
+          'Cada encargo se rige por un acuerdo escrito separado, que deberá indicar su alcance, precio, forma de pago y condiciones de cancelación y reembolso. {{PENDING:condiciones de cancelación y reembolso en los acuerdos de servicio, a redactar y revisar por profesional}}',
+        ],
+      },
+      {
+        heading: '3. Productos o servicios futuros',
+        paragraphs: [
+          'Si en el futuro se ofrecen productos o servicios de pago en este sitio, esta política se actualizará antes del primer cobro, con los plazos, condiciones y procedimiento de reembolso que correspondan. {{PENDING:condiciones comerciales y de reembolso, a definir cuando exista actividad comercial}}',
+        ],
+      },
+      {
+        heading: '4. Consultas',
+        paragraphs: [
+          'Para consultas sobre esta política, usá el canal de contacto del sitio. {{PENDING:correo de contacto}}',
+        ],
+      },
+      {
+        heading: '5. Vigencia',
+        paragraphs: [
+          'Esta política tiene una versión con fecha visible. {{PENDING:revisión legal de esta política}}',
+        ],
+      },
+    ],
+  },
+  en: {
+    title: 'Refund policy',
+    intro:
+      'This site is a personal portfolio. It does not currently sell products or charge for services through its pages, so this policy does not set purchase conditions yet.',
+    sections: [
+      {
+        heading: '1. Current status',
+        paragraphs: [
+          'At the moment the site does not process payments or offer online purchases. Freelance work is arranged through the contact channel and is not charged automatically on the site.',
+        ],
+      },
+      {
+        heading: '2. Freelance work',
+        paragraphs: [
+          'Each engagement is governed by a separate written agreement, which must state its scope, price, payment method and cancellation and refund terms. {{PENDING:cancellation and refund terms in service agreements, to be drafted and reviewed by a professional}}',
+        ],
+      },
+      {
+        heading: '3. Future products or services',
+        paragraphs: [
+          'If paid products or services are offered on this site in the future, this policy will be updated before the first charge, with the time frames, conditions and refund procedure that apply. {{PENDING:commercial and refund conditions, to be defined once there is commercial activity}}',
+        ],
+      },
+      {
+        heading: '4. Questions',
+        paragraphs: [
+          'For questions about this policy, use the site contact channel. {{PENDING:contact email}}',
+        ],
+      },
+      {
+        heading: '5. Validity',
+        paragraphs: [
+          'This policy has a visible dated version. {{PENDING:legal review of this policy}}',
+        ],
+      },
+    ],
+  },
+};
+
 export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentContent>> = {
+  refund: REFUND,
   terms: {
     es: {
       title: 'Términos y condiciones de uso',
@@ -230,7 +313,12 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
         },
         {
           heading: '9. Cómo ejercer tus derechos',
-          paragraphs: ['Escribe a {{EMAIL}}. {{PENDING:canal y plazo de respuesta, a confirmar}}'],
+          paragraphs: [
+            'Escribe a {{EMAIL}}. {{PENDING:canal y plazo de respuesta, a confirmar}}',
+            'Solicitud de borrado o cancelación de suscripción: podés pedir la eliminación de tus datos desde el enlace «Solicitar borrado de datos / Cancelar suscripción» del pie de página. La solicitud se atiende por el canal de contacto publicado en el sitio; no se confirma ninguna eliminación hasta que el responsable la haya ejecutado.',
+            'Qué puede eliminarse: tus preferencias guardadas en este navegador (que también podés borrar desde su configuración), tu registro de consentimientos y los me gusta asociados a tu visitante. Qué podría conservarse: los registros que una obligación legal exija o que sean necesarios para acreditar un consentimiento o atender una reclamación, durante el plazo del apartado 7.',
+            '{{PENDING:procedimiento automatizado de borrado en el servidor, pendiente de implementación}}',
+          ],
         },
         {
           heading: '10. Cookies y almacenamiento local',
@@ -329,6 +417,9 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
           heading: '9. How to exercise your rights',
           paragraphs: [
             'Write to {{EMAIL}}. {{PENDING:response channel and time frame, to be confirmed}}',
+            'Data deletion or subscription cancellation: you can request the deletion of your data from the "Request data deletion / Cancel subscription" link in the page footer. Requests are handled through the contact channel published on the site; no deletion is confirmed until the controller has carried it out.',
+            'What can be deleted: your preferences stored in this browser (you can also clear them from its settings), your consent record and the likes linked to your visitor identifier. What may be kept: records that a legal obligation requires or that are needed to prove a consent or handle a claim, for the period in section 7.',
+            '{{PENDING:automated server-side deletion procedure, not yet implemented}}',
           ],
         },
         {

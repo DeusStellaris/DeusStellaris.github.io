@@ -1,5 +1,6 @@
 /*
- * Identidad de Juegos: plano técnico. Paleta azul fija (no depende del tema).
+ * Identidad de Juegos: plano técnico (Blueprint). Los colores vienen de tokens --color-blueprint-*,
+ * que cambian entre modo oscuro (blueprint nocturno) y claro (blueprint diurno).
  * Silkscreen en títulos y VT323 como acento de datos. Sin interfaz de videojuego recargada.
  */
 body[data-section="games"] {
@@ -9,13 +10,16 @@ body[data-section="games"] {
   --color-text: var(--color-blueprint-text);
   --color-text-muted: var(--color-blueprint-muted);
   --color-border: var(--color-blueprint-line);
-  --color-accent: #7fb3ff;
-  --color-accent-strong: #bcd6ff;
-  --color-focus: #bcd6ff;
-  --color-glow: rgb(127 179 255 / 0.16);
+  --color-accent: var(--color-blueprint-accent);
+  --color-accent-strong: var(--color-blueprint-accent-strong);
+  --color-focus: var(--color-blueprint-accent-strong);
+  --color-glow: var(--color-blueprint-grid);
 
   background-color: var(--color-blueprint-bg);
-  background-image: url("../../assets/backgrounds/blueprint-grid-placeholder.svg");
+  /* Cuadrícula técnica con gradientes lineales: trazos del token, sin SVG ni colores fijos. */
+  background-image:
+    linear-gradient(var(--color-blueprint-grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-blueprint-grid) 1px, transparent 1px);
   background-size: 40px 40px;
   color: var(--color-text);
 }

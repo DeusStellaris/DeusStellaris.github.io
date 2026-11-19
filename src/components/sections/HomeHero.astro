@@ -24,17 +24,6 @@ const latest = await listProjects(locale, { limit: 3 });
     <p class="home__subtitle">{t(locale, 'sections.home.subtitle')}</p>
   </header>
 
-  <section class="home__block" aria-labelledby="home-latest-heading">
-    <h2 id="home-latest-heading" class="home__heading">{t(locale, 'projects.latestHeading')}</h2>
-    {
-      latest.length > 0 ? (
-        <ProjectGrid locale={locale} items={latest} />
-      ) : (
-        <EmptyState message={t(locale, 'projects.emptyHome')} />
-      )
-    }
-  </section>
-
   <section class="home__block" aria-labelledby="home-explore-heading">
     <h2 id="home-explore-heading" class="home__heading">{t(locale, 'sections.home.exploreHeading')}</h2>
     <div class="home__cards">
@@ -47,6 +36,17 @@ const latest = await listProjects(locale, { limit: 3 });
         })
       }
     </div>
+  </section>
+
+  <section class="home__block" aria-labelledby="home-latest-heading">
+    <h2 id="home-latest-heading" class="home__heading">{t(locale, 'projects.latestHeading')}</h2>
+    {
+      latest.length > 0 ? (
+        <ProjectGrid locale={locale} items={latest} />
+      ) : (
+        <EmptyState message={t(locale, 'projects.emptyHome')} />
+      )
+    }
   </section>
 </div>
 

@@ -59,8 +59,12 @@ export function projectPagePaths(
 }
 
 /** Segmentos de URL de los documentos legales, por idioma. */
-export const LEGAL_SEGMENT: Record<'terms' | 'privacy' | 'cookies', Record<Locale, string>> = {
+export const LEGAL_SEGMENT: Record<
+  'terms' | 'privacy' | 'cookies' | 'refund',
+  Record<Locale, string>
+> = {
   terms: { es: 'terminos', en: 'terms' },
   privacy: { es: 'privacidad', en: 'privacy' },
   cookies: { es: 'cookies', en: 'cookies' },
+  refund: { es: 'reembolso', en: 'refunds' },
 };

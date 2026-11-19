@@ -7,6 +7,7 @@ import IntroOverlay from '../components/layout/IntroOverlay.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import SiteHeader from '../components/layout/SiteHeader.astro';
 import ProfileDialog from '../components/profile/ProfileDialog.astro';
+import NotificationsDialog from '../components/push/NotificationsDialog.astro';
 import type { SectionId } from '../config/sections';
 import siteConfig from '../config/site.json';
 import { DEFAULT_LOCALE, LOCALES, type Locale, t } from '../i18n';
@@ -50,10 +51,18 @@ const switchHrefs = switchTargets(paths ?? {});
 ---
 
 <!doctype html>
-<html lang={locale}>
+<html lang={locale} data-intro-policy={import.meta.env.DEV ? 'always' : 'session'}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!--
+      Tema, Lite Mode y bienvenida: script clásico, síncrono y lo más arriba posible del <head>.
+      Se ejecuta antes de cualquier hoja de estilo o componente que dependa del tema y fija
+      <html data-theme> antes del primer pintado. Externo (is:inline con src): cumple 'self' sin
+      'unsafe-inline' y no requiere mantener hashes. Ver public/js/preferences-init.js.
+    -->
+    <script is:inline src={publicAssetUrl('js/preferences-init.js')}></script>
     <title>{title}</title>
     <meta name="description" content={description} />
     {noindex && <meta name="robots" content="noindex" />}
@@ -84,14 +93,14 @@ const switchHrefs = switchTargets(paths ?? {});
     <meta property="og:locale" content={ogLocale} />
 
     <link rel="icon" href={publicAssetUrl('favicon.svg')} type="image/svg+xml" />
-
-    <!-- Tema y Lite Mode antes del primer pintado. Script externo: no requiere 'unsafe-inline' en la CSP. -->
-    <script is:inline src={publicAssetUrl('js/preferences-init.js')}></script>
+    <link rel="manifest" href={publicAssetUrl('manifest.webmanifest')} />
+    <link rel="apple-touch-icon" href={publicAssetUrl('assets/icons/apple-touch-icon.png')} />
+    <meta name="theme-color" content="#7C3AED" />
 
     <ClientRouter fallback="swap" />
   </head>
   <body data-section={section ?? 'home'}>
-    <IntroOverlay />
+    <IntroOverlay locale={locale} />
     <a class="skip-link" href="#main">{t(locale, 'common.skipToContent')}</a>
     <SiteHeader locale={locale} section={section ?? 'home'} switchHrefs={switchHrefs} />
     <main id="main" tabindex="-1">
@@ -99,6 +108,7 @@ const switchHrefs = switchTargets(paths ?? {});
     </main>
     <SiteFooter locale={locale} />
     <ProfileDialog locale={locale} />
+    <NotificationsDialog locale={locale} />
     <ConsentBanner locale={locale} />
     {
       assistant && (

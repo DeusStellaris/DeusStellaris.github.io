@@ -2,6 +2,13 @@ import { readLocal, STORAGE_KEYS, writeLocal } from './storage';
 
 export type Theme = 'light' | 'dark';
 
+/** Inicializador único definido en public/js/preferences-init.js (cargado antes del primer pintado). */
+declare global {
+  interface Window {
+    deusPreferences?: { apply(root: HTMLElement): void };
+  }
+}
+
 const SYSTEM_LIGHT_QUERY = '(prefers-color-scheme: light)';
 const TOGGLE_SELECTOR = '[data-theme-toggle]';
 
@@ -15,22 +22,18 @@ export function getStoredTheme(): Theme | null {
   return isTheme(value) ? value : null;
 }
 
-/** Tema efectivo: elección guardada o, si no existe, el del sistema. */
-export function resolveTheme(): Theme {
-  const stored = getStoredTheme();
-  if (stored) return stored;
-  return window.matchMedia(SYSTEM_LIGHT_QUERY).matches ? 'light' : 'dark';
-}
-
 function currentTheme(): Theme {
   return document.documentElement.dataset.theme === 'light' ? 'light' : 'dark';
 }
 
-/** Refleja el tema actual en los botones (icono y etiqueta accesible). */
+/**
+ * Refleja el tema efectivo del documento en la etiqueta accesible de los botones. El icono no se
+ * sincroniza aquí: ThemeToggle.astro lo deriva de <html data-theme> con CSS, sin estado propio.
+ * Idempotente: puede llamarse en cualquier momento sin efectos secundarios.
+ */
 export function syncThemeToggles(): void {
   const theme = currentTheme();
   for (const button of document.querySelectorAll<HTMLButtonElement>(TOGGLE_SELECTOR)) {
-    button.dataset.mode = theme;
     const label = theme === 'dark' ? button.dataset.labelToLight : button.dataset.labelToDark;
     if (label) button.setAttribute('aria-label', label);
   }
@@ -63,11 +66,28 @@ export function initThemePreferences(): void {
     if (event.target.closest(TOGGLE_SELECTOR)) toggleTheme();
   });
 
-  // Si el visitante no eligió tema, seguir los cambios del sistema en vivo.
-  window.matchMedia(SYSTEM_LIGHT_QUERY).addEventListener('change', () => {
-    if (getStoredTheme() === null) applyTheme(resolveTheme());
+  // ClientRouter sustituye <html> (atributos y clases) en cada navegación. Antes del swap se
+  // reaplican las preferencias (Lite Mode) y se fija en el documento nuevo el tema EFECTIVO actual,
+  // sea elegido o detectado del sistema. Tras el swap se reafirma por si el reemplazo lo pisó.
+  let themeBeforeSwap: Theme = currentTheme();
+  document.addEventListener('astro:before-swap', (event) => {
+    themeBeforeSwap = currentTheme();
+    const incoming = event.newDocument.documentElement;
+    window.deusPreferences?.apply(incoming);
+    incoming.dataset.theme = themeBeforeSwap;
+  });
+  document.addEventListener('astro:after-swap', () => {
+    document.documentElement.dataset.theme = themeBeforeSwap;
+    syncThemeToggles();
   });
 
+  // Si el visitante no eligió tema, seguir los cambios del sistema en vivo.
+  window.matchMedia(SYSTEM_LIGHT_QUERY).addEventListener('change', (event) => {
+    if (getStoredTheme() !== null) return;
+    applyTheme(event.matches ? 'light' : 'dark');
+  });
+
+  // El botón nuevo de cada página refleja el tema efectivo del documento.
   document.addEventListener('astro:page-load', syncThemeToggles);
   syncThemeToggles();
 }

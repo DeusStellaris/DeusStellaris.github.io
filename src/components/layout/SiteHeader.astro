@@ -3,6 +3,7 @@ import { NAV_SECTIONS, type NavSectionId, type SectionId } from '../../config/se
 import { type Locale, type TranslationKey, t } from '../../i18n';
 import { sectionHref } from '../../i18n/routes';
 import ProfileButton from '../profile/ProfileButton.astro';
+import NotificationsButton from '../push/NotificationsButton.astro';
 import LanguagePill from '../ui/LanguagePill.astro';
 import LiteModeToggle from '../ui/LiteModeToggle.astro';
 import Logo from '../ui/Logo.astro';
@@ -55,6 +56,7 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
 
     <div class="site-header__controls">
       <ProfileButton locale={locale} />
+      <NotificationsButton locale={locale} />
       <LiteModeToggle locale={locale} />
       <ThemeToggle locale={locale} />
       <LanguagePill locale={locale} hrefs={switchHrefs} />

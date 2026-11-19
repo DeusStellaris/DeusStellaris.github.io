@@ -12,7 +12,7 @@
 
 import { canonicalizeOrigin, readConfig } from './config.js';
 import { pseudonymize } from './hash.js';
-import { errorResponse, jsonResponse, preflightResponse } from './http.js';
+import { errorResponse, jsonResponse } from './http.js';
 import { LEGAL_VERSIONS } from './legal-versions.js';
 import { consumeRateLimit, insertConsent, SupabaseError } from './supabase.js';
 import { readJsonBody, UUID_V4_PATTERN } from './validation.js';
@@ -95,14 +95,4 @@ export async function handleConsent(request, env) {
     console.error('consent_storage_error', error instanceof SupabaseError ? error.code : 'unknown');
     return errorResponse(502, 'No se pudo registrar la solicitud. Intentalo más tarde.', origin);
   }
-}
-
-/** Preflight CORS para /consent, solo para orígenes permitidos. */
-export function consentPreflight(request, env) {
-  const origin = canonicalizeOrigin(request.headers.get('origin'));
-  const loaded = readConfig(env);
-  const allowed = loaded.ok ? loaded.config.allowedOrigins : [];
-  return origin && allowed.includes(origin)
-    ? preflightResponse(origin)
-    : errorResponse(403, 'Origen no permitido.', null);
 }

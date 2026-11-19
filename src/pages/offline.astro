@@ -1,0 +1,28 @@
+---
+import { type Locale, t } from '../i18n';
+import { sectionHref } from '../i18n/routes';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const locale: Locale = 'es';
+---
+
+<BaseLayout
+  title={`${t(locale, 'offline.title')} · ${t(locale, 'common.siteName')}`}
+  description={t(locale, 'offline.body')}
+  locale={locale}
+  pagePaths={{ es: '/offline/', en: '/offline/' }}
+  assistant={false}
+  noindex
+>
+  <div class="container offline">
+    <h1>{t(locale, 'offline.title')}</h1>
+    <p>{t(locale, 'offline.body')}</p>
+    <p><a href={sectionHref('home', locale)}>{t(locale, 'offline.back')}</a></p>
+  </div>
+</BaseLayout>
+
+<style>
+  .offline {
+    padding-block: var(--space-24);
+  }
+</style>

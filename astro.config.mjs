@@ -87,6 +87,12 @@ export default defineConfig({
         access: 'public',
         optional: true,
       }),
+      // Clave VAPID pública de Web Push (la privada vive solo como secreto del Worker).
+      PUBLIC_VAPID_PUBLIC_KEY: envField.string({
+        context: 'client',
+        access: 'public',
+        optional: true,
+      }),
     },
   },
 

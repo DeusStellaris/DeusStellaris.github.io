@@ -61,11 +61,15 @@ const en: Partial<Dictionary> = {
     fallbackNotice: 'This version of the project is only available in Spanish.',
     category: 'Category',
   },
+  intro: {
+    welcome: 'Welcome',
+  },
   preferences: {
     themeToLight: 'Switch to light mode',
     themeToDark: 'Switch to dark mode',
     liteMode: 'Performance mode',
-    liteModeHint: 'Reduces animations and visual effects',
+    liteModeHint:
+      'Lite Mode is on by default to save CPU, GPU, RAM and battery. Press it to turn on the full ambient effects; press again to save resources.',
   },
   search: {
     heading: 'Search',
@@ -147,6 +151,8 @@ const en: Partial<Dictionary> = {
     footerTerms: 'Terms',
     footerPrivacy: 'Privacy',
     footerCookies: 'Cookies',
+    footerRefund: 'Refunds',
+    dataDeletionRequest: 'Request data deletion / Cancel subscription',
     pendingTag: 'Pending item',
   },
   consent: {
@@ -159,6 +165,17 @@ const en: Partial<Dictionary> = {
     required: 'To continue, check the two required documents.',
     submit: 'Save my choices',
     later: 'Later',
+    optionalLabel: 'Optional cookies (not needed to use the site):',
+    optionalAccept: 'Accept optional cookies',
+    optionalReject: 'Reject optional',
+    docsLabel: 'Legal documents',
+    tooltipTerms: 'Opens the Terms and conditions of use.',
+    tooltipPrivacy: 'Opens the Privacy policy.',
+    tooltipCookies: 'Opens the Cookie policy.',
+    tooltipSubmit: 'Saves your acceptance of the ticked documents.',
+    tooltipReject: 'Rejects optional storage and cookies. The site works just the same.',
+    tooltipLater: 'Closes this notice until the next session without saving anything.',
+    tooltipAccept: 'Accepts optional cookies (non-essential advertising).',
     close: 'Close',
     registered: 'Acceptance registered on the server.',
     serverPending:
@@ -176,6 +193,78 @@ const en: Partial<Dictionary> = {
   ads: {
     placeholder: 'Advertising space',
     waiting: 'Advertising will only be shown if you accept the advertising preference.',
+  },
+  offline: {
+    title: 'Offline',
+    body: 'There is no connection and this page has not been saved on your device yet. Try again when you are back online.',
+    back: 'Go to home',
+  },
+  push: {
+    open: 'Notifications',
+    openHint: 'Choose which alerts you want to receive. They only turn on if you decide so.',
+    title: 'Notification preferences',
+    close: 'Close',
+    intro:
+      'Choose what you want to receive. Alerts only reach this device and you can change or turn them off at any time.',
+    modeGroup: 'Which alerts to receive',
+    categoriesGroup: 'Categories',
+    projectsGroup: 'Specific projects',
+    impactTitle: 'Estimated impact',
+    impactBattery: 'Battery',
+    impactData: 'Background data',
+    detailHint: 'Hover or focus an option to see its details.',
+    categoryTooltip: 'Receive alerts from this section.',
+    projectTooltip: 'Receive alerts from this project.',
+    enable: 'Enable on this device',
+    enableHint: 'Asks the browser for permission to show alerts on this device.',
+    modes: {
+      all: {
+        label: 'Everything',
+        tooltip: 'Get an alert for every update on the site.',
+        description:
+          'One alert for every published update, whatever the section. The most complete option.',
+        battery: 'Low: each alert wakes the device for a few seconds.',
+        data: 'About 1 to 2 KB per alert, a few per week.',
+      },
+      none: {
+        label: 'Nothing',
+        tooltip: 'Receive no alerts and cancel this device subscription.',
+        description:
+          'No alerts at all. This device subscription is cancelled and removed from the server.',
+        battery: 'None.',
+        data: 'None.',
+      },
+      categories: {
+        label: 'By category',
+        tooltip: 'Pick one or more sections: Games, Programs or Freelance.',
+        description:
+          'You only get alerts from the sections you tick: Games, Programs or Freelance.',
+        battery: 'Very low: fewer alerts than Everything.',
+        data: 'Under 1 KB per week, depending on your choice.',
+      },
+      projects: {
+        label: 'By project',
+        tooltip: 'Follow specific projects, for example DeusDeck.',
+        description:
+          'You only get alerts from the projects you follow, such as DeusDeck. The quietest option.',
+        battery: 'Minimal: only alerts for what you follow.',
+        data: 'Minimal: a few KB per month.',
+      },
+    },
+    status: {
+      off: 'Notifications are off on this device.',
+      needsPermission:
+        'Your preferences are saved. Notifications still need to be enabled on this device.',
+      active: 'Active on this device. Changes are saved automatically.',
+      denied:
+        'The browser blocked notifications. Allow them in the site permissions to turn them on.',
+      unsupported: 'This browser does not support push notifications.',
+      unconfigured:
+        'Preferences saved on this device. Alerts will turn on once the notification service is available.',
+      saving: 'Saving…',
+      error: 'The action could not be completed. Please try again later.',
+    },
+    ios: 'On iPhone and iPad you must install the app first: tap Share, choose "Add to Home Screen" and open it from its icon. Then you can enable notifications.',
   },
   notFound: {
     title: 'Page not found',

@@ -59,11 +59,15 @@ const es = {
     fallbackNotice: 'Esta versión del proyecto solo está disponible en español.',
     category: 'Categoría',
   },
+  intro: {
+    welcome: 'Bienvenido',
+  },
   preferences: {
     themeToLight: 'Activar modo claro',
     themeToDark: 'Activar modo oscuro',
     liteMode: 'Modo rendimiento',
-    liteModeHint: 'Reduce animaciones y efectos visuales',
+    liteModeHint:
+      'Modo Lite activo por defecto para ahorrar CPU, GPU, RAM y batería. Pulsalo para encender los efectos ambientales completos; volvé a pulsarlo para ahorrar de nuevo.',
   },
   search: {
     heading: 'Buscar',
@@ -143,6 +147,8 @@ const es = {
     footerTerms: 'Términos',
     footerPrivacy: 'Privacidad',
     footerCookies: 'Cookies',
+    footerRefund: 'Reembolso',
+    dataDeletionRequest: 'Solicitar borrado de datos / Cancelar suscripción',
     pendingTag: 'Dato pendiente',
   },
   consent: {
@@ -155,6 +161,18 @@ const es = {
     required: 'Para continuar, marcá los dos documentos obligatorios.',
     submit: 'Guardar mis decisiones',
     later: 'Más tarde',
+    optionalLabel: 'Cookies opcionales (no son necesarias para usar el sitio):',
+    optionalAccept: 'Aceptar cookies opcionales',
+    optionalReject: 'Rechazar opcionales',
+    docsLabel: 'Documentos legales',
+    tooltipTerms: 'Abre los Términos y condiciones de uso.',
+    tooltipPrivacy: 'Abre la Política de privacidad.',
+    tooltipCookies: 'Abre la Política de cookies.',
+    tooltipSubmit: 'Guarda tu aceptación de los documentos marcados.',
+    tooltipReject:
+      'Rechaza el almacenamiento y las cookies opcionales. El sitio sigue funcionando igual.',
+    tooltipLater: 'Cierra este aviso hasta la próxima sesión sin guardar nada.',
+    tooltipAccept: 'Acepta las cookies opcionales (publicidad no esencial).',
     close: 'Cerrar',
     registered: 'Aceptación registrada en el servidor.',
     serverPending:
@@ -172,6 +190,78 @@ const es = {
   ads: {
     placeholder: 'Espacio publicitario',
     waiting: 'La publicidad se mostrará solo si aceptás la preferencia de publicidad.',
+  },
+  offline: {
+    title: 'Sin conexión',
+    body: 'No hay conexión y esta página todavía no se guardó en tu dispositivo. Volvé a intentarlo cuando te reconectes.',
+    back: 'Ir al inicio',
+  },
+  push: {
+    open: 'Notificaciones',
+    openHint: 'Elegí qué avisos querés recibir. Solo se activan si vos lo decidís.',
+    title: 'Preferencias de notificaciones',
+    close: 'Cerrar',
+    intro:
+      'Elegí qué querés recibir. Los avisos llegan solo a este dispositivo y podés cambiarlos o apagarlos cuando quieras.',
+    modeGroup: 'Qué avisos recibir',
+    categoriesGroup: 'Categorías',
+    projectsGroup: 'Proyectos puntuales',
+    impactTitle: 'Impacto estimado',
+    impactBattery: 'Batería',
+    impactData: 'Datos en segundo plano',
+    detailHint: 'Pasá el mouse o enfocá una opción para ver su detalle.',
+    categoryTooltip: 'Recibir avisos de esta sección.',
+    projectTooltip: 'Recibir avisos de este proyecto.',
+    enable: 'Activar en este dispositivo',
+    enableHint: 'Pide permiso al navegador para mostrar avisos en este dispositivo.',
+    modes: {
+      all: {
+        label: 'Todo',
+        tooltip: 'Recibir un aviso por cada novedad del sitio.',
+        description:
+          'Un aviso por cada novedad publicada, sin importar la sección. Es la opción más completa.',
+        battery: 'Baja: cada aviso despierta el dispositivo unos segundos.',
+        data: 'Cerca de 1 a 2 KB por aviso, unos pocos por semana.',
+      },
+      none: {
+        label: 'Nada',
+        tooltip: 'No recibir avisos y cancelar la suscripción de este dispositivo.',
+        description:
+          'No llega ningún aviso. Se cancela la suscripción de este dispositivo y se borra del servidor.',
+        battery: 'Ninguno.',
+        data: 'Ninguno.',
+      },
+      categories: {
+        label: 'Por categoría',
+        tooltip: 'Elegir una o más secciones: Juegos, Programas o Freelance.',
+        description:
+          'Solo recibís avisos de las secciones que marques: Juegos, Programas o Freelance.',
+        battery: 'Muy baja: llegan menos avisos que con Todo.',
+        data: 'Menos de 1 KB por semana, según lo que elijas.',
+      },
+      projects: {
+        label: 'Por proyecto',
+        tooltip: 'Seguir proyectos puntuales, por ejemplo DeusDeck.',
+        description:
+          'Solo recibís avisos de los proyectos que sigas, como DeusDeck. Es la opción más silenciosa.',
+        battery: 'Mínima: solo avisos de lo que seguís.',
+        data: 'Mínimos: unos pocos KB al mes.',
+      },
+    },
+    status: {
+      off: 'Las notificaciones están apagadas en este dispositivo.',
+      needsPermission:
+        'Tus preferencias están guardadas. Falta activar las notificaciones en este dispositivo.',
+      active: 'Activas en este dispositivo. Los cambios se guardan solos.',
+      denied:
+        'El navegador bloqueó las notificaciones. Habilitalas en los permisos del sitio para activarlas.',
+      unsupported: 'Este navegador no admite notificaciones push.',
+      unconfigured:
+        'Preferencias guardadas en este dispositivo. Los avisos se activarán cuando el servicio de notificaciones esté disponible.',
+      saving: 'Guardando…',
+      error: 'No se pudo completar la acción. Intentalo de nuevo más tarde.',
+    },
+    ios: 'En iPhone y iPad primero tenés que instalar la app: tocá Compartir, elegí "Agregar a pantalla de inicio" y abrila desde su ícono. Después podrás activar las notificaciones.',
   },
   notFound: {
     title: 'Página no encontrada',

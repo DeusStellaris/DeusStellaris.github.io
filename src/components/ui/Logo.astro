@@ -11,13 +11,10 @@ interface Props {
 const { locale } = Astro.props;
 ---
 
-<!--
-  data-brand-mark: destino de la animación de bienvenida (src/features/intro/intro.ts).
-  El destello (.brand-glint) se dispara una vez al terminar esa animación.
--->
+<!-- El destello de marca (.brand-mark) se define en src/styles/brand.css, compartido con la bienvenida. -->
 <a class="logo" href={sectionHref('home', locale)}>
-  <span class="logo__mark" data-brand-mark>
-    <img src={publicAssetUrl('assets/logo/deus-logo-placeholder.svg')} alt="" width="40" height="40" />
+  <span class="brand-mark logo__mark" data-logo-mark>
+    <img src={publicAssetUrl('assets/logo/deus-samurai.webp')} alt="" width="40" height="40" />
   </span>
   <span class="logo__name">{t(locale, 'common.siteName')}</span>
 </a>
@@ -35,47 +32,7 @@ const { locale } = Astro.props;
   }
 
   .logo__mark {
-    position: relative;
-    display: inline-flex;
     width: 2.25rem;
     height: 2.25rem;
-    border-radius: 50%;
-  }
-
-  .logo__mark img {
-    width: 100%;
-    height: 100%;
-  }
-
-  /* Destello sutil de marca: un único barrido tras la bienvenida, sin bucles. */
-  .logo__mark::after {
-    content: '';
-    position: absolute;
-    inset: -40%;
-    border-radius: 50%;
-    background: radial-gradient(circle, var(--color-accent-strong) 0%, transparent 60%);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .logo__mark.brand-glint::after {
-    animation: brand-glint 1200ms var(--ease-out) 1;
-  }
-
-  @keyframes brand-glint {
-    0% {
-      opacity: 0;
-    }
-    40% {
-      opacity: 0.45;
-    }
-    100% {
-      opacity: 0;
-    }
-  }
-
-  /* Mientras corre la bienvenida, el logotipo del header aún no se muestra. */
-  :global(html.intro-playing) .logo__mark {
-    visibility: hidden;
   }
 </style>

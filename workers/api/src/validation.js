@@ -26,17 +26,18 @@ export function parseLikeBody(body) {
  * Lee el cuerpo JSON con límite de tamaño. Devuelve null si excede el límite o no es JSON.
  * Se comprueba la longitud real del texto, no solo la cabecera Content-Length.
  * @param {Request} request
+ * @param {number} [maxBytes]
  * @returns {Promise<unknown | null>}
  */
-export async function readJsonBody(request) {
+export async function readJsonBody(request, maxBytes = MAX_BODY_BYTES) {
   const contentType = request.headers.get('content-type') ?? '';
   if (!contentType.toLowerCase().startsWith('application/json')) return null;
 
   const declared = Number(request.headers.get('content-length') ?? '0');
-  if (Number.isFinite(declared) && declared > MAX_BODY_BYTES) return null;
+  if (Number.isFinite(declared) && declared > maxBytes) return null;
 
   const text = await request.text();
-  if (new TextEncoder().encode(text).length > MAX_BODY_BYTES) return null;
+  if (new TextEncoder().encode(text).length > maxBytes) return null;
   try {
     return JSON.parse(text);
   } catch {

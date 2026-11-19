@@ -1,13 +1,7 @@
 /*
- * Identidad de Freelance: mármol sobrio y composición editorial. Sigue el tema.
+ * Identidad de Freelance: mármol real (ver textures.css) y composición editorial. Sigue el tema.
  * Playfair Display en títulos, espaciado generoso y líneas finas.
  */
-body[data-section="freelance"] {
-  background-color: var(--color-bg);
-  background-image: radial-gradient(50rem 26rem at 80% 0%, var(--color-glow), transparent 70%);
-  background-repeat: no-repeat;
-}
-
 body[data-section="freelance"] h1 {
   font-family: var(--font-display);
   font-weight: 400;

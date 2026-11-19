@@ -26,18 +26,40 @@
   --color-accent-strong: #f3e3bd;
   --color-glow: rgb(227 207 160 / 0.18);
 
+  /* Textura de mármol real de Inicio y Freelance (WebP optimizado; cambia con el tema) */
+  --texture-marble: url("../assets/backgrounds/marble-dark.webp");
+  /* Encuadre de la textura por breakpoint (background-position); conserva las vetas doradas */
+  --texture-marble-position: 50% 45%;
+  /* Superficie velada para texto largo sobre la textura (legal, prosa) */
+  --surface-veil: rgb(12 12 14 / 0.9);
+  /* Velo translúcido para textos sueltos sobre el mármol (ver textures.css) */
+  --veil-bg: rgb(12 12 14 / 0.72);
+  --veil-blur: 10px;
+
+  /* Efectos ambientales (ver ambient.css): violeta y dorado discretos, polvo estelar cálido */
+  --ambient-violet: rgb(124 58 237 / 0.5);
+  --ambient-gold-glow: rgb(227 207 160 / 0.3);
+  --ambient-trace: rgb(227 207 160 / 0.85);
+  --ambient-dust: rgb(255 244 214 / 0.9);
+  --ambient-shimmer: rgb(255 240 210 / 0.14);
+
   /* Identidades de sección (Juegos y Programas fijan su paleta oscura en cualquier tema) */
   --color-blueprint-bg: #0a1220;
   --color-blueprint-surface: #0f1a2e;
   --color-blueprint-text: #e6eefc;
   --color-blueprint-muted: #9fb3d1;
   --color-blueprint-line: rgb(127 179 255 / 0.18);
+  --color-blueprint-grid: rgb(127 179 255 / 0.1);
+  --color-blueprint-accent: #7fb3ff;
+  --color-blueprint-accent-strong: #bcd6ff;
   --color-terminal-bg: #060708;
   --color-terminal-surface: #0b0d0c;
+  --color-terminal-raised: #111513;
   --color-terminal-text: #d7e3d7;
   --color-terminal-muted: #8fa892;
   --color-terminal-accent: #7fdc9a;
   --color-terminal-border: rgb(127 220 154 / 0.22);
+  --color-terminal-selection: rgb(127 220 154 / 0.25);
 
   /* Foco visible y consistente en todo el sitio */
   --color-focus: #f3e3bd;
@@ -100,14 +122,58 @@
  */
 :root[data-theme="light"] {
   color-scheme: light;
-  --color-bg: #f4f3f0;
+  /* Blanco perla neutro: sin dominante amarilla, con menos brillo que el blanco puro */
+  --color-bg: #f5f5f7;
   --color-surface: #ffffff;
-  --color-surface-raised: #ecebe7;
-  --color-border: rgb(0 0 0 / 0.1);
-  --color-text: #141417;
+  --color-surface-raised: #ebebef;
+  --color-border: rgb(20 20 28 / 0.12);
+  --color-text: #16161c;
   --color-text-muted: #55555e;
-  --color-accent: #7a5c1e;
-  --color-accent-strong: #5c4413;
-  --color-glow: rgb(122 92 30 / 0.12);
-  --color-focus: #5c4413;
+  --color-accent: #6b4f17;
+  --color-accent-strong: #4f3a10;
+  --color-glow: rgb(107 79 23 / 0.1);
+  --color-focus: #4f3a10;
+  --texture-marble: url("../assets/backgrounds/marble-light.webp");
+  --surface-veil: rgb(255 255 255 / 0.92);
+  --veil-bg: rgb(250 250 252 / 0.78);
+
+  /* Efectos ambientales en claro: tonos más contenidos sobre fondo pálido */
+  --ambient-violet: rgb(109 40 217 / 0.34);
+  --ambient-gold-glow: rgb(184 134 11 / 0.4);
+  --ambient-trace: rgb(184 134 11 / 0.9);
+  --ambient-dust: rgb(184 134 11 / 0.85);
+  --ambient-shimmer: rgb(255 255 255 / 0.5);
+
+  /* Blueprint diurno (Juegos): celeste grisáceo pálido, trazos azules técnicos */
+  --color-blueprint-bg: #eef3f9;
+  --color-blueprint-surface: #ffffff;
+  --color-blueprint-text: #0f1f38;
+  --color-blueprint-muted: #3d5573;
+  --color-blueprint-line: rgb(29 78 216 / 0.22);
+  --color-blueprint-grid: rgb(29 78 216 / 0.09);
+  --color-blueprint-accent: #1d4ed8;
+  --color-blueprint-accent-strong: #1e3a8a;
+
+  /* Editor de código en modo día (Programas): fondo claro, sintaxis legible */
+  --color-terminal-bg: #f7f8f7;
+  --color-terminal-surface: #ffffff;
+  --color-terminal-raised: #eceee9;
+  --color-terminal-text: #1e2327;
+  --color-terminal-muted: #5b6670;
+  --color-terminal-accent: #6d28d9;
+  --color-terminal-border: rgb(30 35 39 / 0.14);
+  --color-terminal-selection: rgb(109 40 217 / 0.16);
+}
+
+/* Posición de la textura por breakpoint (mobile-first). Escritorio centrado; móvil desplaza para conservar las vetas. */
+@media (min-width: 40em) {
+  :root {
+    --texture-marble-position: 50% 42%;
+  }
+}
+
+@media (min-width: 64em) {
+  :root {
+    --texture-marble-position: 50% 50%;
+  }
 }

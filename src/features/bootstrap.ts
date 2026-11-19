@@ -8,6 +8,8 @@ import { initLikes, initRankings } from './likes/likes';
 import { initLiteMode } from './preferences/lite-mode';
 import { initThemePreferences } from './preferences/theme';
 import { initProfile } from './profile/profile';
+import { initPushPanel } from './push/push-panel';
+import { registerServiceWorker } from './pwa/register';
 import { initSearchWidgets } from './search/search-widget';
 
 /**
@@ -20,6 +22,7 @@ import { initSearchWidgets } from './search/search-widget';
 function initPage(): void {
   initFavorites();
   initProfile();
+  initPushPanel();
   initAssistant();
   initSearchWidgets();
   initLikes();
@@ -29,8 +32,13 @@ function initPage(): void {
   initAds();
 }
 
+registerServiceWorker();
 initThemePreferences();
 initLiteMode();
-runIntro();
 initPage();
-document.addEventListener('astro:page-load', initPage);
+runIntro();
+// runIntro es idempotente: en cada navegación solo retira el overlay si no corresponde reproducirlo.
+document.addEventListener('astro:page-load', () => {
+  initPage();
+  runIntro();
+});

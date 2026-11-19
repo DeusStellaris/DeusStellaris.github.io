@@ -1,22 +1,27 @@
 /*
- * Identidad de Programas: terminal oscura. Paleta fija en cualquier tema.
- * JetBrains Mono para jerarquía. La legibilidad es prioridad: texto claro sobre fondo casi negro.
+ * Identidad de Programas: editor de código con tema oscuro o claro según el tema del sitio.
+ * Colores vía tokens --color-terminal-*. JetBrains Mono para jerarquía; la legibilidad es prioridad.
  */
 body[data-section="programs"] {
   --color-bg: var(--color-terminal-bg);
   --color-surface: var(--color-terminal-surface);
-  --color-surface-raised: #111513;
+  --color-surface-raised: var(--color-terminal-raised);
   --color-text: var(--color-terminal-text);
   --color-text-muted: var(--color-terminal-muted);
   --color-border: var(--color-terminal-border);
   --color-accent: var(--color-terminal-accent);
   --color-accent-strong: var(--color-terminal-accent);
   --color-focus: var(--color-terminal-accent);
-  --color-glow: rgb(127 220 154 / 0.12);
+  --color-glow: var(--color-terminal-selection);
 
   background-color: var(--color-terminal-bg);
   color: var(--color-text);
   font-family: var(--font-mono);
+}
+
+body[data-section="programs"] ::selection {
+  background-color: var(--color-terminal-selection);
+  color: var(--color-text);
 }
 
 body[data-section="programs"] h1,

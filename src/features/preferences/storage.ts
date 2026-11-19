@@ -8,6 +8,7 @@ export const STORAGE_KEYS = {
   theme: 'deus:theme',
   liteMode: 'deus:lite-mode',
   introPlayed: 'deus:intro-played',
+  pushPreferences: 'deus:push-preferences',
 } as const;
 
 export function readLocal(key: string): string | null {

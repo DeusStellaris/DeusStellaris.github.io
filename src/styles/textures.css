@@ -1,0 +1,52 @@
+/*
+ * Textura de mármol real para Inicio y Freelance. Sigue el tema: el token --texture-marble
+ * cambia entre marble-dark.webp y marble-light.webp sin recargar la página. Una sola capa de imagen,
+ * sin filtros ni gradientes superpuestos. La posición por breakpoint vive en tokens.css.
+ */
+body[data-section="home"],
+body[data-section="freelance"] {
+  background-color: var(--color-bg);
+  background-image: var(--texture-marble);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: var(--texture-marble-position);
+}
+
+/*
+ * Velo legible solo para los bloques de texto que van directamente sobre el mármol: encabezado,
+ * subtítulos de sección y estados vacíos. Fondo translúcido con desenfoque moderado, sin sombras
+ * de texto ni contornos en las letras. Las tarjetas (ProjectCard, SectionCard) ya tienen superficie.
+ */
+body[data-section="home"] :is(.home__hero, .home__heading, .empty-state, .site-footer),
+body[data-section="freelance"] :is(.section-intro, .empty-state, .site-footer) {
+  background: var(--veil-bg);
+  -webkit-backdrop-filter: blur(var(--veil-blur));
+  backdrop-filter: blur(var(--veil-blur));
+  border-radius: var(--radius-md);
+}
+
+/* El pie es una banda de ancho completo: sin esquinas redondeadas, continuidad con el contenido. */
+body[data-section="home"] .site-footer,
+body[data-section="freelance"] .site-footer {
+  border-radius: 0;
+}
+
+body[data-section="home"] .home__hero,
+body[data-section="freelance"] .section-intro {
+  padding: var(--space-8) var(--space-6);
+}
+
+/* Los rótulos de sección son de una línea: el velo ajusta su ancho al texto. */
+body[data-section="home"] .home__heading {
+  width: fit-content;
+  padding: var(--space-1) var(--space-3);
+}
+
+/* Lite Mode: sin desenfoque (coste de GPU); el velo translúcido se mantiene. */
+html.lite-mode
+  body[data-section="home"]
+  :is(.home__hero, .home__heading, .empty-state, .site-footer),
+html.lite-mode body[data-section="freelance"] :is(.section-intro, .empty-state, .site-footer) {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}

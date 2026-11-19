@@ -1,0 +1,10 @@
+{
+  "_nota": "Categorías y proyectos seguibles por notificación. Los slugs deben coincidir con los de src/content/projects. featuredProjects se muestran aunque el proyecto aún no esté publicado.",
+  "categories": ["games", "programs", "freelance"],
+  "featuredProjects": [
+    {
+      "slug": "deusdeck",
+      "title": "DeusDeck"
+    }
+  ]
+}

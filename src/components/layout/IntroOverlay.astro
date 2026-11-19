@@ -1,33 +1,78 @@
 ---
+import { type Locale, t } from '../../i18n';
 import { publicAssetUrl } from '../../lib/assets';
 
-// Overlay de bienvenida. Oculto por defecto: solo lo muestra intro.ts cuando corresponde,
-// así que sin JavaScript o con preferencias que lo desactivan no aparece ningún destello.
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+// Bienvenida de sesión. Oculta por defecto: solo se muestra con html.intro-playing, que
+// preferences-init.js (antes del primer pintado) añade cuando corresponde. El recorrido del
+// logotipo hacia el encabezado lo anima src/features/intro/intro.ts.
 ---
 
-<div class="intro" data-intro hidden aria-hidden="true">
-  <img class="intro__logo" src={publicAssetUrl('assets/logo/deus-logo-placeholder.svg')} alt="" width="160" height="160" />
+<div class="intro" data-intro aria-hidden="true">
+  <div class="intro__veil" data-intro-veil></div>
+  <div class="intro__content" data-intro-content>
+    <span class="brand-mark intro__mark" data-intro-mark>
+      <img src={publicAssetUrl('assets/logo/deus-samurai.webp')} alt="" width="120" height="120" />
+    </span>
+    <p class="intro__text" data-intro-text>{t(locale, 'intro.welcome')}</p>
+  </div>
 </div>
 
 <style>
   .intro {
+    display: none;
     position: fixed;
     inset: 0;
     z-index: 60;
-    display: grid;
     place-items: center;
-    background: var(--color-bg);
     /* No recibe eventos: la navegación nunca queda bloqueada durante la bienvenida. */
     pointer-events: none;
   }
 
-  .intro[hidden] {
-    display: none;
+  /* El velo es opaco desde el primer pintado: la página nunca se ve antes de la bienvenida. */
+  html.intro-playing .intro {
+    display: grid;
   }
 
-  .intro__logo {
-    width: 10rem;
-    height: 10rem;
-    filter: drop-shadow(0 0 1.5rem var(--color-glow));
+  .intro__veil {
+    position: absolute;
+    inset: 0;
+    background: var(--color-bg);
   }
+
+  .intro__content {
+    position: relative;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-6);
+  }
+
+  /* Oculto hasta que intro.ts lo hace aparecer (Web Animations sobre transform y opacity). */
+  html.intro-playing .intro__content {
+    opacity: 0;
+  }
+
+  .intro__mark {
+    width: 7.5rem;
+    height: 7.5rem;
+  }
+
+  .intro__text {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    letter-spacing: 0.04em;
+    color: var(--color-text);
+  }
+
+  /* El logotipo del encabezado espera oculto: el del overlay aterriza exactamente sobre él. */
+  :global(html.intro-playing .logo__mark) {
+    opacity: 0;
+  }
+
 </style>

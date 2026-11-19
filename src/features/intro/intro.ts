@@ -1,83 +1,101 @@
-import { isLiteModeEnabled } from '../preferences/lite-mode';
-import { readSession, STORAGE_KEYS, writeSession } from '../preferences/storage';
+import { STORAGE_KEYS, writeSession } from '../preferences/storage';
 
 /**
- * Bienvenida: el logotipo aparece centrado, se desplaza a su posición en el header
- * y deja un destello sutil. Se reproduce una vez por sesión (sessionStorage).
+ * Ciclo de vida de la bienvenida (IntroOverlay.astro).
  *
- * Se omite en Lite Mode y con prefers-reduced-motion. En cualquiera de esos casos
- * o si la API Web Animations no existe, el overlay se elimina y el logotipo queda
- * en su sitio sin animación. Nunca bloquea la navegación: el overlay no recibe eventos.
+ * - La decisión (sesión o ?intro=true) la toma public/js/preferences-init.js antes del primer
+ *   pintado y la refleja en html.intro-playing. Es independiente del Lite Mode.
+ * - Astro reemplaza <html> (con su clase) en cada navegación de View Transitions. Tras un swap la
+ *   clase ya no está y el overlay nuevo se retira sin reproducirse.
+ * - runIntro es idempotente: cada overlay se inicia como máximo una vez.
+ * - Toda la secuencia usa Web Animations sobre transform y opacity (aceleradas por GPU, sin filtros
+ *   ni sombras), así el Modo Lite no la afecta: aparición, pausa de reconocimiento y vuelo del
+ *   logotipo a la posición del encabezado mientras el velo se desvanece. Se mide el destino al partir.
+ * - Con prefers-reduced-motion no hay desplazamiento: el saludo aparece y se desvanece en su lugar.
  */
 
-const PLAY_DURATION_MS = 1000;
-const SAFETY_TIMEOUT_MS = 2500;
+const FADE_IN_MS = 500;
+const HOLD_UNTIL_MS = 1100;
+const FLIGHT_MS = 1100;
+const SAFETY_TIMEOUT_MS = HOLD_UNTIL_MS + FLIGHT_MS + 800;
+const FLIGHT_EASING = 'cubic-bezier(0.65, 0, 0.35, 1)';
 const REDUCED_MOTION_QUERY = '(prefers-reduced-motion: reduce)';
 
-function shouldPlay(): boolean {
-  if (readSession(STORAGE_KEYS.introPlayed) === 'yes') return false;
-  if (isLiteModeEnabled()) return false;
-  if (window.matchMedia(REDUCED_MOTION_QUERY).matches) return false;
-  return typeof Element.prototype.animate === 'function';
+const FILL: KeyframeAnimationOptions = { fill: 'forwards' };
+const FADE_OUT: Keyframe[] = [{ opacity: 1 }, { opacity: 0 }];
+
+function flightKeyframes(from: DOMRect, to: DOMRect): Keyframe[] {
+  const dx = to.left + to.width / 2 - (from.left + from.width / 2);
+  const dy = to.top + to.height / 2 - (from.top + from.height / 2);
+  return [
+    { transform: 'translate3d(0, 0, 0) scale(1)' },
+    { transform: `translate3d(${dx}px, ${dy}px, 0) scale(${to.width / from.width})` },
+  ];
 }
 
-function finish(overlay: HTMLElement): void {
-  overlay.hidden = true;
-  document.documentElement.classList.remove('intro-playing');
+/** Espera el primer pintado real: dos frames, para que la bienvenida nunca se saltee antes de verse. */
+function afterFirstPaint(callback: () => void): void {
+  requestAnimationFrame(() => requestAnimationFrame(callback));
+}
+
+function play(overlay: HTMLElement, finish: () => void): void {
+  const content = overlay.querySelector<HTMLElement>('[data-intro-content]');
+  const mark = overlay.querySelector<HTMLElement>('[data-intro-mark]');
+  const text = overlay.querySelector<HTMLElement>('[data-intro-text]');
+  const veil = overlay.querySelector<HTMLElement>('[data-intro-veil]');
+  const target = document.querySelector<HTMLElement>('[data-logo-mark]');
+  if (!content || !mark || !veil) {
+    finish();
+    return;
+  }
+
+  const reduced = window.matchMedia(REDUCED_MOTION_QUERY).matches;
+  const appear: Keyframe[] = reduced
+    ? [{ opacity: 0 }, { opacity: 1 }]
+    : [
+        { opacity: 0, transform: 'translateY(0.75rem)' },
+        { opacity: 1, transform: 'translateY(0)' },
+      ];
+  content.animate(appear, { ...FILL, duration: FADE_IN_MS, easing: 'ease-out' });
+
+  window.setTimeout(() => {
+    if (reduced || !target) {
+      const fade = { ...FILL, duration: FLIGHT_MS * 0.6, easing: 'ease-in-out' };
+      content.animate(FADE_OUT, fade);
+      veil.animate(FADE_OUT, fade).addEventListener('finish', finish);
+      return;
+    }
+    const flight = { ...FILL, duration: FLIGHT_MS, easing: FLIGHT_EASING };
+    mark.animate(
+      flightKeyframes(mark.getBoundingClientRect(), target.getBoundingClientRect()),
+      flight,
+    );
+    text?.animate(FADE_OUT, { ...flight, duration: FLIGHT_MS * 0.4, easing: 'ease-out' });
+    veil.animate(FADE_OUT, flight).addEventListener('finish', finish);
+  }, HOLD_UNTIL_MS);
 }
 
 export function runIntro(): void {
+  const root = document.documentElement;
   const overlay = document.querySelector<HTMLElement>('[data-intro]');
   if (!overlay) return;
 
-  if (!shouldPlay()) {
+  if (!root.classList.contains('intro-playing')) {
     overlay.remove();
     return;
   }
-
-  const logo = overlay.querySelector<HTMLImageElement>('img');
-  const target = document.querySelector<HTMLElement>('[data-brand-mark]');
-  if (!logo || !target) {
-    overlay.remove();
-    return;
-  }
+  if (overlay.dataset.introStarted === 'yes') return;
+  overlay.dataset.introStarted = 'yes';
 
   writeSession(STORAGE_KEYS.introPlayed, 'yes');
-  document.documentElement.classList.add('intro-playing');
-  overlay.hidden = false;
-
-  // Posición de inicio (centro de pantalla) y destino (logotipo del header).
-  const start = logo.getBoundingClientRect();
-  const end = target.getBoundingClientRect();
-  const dx = end.left + end.width / 2 - (start.left + start.width / 2);
-  const dy = end.top + end.height / 2 - (start.top + start.height / 2);
-  const scale = end.width / start.width;
 
   let done = false;
-  const complete = (): void => {
+  const finish = (): void => {
     if (done) return;
     done = true;
-    finish(overlay);
-    target.classList.add('brand-glint');
+    root.classList.remove('intro-playing');
+    overlay.remove();
   };
-
-  logo
-    .animate(
-      [
-        { transform: 'translate(0, 0) scale(0.92)', opacity: 0, offset: 0 },
-        { transform: 'translate(0, 0) scale(1)', opacity: 1, offset: 0.25 },
-        { transform: `translate(${dx}px, ${dy}px) scale(${scale})`, opacity: 1, offset: 1 },
-      ],
-      { duration: PLAY_DURATION_MS, easing: 'cubic-bezier(0.2, 0.7, 0.2, 1)', fill: 'forwards' },
-    )
-    .addEventListener('finish', complete);
-
-  overlay.animate([{ opacity: 1 }, { opacity: 0 }], {
-    delay: PLAY_DURATION_MS * 0.8,
-    duration: PLAY_DURATION_MS * 0.2,
-    fill: 'forwards',
-  });
-
-  // Red de seguridad: si la animación no termina (pestaña en segundo plano, etc.), cerrar igual.
-  window.setTimeout(complete, SAFETY_TIMEOUT_MS);
+  window.setTimeout(finish, SAFETY_TIMEOUT_MS);
+  afterFirstPaint(() => play(overlay, finish));
 }

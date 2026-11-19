@@ -2,6 +2,8 @@
  * Respuestas HTTP de la API. CORS solo para orígenes ya validados por el router.
  */
 
+import { canonicalizeOrigin, readConfig } from './config.js';
+
 /** @param {string} origin Origen ya comprobado contra la lista permitida. */
 function corsHeaders(origin) {
   return {
@@ -60,6 +62,20 @@ export function preflightResponse(origin) {
     status: 204,
     headers: { ...SECURITY_HEADERS, ...corsHeaders(origin) },
   });
+}
+
+/**
+ * Preflight CORS común a todas las rutas, solo para orígenes permitidos.
+ * @param {Request} request
+ * @param {Record<string, string | undefined>} env
+ */
+export function preflight(request, env) {
+  const origin = canonicalizeOrigin(request.headers.get('origin'));
+  const loaded = readConfig(env);
+  const allowed = loaded.ok ? loaded.config.allowedOrigins : [];
+  return origin && allowed.includes(origin)
+    ? preflightResponse(origin)
+    : errorResponse(403, 'Origen no permitido.', null);
 }
 
 export { corsHeaders };

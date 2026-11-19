@@ -137,3 +137,40 @@ export async function insertConsent(config, row) {
   }
   return acceptedAt;
 }
+
+/**
+ * Crea o actualiza una suscripción push (una fila por endpoint). Las preferencias se reemplazan.
+ * @param {{ url: string, serviceKey: string }} config
+ * @param {{ endpointHash: string, endpoint: string, p256dh: string, auth: string, mode: string, categories: string[], projects: string[], locale: string }} row
+ */
+export async function upsertPushSubscription(config, row) {
+  await request(config, 'push_subscriptions?on_conflict=endpoint_hash', {
+    method: 'POST',
+    body: JSON.stringify([
+      {
+        endpoint_hash: row.endpointHash,
+        endpoint: row.endpoint,
+        p256dh: row.p256dh,
+        auth: row.auth,
+        mode: row.mode,
+        categories: row.categories,
+        projects: row.projects,
+        locale: row.locale,
+      },
+    ]),
+    prefer: 'resolution=merge-duplicates,return=minimal',
+  });
+}
+
+/**
+ * Borra la suscripción push de un endpoint.
+ * @param {{ url: string, serviceKey: string }} config
+ * @param {string} endpointHash
+ */
+export async function deletePushSubscription(config, endpointHash) {
+  const query = new URLSearchParams({ endpoint_hash: `eq.${endpointHash}` });
+  await request(config, `push_subscriptions?${query.toString()}`, {
+    method: 'DELETE',
+    prefer: 'return=minimal',
+  });
+}

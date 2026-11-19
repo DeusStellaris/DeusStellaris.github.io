@@ -2,8 +2,9 @@
   "_nota": "Datos del titular y versiones de los documentos. Un valor null se muestra en el sitio como marcador PENDIENTE y debe completarse antes de publicar los documentos como definitivos. No inventar valores.",
   "versions": {
     "terms": "2026-11-05.1",
-    "privacy": "2026-11-05.1",
-    "cookies": "2026-11-05.1"
+    "privacy": "2026-11-06.1",
+    "cookies": "2026-11-05.1",
+    "refund": "2026-11-06.1"
   },
   "controller": {
     "name": null,

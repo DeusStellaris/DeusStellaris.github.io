@@ -7,6 +7,8 @@ Base de datos de los "me gusta" y del ranking. Las escrituras las hace solo el W
 | Archivo                                  | Contenido                                                                      |
 | ---------------------------------------- | ------------------------------------------------------------------------------ |
 | `migrations/0001_likes_and_rankings.sql` | Tablas `likes` y `rate_limit_hits`, RLS, funciones y permisos                  |
+| `migrations/0002_legal_consents.sql`     | Registro inmutable de consentimientos (términos, privacidad, publicidad)       |
+| `migrations/0003_push_subscriptions.sql` | Suscripciones push con preferencias por modo, categoría y proyecto             |
 | `tests/rls/rls.test.sql`                 | Pruebas de RLS, permisos y restricciones. Termina sin error si todo se cumple. |
 
 ## Modelo de seguridad

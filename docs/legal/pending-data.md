@@ -1,46 +1,50 @@
 # Datos pendientes de confirmar antes de publicar
 
-Generado a partir del HTML construido (`dist/`), para que coincida con lo que ve el visitante. Regenerar tras cambiar los documentos.
+Generado a partir del HTML construido (`dist/`), para que coincida con lo que ve el visitante. Regenerar tras cambiar los documentos. Sin confirmación, los documentos siguen siendo borradores.
 
-Cada entrada aparece en las páginas indicadas. Sin confirmación, los documentos siguen siendo borradores.
+| #   | Marcador                                                                                                                           | Páginas                                |
+| --- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| 1   | [PENDIENTE: base jurídica de cada finalidad enumerada en el apartado 3, a confirmar por profesional]                               | /privacidad/                           |
+| 2   | [PENDIENTE: canal y plazo de respuesta, a confirmar]                                                                               | /privacidad/                           |
+| 3   | [PENDIENTE: clasificación definitiva de cada almacenamiento y si requiere consentimiento]                                          | /cookies/                              |
+| 4   | [PENDIENTE: cláusulas de disponibilidad y limitación de responsabilidad, a redactar y revisar por profesional]                     | /terminos/                             |
+| 5   | [PENDIENTE: condiciones comerciales y de reembolso, a definir cuando exista actividad comercial]                                   | /reembolso/                            |
+| 6   | [PENDIENTE: condiciones de cancelación y reembolso en los acuerdos de servicio, a redactar y revisar por profesional]              | /reembolso/                            |
+| 7   | [PENDIENTE: confirmar la autoridad de control vigente (Agencia de Acceso a la Información Pública) y el procedimiento]             | /privacidad/                           |
+| 8   | [PENDIENTE: confirmar si el sitio vende o comparte datos personales en el sentido de la CCPA]                                      | /privacidad/                           |
+| 9   | [PENDIENTE: correo de contacto]                                                                                                    | /privacidad/, /reembolso/, /terminos/  |
+| 10  | [PENDIENTE: domicilio del responsable]                                                                                             | /privacidad/                           |
+| 11  | [PENDIENTE: edad mínima aplicable en cada jurisdicción]                                                                            | /privacidad/                           |
+| 12  | [PENDIENTE: ley aplicable y tribunales competentes]                                                                                | /terminos/                             |
+| 13  | [PENDIENTE: licencia de uso y reutilización del contenido]                                                                         | /terminos/                             |
+| 14  | [PENDIENTE: mecanismos de transferencia internacional aplicables (cláusulas contractuales tipo, decisiones de adecuación u otros)] | /privacidad/                           |
+| 15  | [PENDIENTE: nombre del responsable]                                                                                                | /privacidad/                           |
+| 16  | [PENDIENTE: plazo de conservación de los registros de los proveedores de servidor]                                                 | /privacidad/                           |
+| 17  | [PENDIENTE: plazo de conservación del registro de consentimientos]                                                                 | /privacidad/                           |
+| 18  | [PENDIENTE: procedimiento automatizado de borrado en el servidor, pendiente de implementación]                                     | /privacidad/                           |
+| 19  | [PENDIENTE: representante o DPO]                                                                                                   | /privacidad/                           |
+| 20  | [PENDIENTE: revisión legal de esta política]                                                                                       | /cookies/, /reembolso/                 |
+| 21  | [PENDING: applicable international transfer mechanisms (standard contractual clauses, adequacy decisions or others)]               | /en/privacy/                           |
+| 22  | [PENDING: automated server-side deletion procedure, not yet implemented]                                                           | /en/privacy/                           |
+| 23  | [PENDING: availability and limitation of liability clauses, to be drafted and reviewed by a professional]                          | /en/terms/                             |
+| 24  | [PENDING: cancellation and refund terms in service agreements, to be drafted and reviewed by a professional]                       | /en/refunds/                           |
+| 25  | [PENDING: commercial and refund conditions, to be defined once there is commercial activity]                                       | /en/refunds/                           |
+| 26  | [PENDING: confirm the current supervisory authority (Agencia de Acceso a la Información Pública) and the procedure]                | /en/privacy/                           |
+| 27  | [PENDING: confirm whether the site sells or shares personal information within the meaning of the CCPA]                            | /en/privacy/                           |
+| 28  | [PENDING: contact email]                                                                                                           | /en/privacy/, /en/refunds/, /en/terms/ |
+| 29  | [PENDING: controller address]                                                                                                      | /en/privacy/                           |
+| 30  | [PENDING: controller name]                                                                                                         | /en/privacy/                           |
+| 31  | [PENDING: final classification of each storage item and whether it requires consent]                                               | /en/cookies/                           |
+| 32  | [PENDING: governing law and competent courts]                                                                                      | /en/terms/                             |
+| 33  | [PENDING: legal basis for each purpose listed in section 3, to be confirmed by a professional]                                     | /en/privacy/                           |
+| 34  | [PENDING: legal review of this policy]                                                                                             | /en/cookies/, /en/refunds/             |
+| 35  | [PENDING: license and reuse terms for the content]                                                                                 | /en/terms/                             |
+| 36  | [PENDING: minimum age applicable in each jurisdiction]                                                                             | /en/privacy/                           |
+| 37  | [PENDING: representative or DPO]                                                                                                   | /en/privacy/                           |
+| 38  | [PENDING: response channel and time frame, to be confirmed]                                                                        | /en/privacy/                           |
+| 39  | [PENDING: retention period for consent records]                                                                                    | /en/privacy/                           |
+| 40  | [PENDING: retention period for server provider logs]                                                                               | /en/privacy/                           |
 
-| #   | Marcador                                                                                                                           | Páginas                                                  |
-| --- | ---------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| 1   | [PENDIENTE: licencia de uso y reutilización del contenido]                                                                         | Términos y condiciones (ES)                              |
-| 2   | [PENDIENTE: cláusulas de disponibilidad y limitación de responsabilidad, a redactar y revisar por profesional]                     | Términos y condiciones (ES)                              |
-| 3   | [PENDIENTE: ley aplicable y tribunales competentes]                                                                                | Términos y condiciones (ES)                              |
-| 4   | [PENDIENTE: correo de contacto]                                                                                                    | Términos y condiciones (ES); Política de privacidad (ES) |
-| 5   | [PENDIENTE: nombre del responsable]                                                                                                | Política de privacidad (ES)                              |
-| 6   | [PENDIENTE: domicilio del responsable]                                                                                             | Política de privacidad (ES)                              |
-| 7   | [PENDIENTE: representante o DPO]                                                                                                   | Política de privacidad (ES)                              |
-| 8   | [PENDIENTE: base jurídica de cada finalidad enumerada en el apartado 3, a confirmar por profesional]                               | Política de privacidad (ES)                              |
-| 9   | [PENDIENTE: mecanismos de transferencia internacional aplicables (cláusulas contractuales tipo, decisiones de adecuación u otros)] | Política de privacidad (ES)                              |
-| 10  | [PENDIENTE: plazo de conservación del registro de consentimientos]                                                                 | Política de privacidad (ES)                              |
-| 11  | [PENDIENTE: plazo de conservación de los registros de los proveedores de servidor]                                                 | Política de privacidad (ES)                              |
-| 12  | [PENDIENTE: confirmar si el sitio vende o comparte datos personales en el sentido de la CCPA]                                      | Política de privacidad (ES)                              |
-| 13  | [PENDIENTE: confirmar la autoridad de control vigente (Agencia de Acceso a la Información Pública) y el procedimiento]             | Política de privacidad (ES)                              |
-| 14  | [PENDIENTE: canal y plazo de respuesta, a confirmar]                                                                               | Política de privacidad (ES)                              |
-| 15  | [PENDIENTE: edad mínima aplicable en cada jurisdicción]                                                                            | Política de privacidad (ES)                              |
-| 16  | [PENDIENTE: clasificación definitiva de cada almacenamiento y si requiere consentimiento]                                          | Cookies (ES)                                             |
-| 17  | [PENDIENTE: revisión legal de esta política]                                                                                       | Cookies (ES)                                             |
-| 18  | [PENDING: license and reuse terms for the content]                                                                                 | Terms and conditions (EN)                                |
-| 19  | [PENDING: availability and limitation of liability clauses, to be drafted and reviewed by a professional]                          | Terms and conditions (EN)                                |
-| 20  | [PENDING: governing law and competent courts]                                                                                      | Terms and conditions (EN)                                |
-| 21  | [PENDING: contact email]                                                                                                           | Terms and conditions (EN); Privacy policy (EN)           |
-| 22  | [PENDING: controller name]                                                                                                         | Privacy policy (EN)                                      |
-| 23  | [PENDING: controller address]                                                                                                      | Privacy policy (EN)                                      |
-| 24  | [PENDING: representative or DPO]                                                                                                   | Privacy policy (EN)                                      |
-| 25  | [PENDING: legal basis for each purpose listed in section 3, to be confirmed by a professional]                                     | Privacy policy (EN)                                      |
-| 26  | [PENDING: applicable international transfer mechanisms (standard contractual clauses, adequacy decisions or others)]               | Privacy policy (EN)                                      |
-| 27  | [PENDING: retention period for consent records]                                                                                    | Privacy policy (EN)                                      |
-| 28  | [PENDING: retention period for server provider logs]                                                                               | Privacy policy (EN)                                      |
-| 29  | [PENDING: confirm whether the site sells or shares personal information within the meaning of the CCPA]                            | Privacy policy (EN)                                      |
-| 30  | [PENDING: confirm the current supervisory authority (Agencia de Acceso a la Información Pública) and the procedure]                | Privacy policy (EN)                                      |
-| 31  | [PENDING: response channel and time frame, to be confirmed]                                                                        | Privacy policy (EN)                                      |
-| 32  | [PENDING: minimum age applicable in each jurisdiction]                                                                             | Privacy policy (EN)                                      |
-| 33  | [PENDING: final classification of each storage item and whether it requires consent]                                               | Cookies (EN)                                             |
-| 34  | [PENDING: legal review of this policy]                                                                                             | Cookies (EN)                                             |
-
-**Total de marcadores distintos:** 34.
+**Total de marcadores distintos:** 40.
 
 Datos del titular en `src/config/legal.json` (`controller`): nombre, forma jurídica, domicilio, correo y contacto de protección de datos. Mientras sean `null`, aparecen como marcador pendiente en los documentos.

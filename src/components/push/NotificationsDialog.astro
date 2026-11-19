@@ -1,0 +1,329 @@
+---
+import { PUBLIC_VAPID_PUBLIC_KEY } from 'astro:env/client';
+import pushConfig from '../../config/push.json';
+import services from '../../config/services.json';
+import { PUSH_MODES } from '../../features/push/preferences';
+import { type Locale, type TranslationKey, t } from '../../i18n';
+import { listProjects } from '../../services/projects';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const CATEGORY_LABEL_KEYS = {
+  games: 'nav.games',
+  programs: 'nav.programs',
+  freelance: 'nav.freelance',
+} as const satisfies Record<string, TranslationKey>;
+
+const categories = pushConfig.categories.filter(
+  (id): id is keyof typeof CATEGORY_LABEL_KEYS => id in CATEGORY_LABEL_KEYS,
+);
+
+// Proyectos seguibles: los destacados de la configuración (p. ej. deusdeck) más los publicados.
+const projects = new Map(pushConfig.featuredProjects.map(({ slug, title }) => [slug, title]));
+for (const { slug, entry } of await listProjects(locale)) projects.set(slug, entry.data.title);
+
+const detail = (mode: (typeof PUSH_MODES)[number]) => ({
+  'data-detail-title': t(locale, `push.modes.${mode}.label`),
+  'data-detail-description': t(locale, `push.modes.${mode}.description`),
+  'data-detail-battery': t(locale, `push.modes.${mode}.battery`),
+  'data-detail-data': t(locale, `push.modes.${mode}.data`),
+});
+
+const STATUS_KEYS = [
+  'off',
+  'needsPermission',
+  'active',
+  'denied',
+  'unsupported',
+  'unconfigured',
+  'saving',
+  'error',
+] as const;
+const statusMessages = Object.fromEntries(
+  STATUS_KEYS.map((key) => [`data-status-${key}`, t(locale, `push.status.${key}`)]),
+);
+---
+
+<!--
+  Preferencias de notificaciones, estilo menú de ajustes: opciones a la izquierda y panel fijo de
+  detalle (descripción e impacto en batería y datos) a la derecha o debajo. Lo gestiona
+  src/features/push/push-panel.ts. El <dialog> modal aporta foco, Escape y retorno del foco.
+-->
+<dialog
+  class="push"
+  data-push-dialog
+  data-locale={locale}
+  data-api={services.apiBaseUrl ?? ''}
+  data-vapid={PUBLIC_VAPID_PUBLIC_KEY ?? ''}
+  data-categories={categories.join(',')}
+  aria-labelledby="push-title"
+  {...statusMessages}
+>
+  <div class="push__inner">
+    <header class="push__header">
+      <h2 id="push-title">{t(locale, 'push.title')}</h2>
+      <button type="button" class="push__button" data-push-close>{t(locale, 'push.close')}</button>
+    </header>
+
+    <p class="push__intro">{t(locale, 'push.intro')}</p>
+    <p class="push__notice" data-push-ios hidden>{t(locale, 'push.ios')}</p>
+
+    <div class="push__layout">
+      <div class="push__options">
+        <fieldset class="push__group">
+          <legend>{t(locale, 'push.modeGroup')}</legend>
+          {
+            PUSH_MODES.map((mode) => (
+              <label
+                class="push__option"
+                data-push-option
+                {...detail(mode)}
+                data-tooltip={t(locale, `push.modes.${mode}.tooltip`)}
+              >
+                <input type="radio" name="push-mode" value={mode} />
+                <span>{t(locale, `push.modes.${mode}.label`)}</span>
+              </label>
+            ))
+          }
+        </fieldset>
+
+        <fieldset class="push__group" data-push-categories data-push-option {...detail('categories')} hidden>
+          <legend>{t(locale, 'push.categoriesGroup')}</legend>
+          {
+            categories.map((id) => (
+              <label class="push__option" data-tooltip={t(locale, 'push.categoryTooltip')}>
+                <input type="checkbox" name="push-category" value={id} />
+                <span>{t(locale, CATEGORY_LABEL_KEYS[id])}</span>
+              </label>
+            ))
+          }
+        </fieldset>
+
+        <fieldset class="push__group" data-push-projects data-push-option {...detail('projects')} hidden>
+          <legend>{t(locale, 'push.projectsGroup')}</legend>
+          {
+            [...projects].map(([slug, title]) => (
+              <label class="push__option" data-tooltip={t(locale, 'push.projectTooltip')}>
+                <input type="checkbox" name="push-project" value={slug} />
+                <span>{title}</span>
+              </label>
+            ))
+          }
+        </fieldset>
+      </div>
+
+      <aside class="push__detail" aria-live="polite">
+        <h3 data-out-title>{t(locale, 'push.title')}</h3>
+        <p data-out-description>{t(locale, 'push.detailHint')}</p>
+        <p class="push__impact-title">{t(locale, 'push.impactTitle')}</p>
+        <dl class="push__impact">
+          <dt>{t(locale, 'push.impactBattery')}</dt>
+          <dd data-out-battery>–</dd>
+          <dt>{t(locale, 'push.impactData')}</dt>
+          <dd data-out-data>–</dd>
+        </dl>
+      </aside>
+    </div>
+
+    <footer class="push__footer">
+      <p class="push__status" role="status" data-push-status></p>
+      <button
+        type="button"
+        class="push__button push__button--primary"
+        data-push-enable
+        data-tooltip={t(locale, 'push.enableHint')}
+        hidden
+      >
+        {t(locale, 'push.enable')}
+      </button>
+    </footer>
+  </div>
+</dialog>
+
+<style>
+  .push {
+    width: min(94vw, 46rem);
+    max-height: 90dvh;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .push::backdrop {
+    background: rgb(0 0 0 / 0.55);
+  }
+
+  .push__inner {
+    display: grid;
+    gap: var(--space-4);
+    max-height: 90dvh;
+    padding: var(--space-6);
+    overflow-y: auto;
+  }
+
+  .push__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .push__header h2 {
+    margin: 0;
+    font-size: var(--text-xl);
+  }
+
+  .push__intro,
+  .push__status {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .push__notice {
+    margin: 0;
+    padding: var(--space-3);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    background: var(--color-glow);
+    font-size: var(--text-sm);
+  }
+
+  .push__layout {
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  @media (min-width: 40em) {
+    .push__layout {
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+    }
+
+    .push__detail {
+      position: sticky;
+      top: 0;
+    }
+  }
+
+  .push__options {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .push__group {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .push__group[hidden] {
+    display: none;
+  }
+
+  .push__group legend {
+    padding: 0 0 var(--space-1);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .push__option {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--target-min);
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-raised);
+    cursor: pointer;
+    transition: border-color var(--duration-fast);
+  }
+
+  .push__option:hover,
+  .push__option:has(input:checked) {
+    border-color: var(--color-accent);
+  }
+
+  .push__option:has(input:focus-visible) {
+    outline: 2px solid var(--color-accent-strong);
+    outline-offset: 2px;
+  }
+
+  .push__detail {
+    padding: var(--space-4);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-md);
+    background: var(--color-glow);
+  }
+
+  .push__detail h3 {
+    margin: 0 0 var(--space-2);
+    font-size: var(--text-lg);
+  }
+
+  .push__detail p {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-sm);
+  }
+
+  .push__impact-title {
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .push__impact {
+    display: grid;
+    gap: var(--space-1);
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+
+  .push__impact dt {
+    font-weight: 600;
+  }
+
+  .push__impact dd {
+    margin: 0 0 var(--space-2);
+    color: var(--color-text-muted);
+  }
+
+  .push__footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .push__button {
+    min-height: var(--target-min);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .push__button--primary {
+    border-color: var(--color-accent);
+    color: var(--color-accent-strong);
+  }
+
+  .push__button:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+</style>

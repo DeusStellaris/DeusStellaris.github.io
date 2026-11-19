@@ -257,9 +257,38 @@ function bindOnce(): void {
   document.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return;
     const root = event.target.closest<HTMLElement>(BANNER_SELECTOR);
-    if (root && event.target.closest('[data-consent-later],[data-consent-close]'))
+    if (!root) return;
+    if (event.target.closest('[data-consent-later],[data-consent-close]')) {
       laterBanner(root);
+      return;
+    }
+    const optional = event.target.closest<HTMLElement>('[data-consent-optional]');
+    if (optional) void decideOptional(root, optional.dataset.consentOptional === 'accept');
   });
+}
+
+/**
+ * Decisión sobre cookies opcionales. Aceptar y rechazar tienen el mismo recorrido y no exigen
+ * aceptar antes los términos: rechazar no debe requerir más pasos que aceptar. Sin categorías
+ * opcionales activas, el botón no se renderiza (ver ConsentBanner.astro).
+ */
+async function decideOptional(root: HTMLElement, granted: boolean): Promise<void> {
+  const context = readContext(root);
+  const messages = readMessages(root);
+  const ads = root.querySelector<HTMLInputElement>('[data-consent-ads]');
+  if (ads) ads.checked = granted;
+
+  const record = setAdsDecision(loadConsentRecord(), granted, new Date().toISOString());
+  saveConsentRecord(record);
+  window.dispatchEvent(new CustomEvent('deus:consent-changed'));
+
+  const acceptedAt = await registerOnServer(context.apiBaseUrl, {
+    type: 'cookies_ads',
+    granted,
+    documentVersion: context.versions.cookies,
+    locale: context.locale,
+  });
+  setStatus(root, acceptedAt ? messages.registered : messages.localSaved);
 }
 
 /** Activa el aviso y el gestor de preferencias de la página actual. Idempotente. */

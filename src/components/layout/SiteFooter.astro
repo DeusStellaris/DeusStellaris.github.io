@@ -1,6 +1,12 @@
 ---
 import { type Locale, t } from '../../i18n';
-import { LEGAL_SEGMENT, localizedHref, RANKING_SEGMENT, SEARCH_SEGMENT } from '../../i18n/routes';
+import {
+  LEGAL_SEGMENT,
+  localizedHref,
+  RANKING_SEGMENT,
+  SEARCH_SEGMENT,
+  sectionHref,
+} from '../../i18n/routes';
 
 interface Props {
   locale: Locale;
@@ -20,8 +26,12 @@ const year = new Date().getFullYear();
         <li><a href={localizedHref(locale, `/${LEGAL_SEGMENT.terms[locale]}/`)}>{t(locale, 'legal.footerTerms')}</a></li>
         <li><a href={localizedHref(locale, `/${LEGAL_SEGMENT.privacy[locale]}/`)}>{t(locale, 'legal.footerPrivacy')}</a></li>
         <li><a href={localizedHref(locale, `/${LEGAL_SEGMENT.cookies[locale]}/`)}>{t(locale, 'legal.footerCookies')}</a></li>
+        <li><a href={localizedHref(locale, `/${LEGAL_SEGMENT.refund[locale]}/`)}>{t(locale, 'legal.footerRefund')}</a></li>
       </ul>
     </nav>
+    <p class="site-footer__request">
+      <a href={sectionHref('contact', locale)}>{t(locale, 'legal.dataDeletionRequest')}</a>
+    </p>
   </div>
 </footer>
 
@@ -42,7 +52,8 @@ const year = new Date().getFullYear();
     gap: var(--space-4);
   }
 
-  .site-footer__text {
+  .site-footer__text,
+  .site-footer__request {
     margin: 0;
   }
 

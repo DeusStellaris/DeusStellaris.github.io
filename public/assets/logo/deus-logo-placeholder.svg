@@ -1,6 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" role="img" aria-labelledby="title">
-  <title>Logotipo de Deus (placeholder: reemplazar por el logotipo oficial)</title>
-  <circle cx="60" cy="60" r="52" fill="none" stroke="#e3cfa0" stroke-width="2" opacity="0.5"/>
-  <circle cx="60" cy="60" r="44" fill="none" stroke="#e3cfa0" stroke-width="1" stroke-dasharray="2 6" opacity="0.6"/>
-  <path d="M42 36v48h14c13 0 22-8.5 22-24s-9-24-22-24z" fill="none" stroke="#f3e3bd" stroke-width="4" stroke-linejoin="round"/>
-</svg>
