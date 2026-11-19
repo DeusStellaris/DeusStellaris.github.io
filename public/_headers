@@ -1,0 +1,33 @@
+# Cabeceras de caché para hosts que las admiten (Cloudflare Pages, Netlify). GitHub Pages las ignora
+# y aplica su propia política (ver docs/setup/performance.md).
+
+# Recursos con hash en el nombre (CSS, JS, fuentes, imágenes optimizadas): inmutables un año.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Service worker: siempre revalidado para que las actualizaciones lleguen.
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Datos públicos: caché corta y revalidación en segundo plano.
+/search-index.json
+  Cache-Control: public, max-age=300, stale-while-revalidate=3600
+/demos-index.json
+  Cache-Control: public, max-age=300, stale-while-revalidate=3600
+/hub-resources.json
+  Cache-Control: public, max-age=300, stale-while-revalidate=3600
+/manifest.webmanifest
+  Cache-Control: public, max-age=3600
+
+# Archivos estáticos sin hash.
+/js/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+/assets/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+/demos/*
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
+
+# Páginas HTML: se revalidan siempre y el CDN puede servir una copia vencida mientras actualiza.
+/*
+  Cache-Control: public, max-age=0, s-maxage=300, stale-while-revalidate=86400
+  X-Content-Type-Options: nosniff

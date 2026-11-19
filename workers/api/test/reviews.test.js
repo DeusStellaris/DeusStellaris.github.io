@@ -166,3 +166,28 @@ test('GET /reviews con slug inválido: 400', async () => {
   );
   assert.equal(response.status, 400);
 });
+
+test('GET /reviews pagina con offset, informa hasMore y es cacheable', async () => {
+  const calls = installFetch();
+  const response = await worker.fetch(
+    makeRequest(null, { method: 'GET', query: '?slug=demo-uno&offset=10' }),
+    env,
+  );
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get('cache-control') ?? '', /max-age=15/);
+  assert.equal((await response.json()).hasMore, false);
+  const list = calls.find((call) => call.url.includes('/rest/v1/reviews'));
+  assert.match(list?.url ?? '', /offset=10/);
+  assert.match(list?.url ?? '', /limit=11/);
+});
+
+test('GET /reviews rechaza offsets inválidos', async () => {
+  installFetch();
+  for (const offset of ['-1', 'x', '5000', '1.5']) {
+    const response = await worker.fetch(
+      makeRequest(null, { method: 'GET', query: `?slug=demo-uno&offset=${offset}` }),
+      env,
+    );
+    assert.equal(response.status, 400);
+  }
+});

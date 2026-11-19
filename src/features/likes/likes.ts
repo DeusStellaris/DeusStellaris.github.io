@@ -232,6 +232,7 @@ async function initRanking(root: HTMLElement): Promise<void> {
   const locale = root.dataset.locale ?? 'es';
 
   if (!supabaseState().configured) {
+    list.replaceChildren();
     status.textContent = messages.unconfigured;
     return;
   }
@@ -258,6 +259,7 @@ async function initRanking(root: HTMLElement): Promise<void> {
       })
       .sort((a, b) => b.likes - a.likes);
   } catch {
+    list.replaceChildren();
     status.textContent = messages.error;
     return;
   }

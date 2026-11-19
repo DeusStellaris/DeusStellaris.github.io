@@ -2,7 +2,7 @@
  * Worker de la API de likes del portafolio Deus.
  *
  *   POST /likes  { slug, visitorId, action: "like" | "unlike" }  →  { slug, likes, liked }
- *   POST /consent, /push/*, /reviews y /accounts/*  (ver consent.js, push.js, reviews.js y accounts.js)
+ *   POST /consent, /push/*, /reviews, /accounts/* y /vitals  (ver consent.js, push.js, reviews.js, accounts.js y observability.js)
  *
  * Capas de defensa, en orden:
  *   1. Origen: solo los orígenes del sitio (lista explícita) reciben CORS. Sin origen permitido → 403.
@@ -19,6 +19,7 @@ import { canonicalizeOrigin, readConfig } from './config.js';
 import { handleConsent } from './consent.js';
 import { pseudonymize } from './hash.js';
 import { errorResponse, jsonResponse, preflight } from './http.js';
+import { handleVitals, traced } from './observability.js';
 import { handlePushSubscribe, handlePushUnsubscribe } from './push.js';
 import { handleReviewsRead, handleReviewsWrite } from './reviews.js';
 import { consumeRateLimit, countLikes, deleteLike, insertLike, SupabaseError } from './supabase.js';
@@ -100,6 +101,7 @@ const ROUTES = {
   '/push/subscribe': { POST: handlePushSubscribe },
   '/push/unsubscribe': { POST: handlePushUnsubscribe },
   '/reviews': { GET: handleReviewsRead, POST: handleReviewsWrite },
+  '/vitals': { POST: handleVitals },
   '/accounts/register': { POST: handleRegister },
   '/accounts/login': { POST: handleLogin },
   '/accounts/backup': { GET: handleBackup, PUT: handleBackup },
@@ -128,7 +130,7 @@ export default {
           Allow: `${Object.keys(methods).join(', ')}, OPTIONS`,
         });
       }
-      return await handler(request, env);
+      return await traced(request, pathname, () => handler(request, env));
     } catch (error) {
       // Error inesperado: respuesta genérica, sin detalles ni stack trace.
       console.error('api_unexpected', error instanceof Error ? error.name : 'unknown');

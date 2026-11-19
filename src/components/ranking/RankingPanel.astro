@@ -35,7 +35,9 @@ const { locale } = Astro.props;
   </div>
 
   <p class="ranking__status" role="status" aria-live="polite" data-ranking-status></p>
-  <ol class="ranking__list" data-ranking-list></ol>
+  <ol class="ranking__list" data-ranking-list>
+    {Array.from({ length: 4 }, () => <li class="skeleton skeleton--box" aria-hidden="true" />)}
+  </ol>
 </section>
 
 <style>

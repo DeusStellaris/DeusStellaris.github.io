@@ -1,4 +1,5 @@
 import { debounce } from '../../lib/debounce';
+import { dedupe } from '../../lib/dedupe';
 import { fill } from '../../lib/fill';
 import {
   filterResources,
@@ -19,6 +20,7 @@ import {
 const ROOT_SELECTOR = '[data-hub]';
 const SEARCH_DEBOUNCE_MS = 250;
 const FETCH_TIMEOUT_MS = 8_000;
+const PAGE_SIZE = 12;
 
 interface HubView {
   root: HTMLElement;
@@ -26,6 +28,7 @@ interface HubView {
   messages: Record<string, string>;
   resources: HubResource[];
   filter: HubFilter;
+  shown: number;
 }
 
 const field = (scope: ParentNode, name: string): HTMLElement | null =>
@@ -105,45 +108,65 @@ function openDetails(view: HubView, resource: HubResource): void {
   if (!dialog.open) dialog.showModal();
 }
 
-function render(view: HubView): void {
+/** Con `append`, agrega solo las tarjetas nuevas en vez de repintar la lista completa. */
+function render(view: HubView, append = false): void {
   const { root, messages } = view;
   const grid = root.querySelector<HTMLElement>('[data-hub-grid]');
   const status = root.querySelector<HTMLElement>('[data-hub-status]');
+  const more = root.querySelector<HTMLButtonElement>('[data-hub-more]');
   const template = root.querySelector<HTMLTemplateElement>('[data-hub-card-template]');
   if (!grid || !status || !template) return;
 
   const visible = filterResources(view.resources, view.filter);
-  grid.replaceChildren(...visible.map((resource) => renderCard(view, template, resource)));
+  const from = append ? grid.children.length : 0;
+  const page = visible.slice(from, view.shown);
+  const cards = page.map((resource) => renderCard(view, template, resource));
+  if (append) grid.append(...cards);
+  else grid.replaceChildren(...cards);
+  grid.removeAttribute('aria-busy');
+  if (more) more.hidden = view.shown >= visible.length;
   status.textContent =
     visible.length === 0
       ? (messages['hub.noResults'] ?? '')
       : fill(messages['hub.count'] ?? '', { n: visible.length });
 }
 
-async function loadResources(src: string): Promise<HubResource[]> {
-  const response = await fetch(src, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
-  if (!response.ok) throw new Error('hub_http');
-  return normalizeResources(await response.json());
+/** Cambia el filtro y vuelve a la primera página. */
+function setFilter(view: HubView, filter: HubFilter): void {
+  view.filter = filter;
+  view.shown = PAGE_SIZE;
+  render(view);
+}
+
+function loadResources(src: string): Promise<HubResource[]> {
+  return dedupe(`hub:${src}`, async () => {
+    const response = await fetch(src, { signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) });
+    if (!response.ok) throw new Error('hub_http');
+    return normalizeResources(await response.json());
+  });
 }
 
 function bind(view: HubView): void {
   const { root } = view;
   const search = root.querySelector<HTMLInputElement>('[data-hub-search]');
   const updateQuery = debounce((query: string) => {
-    view.filter = { ...view.filter, query };
-    render(view);
+    setFilter(view, { ...view.filter, query });
   }, SEARCH_DEBOUNCE_MS);
   search?.addEventListener('input', () => updateQuery(search.value));
 
   root.addEventListener('change', (event) => {
     const input = event.target;
     if (!(input instanceof HTMLInputElement) || input.name !== 'hub-category') return;
-    view.filter = { ...view.filter, category: input.value as HubCategory | 'all' };
-    render(view);
+    setFilter(view, { ...view.filter, category: input.value as HubCategory | 'all' });
   });
 
   root.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return;
+    if (event.target.closest('[data-hub-more]')) {
+      view.shown += PAGE_SIZE;
+      render(view, true);
+      return;
+    }
     if (event.target.closest('[data-hub-close]')) {
       root.querySelector<HTMLDialogElement>('[data-hub-dialog]')?.close();
       return;
@@ -166,24 +189,33 @@ async function initHub(root: HTMLElement): Promise<void> {
     messages,
     resources: [],
     filter: { category: 'all', query: '', locale },
+    shown: PAGE_SIZE,
   };
   const status = root.querySelector<HTMLElement>('[data-hub-status]');
   const empty = root.querySelector<HTMLElement>('[data-hub-empty]');
   const toolbar = root.querySelector<HTMLElement>('[data-hub-toolbar]');
 
+  const grid = root.querySelector<HTMLElement>('[data-hub-grid]');
   try {
     view.resources = await loadResources(root.dataset.src ?? '');
   } catch {
+    grid?.replaceChildren();
+    if (toolbar) toolbar.hidden = true;
     if (status) status.textContent = messages['hub.loadError'] ?? '';
     return;
   }
 
   if (view.resources.length === 0) {
+    grid?.replaceChildren();
+    if (toolbar) toolbar.hidden = true;
     if (status) status.textContent = '';
     if (empty) empty.hidden = false;
     return;
   }
-  if (toolbar) toolbar.hidden = false;
+  if (toolbar) {
+    toolbar.classList.remove('is-pending');
+    toolbar.inert = false;
+  }
   bind(view);
   render(view);
 }

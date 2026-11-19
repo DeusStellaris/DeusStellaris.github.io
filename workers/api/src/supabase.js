@@ -180,15 +180,17 @@ export async function deletePushSubscription(config, endpointHash) {
  * @param {{ url: string, serviceKey: string }} config
  * @param {string} slug
  * @param {number} limit
+ * @param {number} [offset]
  * @returns {Promise<Array<{ rating: number, comment: string, locale: string, createdAt: string }>>}
  */
-export async function listReviews(config, slug, limit) {
+export async function listReviews(config, slug, limit, offset = 0) {
   const query = new URLSearchParams({
     demo_slug: `eq.${slug}`,
     status: 'eq.published',
     select: 'rating,comment,locale,created_at',
     order: 'created_at.desc',
     limit: String(limit),
+    offset: String(offset),
   });
   const rows = await (await request(config, `reviews?${query.toString()}`)).json();
   if (!Array.isArray(rows)) throw new SupabaseError('reviews_shape');

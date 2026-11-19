@@ -67,6 +67,8 @@ export const reviewsEs = {
   rateLimited: 'Demasiados envíos. Esperá un momento y probá de nuevo.',
   error: 'No se pudo guardar tu reseña. Intentalo más tarde.',
   loadError: 'No se pudieron cargar las reseñas.',
+  more: 'Ver más reseñas',
+  moreTooltip: 'Carga las reseñas anteriores sin recargar la página.',
   unavailable: 'Las reseñas todavía no están disponibles.',
 };
 
@@ -91,6 +93,8 @@ export const reviewsEn: typeof reviewsEs = {
   rateLimited: 'Too many submissions. Wait a moment and try again.',
   error: 'Your review could not be saved. Please try again later.',
   loadError: 'Reviews could not be loaded.',
+  more: 'Show more reviews',
+  moreTooltip: 'Loads older reviews without reloading the page.',
   unavailable: 'Reviews are not available yet.',
 };
 

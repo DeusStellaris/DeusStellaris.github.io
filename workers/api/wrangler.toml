@@ -18,3 +18,12 @@ DEMOS_INDEX_URL = "https://DeusStellaris.github.io/demos-index.json"
 # URL del proyecto de Supabase. No es secreta: la seguridad depende de RLS y de los secretos.
 # Marcador vacio hasta crear el proyecto; sin valor el Worker responde 503 de forma controlada.
 SUPABASE_URL = ""
+
+# Trazas y registros de Workers (exportables a OpenTelemetry desde el panel). Muestreo bajo: las
+# peticiones lentas y las muestras RUM se emiten como líneas JSON (ver src/observability.js).
+[observability]
+enabled = true
+head_sampling_rate = 0.1
+
+# Supavisor: SUPABASE_URL usa la API REST (PostgREST), que ya agrupa conexiones. Si se agrega acceso
+# SQL directo desde el Worker, usar la cadena "Transaction pooler" (puerto 6543) y nunca la directa.

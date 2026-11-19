@@ -8,6 +8,8 @@
 @import "./base.css";
 @import "./motion.css";
 @import "./prose.css";
+@import "./surfaces.css";
+@import "./skeleton.css";
 @import "./sections/home.css";
 @import "./sections/games.css";
 @import "./sections/programs.css";

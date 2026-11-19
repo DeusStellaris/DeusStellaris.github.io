@@ -165,6 +165,8 @@ export const hubEs = {
   emptyBody:
     'El Hub se abre junto con la versión pública de DeusDeck. Acá aparecerán los recursos de la comunidad cuando existan.',
   noResults: 'Ningún recurso coincide con tu búsqueda.',
+  more: 'Mostrar más',
+  moreTooltip: 'Agrega los siguientes recursos a la lista sin recargar la página.',
   by: 'Por',
   version: 'Versión',
   compat: 'Compatible con DeusDeck {v} o superior',
@@ -202,6 +204,8 @@ export const hubEn: typeof hubEs = {
   emptyBody:
     'The Hub opens together with the public DeusDeck release. Community resources will show up here once they exist.',
   noResults: 'No resource matches your search.',
+  more: 'Show more',
+  moreTooltip: 'Adds the next resources to the list without reloading the page.',
   by: 'By',
   version: 'Version',
   compat: 'Compatible with DeusDeck {v} or later',

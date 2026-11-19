@@ -1,4 +1,5 @@
 import { PUBLIC_SUPABASE_ANON_KEY, PUBLIC_SUPABASE_URL } from 'astro:env/client';
+import { dedupe } from './dedupe';
 
 /**
  * Cliente de LECTURA de Supabase para el navegador. Usa solo la clave anon: las políticas RLS
@@ -30,7 +31,11 @@ export class SupabaseRequestError extends Error {
  * Llama a una función RPC pública de Supabase.
  * @throws {SupabaseRequestError} si la red falla o la respuesta no es correcta.
  */
-export async function callReadRpc<T>(name: string, body: Record<string, unknown> = {}): Promise<T> {
+export function callReadRpc<T>(name: string, body: Record<string, unknown> = {}): Promise<T> {
+  return dedupe(`rpc:${name}:${JSON.stringify(body)}`, () => fetchRpc<T>(name, body));
+}
+
+async function fetchRpc<T>(name: string, body: Record<string, unknown>): Promise<T> {
   const state = supabaseState();
   if (!state.configured) throw new SupabaseRequestError('network');
 

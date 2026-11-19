@@ -1,0 +1,52 @@
+/*
+ * Tarjetas y paneles. Marco, elevación y estados salen de los tokens --panel-* (tokens.css), así
+ * el modo claro separa cada superficie del fondo y el oscuro conserva su aspecto. Los selectores
+ * llevan :root delante para vencer la especificidad de los estilos acotados de cada componente.
+ * Modo Lite: borde y sombra estáticos, sin degradados. Sin Modo Lite: brillo de borde superior.
+ * Solo se anima transform; el resto de estados cambia al instante.
+ */
+
+:root
+  :is(
+    .section-card,
+    .project-card,
+    .demos__card,
+    .hub__card,
+    .hub__empty,
+    .hub__dialog,
+    .featured,
+    .search-result,
+    .ranking__item,
+    .reviews__list li,
+    .deck__status,
+    .legal__notice
+  ) {
+  border-color: var(--panel-border);
+  box-shadow: var(--panel-shadow), var(--panel-highlight);
+}
+
+/* Tarjetas accionables: elevación y marco acentuado al apuntar o enfocar. */
+:root :is(.section-card, .project-card, .demos__card, .hub__card, .search-result):hover,
+:root
+  :is(.section-card, .project-card, .demos__card, .hub__card, .search-result):has(:focus-visible),
+:root :is(.section-card, .project-card, .demos__card, .hub__card, .search-result):focus-visible {
+  border-color: var(--panel-border-active);
+  box-shadow: var(--panel-shadow-hover), var(--panel-highlight);
+}
+
+/* Modo Lite: sin filo luminoso ni velo. Sin Modo Lite: ambos, solo en tarjetas principales. */
+:root.lite-mode {
+  --panel-highlight: 0 0 #0000;
+}
+
+:root[data-theme="light"]:not(.lite-mode)
+  :is(.section-card, .project-card, .demos__card, .hub__card, .featured) {
+  background-image: linear-gradient(165deg, var(--panel-wash), transparent 55%);
+}
+
+/* Paneles de Juegos y Programas: el marco toma el acento de la sección en vez del oro. */
+body[data-section="games"],
+body[data-section="programs"] {
+  --panel-border: color-mix(in srgb, var(--color-accent) 38%, transparent);
+  --panel-border-active: var(--color-accent);
+}

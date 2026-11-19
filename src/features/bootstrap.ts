@@ -1,12 +1,8 @@
 import { initAccounts } from './accounts/accounts';
 import { initAds } from './ads/ads';
 import { initAssistant } from './assistant/assistant';
-import { initComments } from './comments/giscus';
 import { initConsent } from './consent/consent';
-import { initDemoPlayers } from './demos/demo-player';
-import { initDeckProduct } from './deusdeck/product';
 import { initFavorites } from './favorites/favorites';
-import { initHubGallery } from './hub/hub';
 import { runIntro } from './intro/intro';
 import { initLikes, initRankings } from './likes/likes';
 import { initLiteMode } from './preferences/lite-mode';
@@ -14,8 +10,26 @@ import { initThemePreferences } from './preferences/theme';
 import { initProfile } from './profile/profile';
 import { initPushPanel } from './push/push-panel';
 import { registerServiceWorker } from './pwa/register';
-import { initReviews } from './reviews/reviews';
+import { initRum } from './rum/rum';
 import { initSearchWidgets } from './search/search-widget';
+
+/**
+ * Módulos de una sola página: se descargan solo si la página contiene su raíz, así el paquete
+ * común no carga la galería, las reseñas, las demos ni los comentarios en las demás páginas.
+ */
+const PAGE_MODULES: ReadonlyArray<readonly [string, () => Promise<() => void>]> = [
+  ['[data-hub]', async () => (await import('./hub/hub')).initHubGallery],
+  ['[data-reviews]', async () => (await import('./reviews/reviews')).initReviews],
+  ['[data-demo-player]', async () => (await import('./demos/demo-player')).initDemoPlayers],
+  ['[data-deck-product]', async () => (await import('./deusdeck/product')).initDeckProduct],
+  ['[data-giscus-root]', async () => (await import('./comments/giscus')).initComments],
+];
+
+function initPageModules(): void {
+  for (const [selector, load] of PAGE_MODULES) {
+    if (document.querySelector(selector)) void load().then((init) => init());
+  }
+}
 
 /**
  * Punto de entrada de la interactividad global. Se importa una sola vez desde BaseLayout.
@@ -32,17 +46,14 @@ function initPage(): void {
   initSearchWidgets();
   initLikes();
   initRankings();
-  initComments();
   initConsent();
   initAds();
-  initDeckProduct();
-  initHubGallery();
-  initDemoPlayers();
-  initReviews();
   initAccounts();
+  initPageModules();
 }
 
 registerServiceWorker();
+initRum();
 initThemePreferences();
 initLiteMode();
 initPage();

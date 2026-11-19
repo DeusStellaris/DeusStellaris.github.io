@@ -1,7 +1,8 @@
 /**
  * Reseñas reales de las demos jugables.
  *
- *   GET  /reviews?slug=<demo>  →  200 { slug, count, average, reviews: [{ rating, comment, locale, createdAt }] }
+ *   GET  /reviews?slug=<demo>&offset=<n>  →  200 { slug, count, average, hasMore, reviews: [{ rating, comment, locale, createdAt }] }
+ *        (páginas de PAGE_SIZE; el cliente pide la siguiente con offset)
  *   POST /reviews  { slug, visitorId, rating (1-5), comment (opcional, hasta 500), locale }  →  200 { slug, saved: true }
  *
  * Zero Fake Reviews: no existe ninguna reseña sembrada ni generada. Cada visitante (pseudónimo HMAC)
@@ -26,7 +27,9 @@ import { readJsonBody, SLUG_PATTERN, UUID_V4_PATTERN } from './validation.js';
 export const MAX_COMMENT_LENGTH = 500;
 const MAX_RAW_COMMENT_LENGTH = 2000;
 const MAX_REVIEW_BODY_BYTES = 4096;
-const LIST_LIMIT = 20;
+const PAGE_SIZE = 10;
+const MAX_OFFSET = 1000;
+const READ_CACHE = 'public, max-age=15, stale-while-revalidate=60';
 const LOCALES = Object.freeze(['es', 'en']);
 const LIMITS = {
   ipPerMinute: { limit: 20, windowSeconds: 60 },
@@ -117,8 +120,10 @@ function storageFailure(error, origin) {
 
 /** @param {Request} request @param {Record<string, string | undefined>} env */
 export async function handleReviewsRead(request, env) {
-  const slug = new URL(request.url).searchParams.get('slug') ?? '';
-  if (!SLUG_PATTERN.test(slug)) {
+  const params = new URL(request.url).searchParams;
+  const slug = params.get('slug') ?? '';
+  const offset = Number(params.get('offset') ?? '0');
+  if (!SLUG_PATTERN.test(slug) || !Number.isInteger(offset) || offset < 0 || offset > MAX_OFFSET) {
     return errorResponse(
       400,
       'Solicitud no válida.',
@@ -143,9 +148,21 @@ export async function handleReviewsRead(request, env) {
     }
     const [stats, reviews] = await Promise.all([
       reviewStats(config.supabase, slug),
-      listReviews(config.supabase, slug, LIST_LIMIT),
+      listReviews(config.supabase, slug, PAGE_SIZE + 1, offset),
     ]);
-    return jsonResponse({ slug, count: stats.count, average: stats.average, reviews }, 200, origin);
+    const hasMore = reviews.length > PAGE_SIZE;
+    return jsonResponse(
+      {
+        slug,
+        count: stats.count,
+        average: stats.average,
+        hasMore,
+        reviews: reviews.slice(0, PAGE_SIZE),
+      },
+      200,
+      origin,
+      { 'Cache-Control': READ_CACHE },
+    );
   } catch (error) {
     return storageFailure(error, origin);
   }

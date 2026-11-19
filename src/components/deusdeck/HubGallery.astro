@@ -43,7 +43,7 @@ const categories = ['all', ...HUB_CATEGORIES] as const;
     <p class="hub__lead">{t(locale, 'hub.lead')}</p>
   </header>
 
-  <div class="hub__toolbar" data-hub-toolbar hidden>
+  <div class="hub__toolbar is-pending" data-hub-toolbar inert>
     <div class="hub__search">
       <label for="hub-search">{t(locale, 'hub.searchLabel')}</label>
       <input
@@ -76,7 +76,25 @@ const categories = ['all', ...HUB_CATEGORIES] as const;
     <p>{t(locale, 'hub.emptyBody')}</p>
   </div>
 
-  <ul class="hub__grid" data-hub-grid></ul>
+  <ul class="hub__grid" data-hub-grid aria-busy="true">
+    {
+      Array.from({ length: 6 }, () => (
+        <li class="hub__card skeleton-card" aria-hidden="true">
+          <div class="hub__preview skeleton"></div>
+          <div class="hub__body">
+            <p class="hub__category skeleton skeleton--text">&nbsp;</p>
+            <h3 class="skeleton skeleton--text">&nbsp;</h3>
+            <p class="hub__author skeleton skeleton--text">&nbsp;</p>
+            <p class="hub__compat skeleton skeleton--text">&nbsp;</p>
+            <span class="hub__button skeleton"></span>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+  <button type="button" class="hub__button hub__more" data-hub-more data-tooltip={t(locale, 'hub.moreTooltip')} hidden>
+    {t(locale, 'hub.more')}
+  </button>
 
   <template data-hub-card-template>
     <li class="hub__card">
@@ -143,6 +161,11 @@ const categories = ['all', ...HUB_CATEGORIES] as const;
   .hub__toolbar {
     display: grid;
     gap: var(--space-4);
+  }
+
+  /* Mientras carga, la barra reserva su espacio sin mostrarse: así no empuja la lista (CLS). */
+  .hub__toolbar.is-pending {
+    visibility: hidden;
   }
 
   .hub__toolbar[hidden],
@@ -307,6 +330,14 @@ const categories = ['all', ...HUB_CATEGORIES] as const;
     font-size: var(--text-sm);
     text-decoration: none;
     cursor: pointer;
+  }
+
+  .skeleton-card .hub__compat {
+    width: 60%;
+  }
+
+  .hub__more {
+    justify-self: center;
   }
 
   .hub__button[hidden] {

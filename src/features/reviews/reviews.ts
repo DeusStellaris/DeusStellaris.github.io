@@ -1,3 +1,4 @@
+import { dedupe, forget } from '../../lib/dedupe';
 import { fill } from '../../lib/fill';
 import { getVisitorId } from '../likes/visitor';
 
@@ -17,6 +18,8 @@ interface Review {
 interface ReviewsPayload {
   count: number;
   average: number | null;
+  /** Ausente en Workers anteriores a la paginación: se trata como sin más páginas. */
+  hasMore?: boolean;
   reviews: Review[];
 }
 
@@ -26,6 +29,7 @@ interface View {
   slug: string;
   locale: string;
   messages: Record<string, string>;
+  loaded: number;
 }
 
 function isPayload(value: unknown): value is ReviewsPayload {
@@ -50,48 +54,67 @@ function setText(root: HTMLElement, selector: string, text: string): void {
   if (element) element.textContent = text;
 }
 
-function renderPayload(view: View, payload: ReviewsPayload): void {
+function reviewItem(review: Review): HTMLLIElement {
+  const item = document.createElement('li');
+  const rating = document.createElement('span');
+  rating.className = 'reviews__item-stars';
+  rating.textContent = stars(review.rating);
+  item.append(rating);
+  if (review.comment !== '') {
+    const comment = document.createElement('p');
+    comment.textContent = review.comment;
+    item.append(comment);
+  }
+  return item;
+}
+
+/** Con `append`, agrega la página nueva al final en vez de repintar la lista. */
+function renderPayload(view: View, payload: ReviewsPayload, append: boolean): void {
   const { root, messages } = view;
   const list = root.querySelector<HTMLElement>('[data-reviews-list]');
+  const more = root.querySelector<HTMLButtonElement>('[data-reviews-more]');
   if (!list) return;
+  list.removeAttribute('aria-busy');
 
   if (payload.count === 0) {
     setText(root, '[data-reviews-summary]', messages.none ?? '');
     list.replaceChildren();
+    if (more) more.hidden = true;
     return;
   }
   const average = (payload.average ?? 0).toFixed(1);
   const template = payload.count === 1 ? messages.summaryOne : messages.summary;
   setText(root, '[data-reviews-summary]', fill(template ?? '', { avg: average, n: payload.count }));
 
-  list.replaceChildren(
-    ...payload.reviews.map((review) => {
-      const item = document.createElement('li');
-      const rating = document.createElement('span');
-      rating.className = 'reviews__item-stars';
-      rating.textContent = stars(review.rating);
-      item.append(rating);
-      if (review.comment !== '') {
-        const comment = document.createElement('p');
-        comment.textContent = review.comment;
-        item.append(comment);
-      }
-      return item;
-    }),
-  );
+  const items = payload.reviews.map(reviewItem);
+  if (append) list.append(...items);
+  else list.replaceChildren(...items);
+  view.loaded = list.children.length;
+  if (more) more.hidden = payload.hasMore !== true;
 }
 
-async function loadReviews(view: View): Promise<void> {
-  try {
-    const response = await fetch(`${view.api}/reviews?slug=${encodeURIComponent(view.slug)}`, {
+function fetchReviews(view: View, offset: number, fresh: boolean): Promise<ReviewsPayload> {
+  const url = `${view.api}/reviews?slug=${encodeURIComponent(view.slug)}&offset=${offset}`;
+  const load = async (): Promise<ReviewsPayload> => {
+    const response = await fetch(url, {
       credentials: 'omit',
+      cache: fresh ? 'reload' : 'default',
       headers: { Accept: 'application/json' },
       signal: AbortSignal.timeout(API_TIMEOUT_MS),
     });
     const body: unknown = response.ok ? await response.json() : null;
     if (!isPayload(body)) throw new Error('reviews_shape');
-    renderPayload(view, body);
+    return body;
+  };
+  if (fresh) forget(url);
+  return dedupe(url, load);
+}
+
+async function loadReviews(view: View, { append = false, fresh = false } = {}): Promise<void> {
+  try {
+    renderPayload(view, await fetchReviews(view, append ? view.loaded : 0, fresh), append);
   } catch {
+    if (!append) view.root.querySelector('[data-reviews-list]')?.replaceChildren();
     setText(view.root, '[data-reviews-summary]', view.messages.loadError ?? '');
   }
 }
@@ -136,7 +159,7 @@ async function submit(view: View, form: HTMLFormElement): Promise<void> {
     else if (!response.ok) feedback(messages.error ?? '');
     else {
       feedback(messages.thanks ?? '');
-      await loadReviews(view);
+      await loadReviews(view, { fresh: true });
     }
   } catch {
     feedback(messages.error ?? '');
@@ -154,6 +177,7 @@ function initReviewsOf(root: HTMLElement): void {
     slug: root.dataset.slug ?? '',
     locale: root.dataset.locale ?? 'es',
     messages: JSON.parse(root.dataset.messages ?? '{}') as Record<string, string>,
+    loaded: 0,
   };
 
   const form = root.querySelector<HTMLFormElement>('[data-reviews-form]');
@@ -175,6 +199,9 @@ function initReviewsOf(root: HTMLElement): void {
       fill(view.messages.counter ?? '', { n: textarea.value.length }),
     );
   });
+  root
+    .querySelector('[data-reviews-more]')
+    ?.addEventListener('click', () => void loadReviews(view, { append: true }));
   void loadReviews(view);
 }
 

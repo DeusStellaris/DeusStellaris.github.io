@@ -1,0 +1,41 @@
+/*
+ * Esqueletos de carga. Reservan el tamaño final del contenido dinámico para evitar saltos de diseño
+ * (CLS) y se reemplazan al llegar los datos. Modo Lite y movimiento reducido: bloque estático;
+ * sin Modo Lite: un brillo que cruza el bloque animando solo transform.
+ */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  display: block;
+  background: var(--color-surface-raised);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton--text {
+  color: transparent;
+  user-select: none;
+}
+
+.skeleton--box {
+  min-height: 4.25rem;
+  border-radius: var(--radius-md);
+}
+
+.skeleton-card {
+  pointer-events: none;
+}
+
+html:not(.lite-mode) .skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, var(--color-glow), transparent);
+  transform: translateX(-100%);
+  animation: skeleton-sweep 1.4s var(--ease-out) infinite;
+}
+
+@keyframes skeleton-sweep {
+  to {
+    transform: translateX(100%);
+  }
+}
