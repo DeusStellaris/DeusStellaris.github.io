@@ -52,7 +52,7 @@ const REFUND: Record<LegalLocale, LegalDocumentContent> = {
       {
         heading: '4. Consultas',
         paragraphs: [
-          'Para consultas sobre esta política, usá el canal de contacto del sitio. {{PENDING:correo de contacto}}',
+          'Para consultas sobre esta política, usá el canal de contacto del sitio: {{EMAIL}}.',
         ],
       },
       {
@@ -88,9 +88,7 @@ const REFUND: Record<LegalLocale, LegalDocumentContent> = {
       },
       {
         heading: '4. Questions',
-        paragraphs: [
-          'For questions about this policy, use the site contact channel. {{PENDING:contact email}}',
-        ],
+        paragraphs: ['For questions about this policy, use the site contact channel: {{EMAIL}}.'],
       },
       {
         heading: '5. Validity',
@@ -257,7 +255,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
         {
           heading: '9. Ley aplicable y contacto',
           paragraphs: [
-            'Ley aplicable y jurisdicción: {{PENDING:ley aplicable y tribunales competentes}}.',
+            'Ley aplicable y jurisdicción: leyes de la República Argentina; tribunales ordinarios de la Ciudad Autónoma de Buenos Aires. Contacto legal: {{EMAIL}}.',
             'Contacto: {{EMAIL}}.',
           ],
         },
@@ -325,7 +323,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
         {
           heading: '9. Governing law and contact',
           paragraphs: [
-            'Governing law and jurisdiction: {{PENDING:governing law and competent courts}}.',
+            'Governing law and jurisdiction: laws of the Argentine Republic; ordinary courts of the Autonomous City of Buenos Aires. Legal contact: {{EMAIL}}.',
             'Contact: {{EMAIL}}.',
           ],
         },
@@ -343,7 +341,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
           heading: '1. Responsable del tratamiento',
           paragraphs: [
             'Responsable: {{CONTROLLER}}. Contacto: {{EMAIL}}.',
-            'Domicilio: {{PENDING:domicilio del responsable}}. Representante o delegado de protección de datos, si corresponde: {{PENDING:representante o DPO}}.',
+            'Domicilio: Ciudad Autónoma de Buenos Aires (CABA), Argentina. Delegado de protección de datos: no designado; consultas de privacidad al correo de contacto.',
           ],
         },
         {
@@ -450,7 +448,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
           heading: '1. Controller',
           paragraphs: [
             'Controller: {{CONTROLLER}}. Contact: {{EMAIL}}.',
-            'Address: {{PENDING:controller address}}. Representative or data protection officer, if applicable: {{PENDING:representative or DPO}}.',
+            'Address: Autonomous City of Buenos Aires (CABA), Argentina. Data protection officer: not appointed; privacy questions go to the contact email.',
           ],
         },
         {
