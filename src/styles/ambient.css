@@ -222,19 +222,7 @@ body[data-section="freelance"] .site-footer {
   z-index: 1;
 }
 
-/* Reduced motion: se eliminan los efectos por completo, sin ciclos ni capas residuales. */
-@media (prefers-reduced-motion: reduce) {
-  .section-card::before,
-  .section-card::after,
-  .section-card__dust i,
-  body[data-section="home"]::before,
-  body[data-section="freelance"]::before {
-    display: none;
-    animation: none;
-  }
-}
-
-/* Lite Mode: mismo resultado que reduced motion; el visitante pidió menos efectos. */
+/* Lite Mode: sin efectos ambientales. */
 html.lite-mode .section-card::before,
 html.lite-mode .section-card::after,
 html.lite-mode .section-card__dust i,

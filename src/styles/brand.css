@@ -48,12 +48,3 @@
     transform: translateX(100%);
   }
 }
-
-/* Accesibilidad: con movimiento reducido el destello se desactiva por completo. Lite Mode lo
-   desactiva en motion.css mediante html.lite-mode *::after. */
-@media (prefers-reduced-motion: reduce) {
-  .brand-mark::after {
-    animation: none;
-    transform: translateX(100%);
-  }
-}

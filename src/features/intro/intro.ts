@@ -11,7 +11,7 @@ import { STORAGE_KEYS, writeSession } from '../preferences/storage';
  * - Toda la secuencia usa Web Animations sobre transform y opacity (aceleradas por GPU, sin filtros
  *   ni sombras), así el Modo Lite no la afecta: aparición, pausa de reconocimiento y vuelo del
  *   logotipo a la posición del encabezado mientras el velo se desvanece. Se mide el destino al partir.
- * - Con prefers-reduced-motion no hay desplazamiento: el saludo aparece y se desvanece en su lugar.
+ * - Con prefers-reduced-motion y Modo Lite activo no hay desplazamiento: el saludo aparece y se desvanece en su lugar.
  */
 
 const FADE_IN_MS = 500;
@@ -49,7 +49,10 @@ function play(overlay: HTMLElement, finish: () => void): void {
     return;
   }
 
-  const reduced = window.matchMedia(REDUCED_MOTION_QUERY).matches;
+  // El movimiento reducido del SO solo aplica con Modo Lite activo: apagarlo es una decisión explícita.
+  const reduced =
+    window.matchMedia(REDUCED_MOTION_QUERY).matches &&
+    document.documentElement.classList.contains('lite-mode');
   const appear: Keyframe[] = reduced
     ? [{ opacity: 0 }, { opacity: 1 }]
     : [

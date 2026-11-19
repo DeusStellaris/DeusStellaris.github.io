@@ -1,38 +1,9 @@
 /*
- * Movimiento. Dos reglas:
- * 1. prefers-reduced-motion: desactiva transiciones y transiciones de vista.
- * 2. Lite Mode (clase html.lite-mode, activada por el visitante) desactiva los efectos caros.
+ * Movimiento. Lite Mode (clase html.lite-mode) es la única palanca: activo por defecto, desactiva
+ * animaciones, transiciones y efectos decorativos. Si el visitante lo apaga a propósito, las
+ * animaciones completas corren aunque el sistema pida movimiento reducido (p. ej. Windows con
+ * "efectos de animación" apagados): la decisión explícita en el sitio vence a la preferencia del SO.
  */
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-
-  /*
-   * La preferencia de movimiento reducido del sistema debe vencer a cualquier transición de componente
-   * (WCAG 2.3.3). Sin !important, las declaraciones de componente con más especificidad la anulaban;
-   * la prueba en navegador lo detectó (0,15 s en lugar de 0,001 ms).
-   * Biome exige una supresión por declaración: cada !important lleva la suya.
-   */
-  *,
-  *::before,
-  *::after {
-    /* biome-ignore lint/complexity/noImportantStyles: preferencia de accesibilidad del sistema (WCAG 2.3.3) */
-    animation-duration: 0.001ms !important;
-    /* biome-ignore lint/complexity/noImportantStyles: preferencia de accesibilidad del sistema (WCAG 2.3.3) */
-    animation-iteration-count: 1 !important;
-    /* biome-ignore lint/complexity/noImportantStyles: preferencia de accesibilidad del sistema (WCAG 2.3.3) */
-    transition-duration: 0.001ms !important;
-  }
-
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) {
-    animation: none;
-  }
-}
-
 /* Transición de vista por defecto: fundido suave entre páginas. */
 ::view-transition-old(root),
 ::view-transition-new(root) {
@@ -41,7 +12,7 @@
 }
 
 /*
- * Lite Mode (html.lite-mode, activado por el visitante). Desactiva animaciones, transiciones y
+ * Lite Mode (html.lite-mode). Desactiva animaciones, transiciones y
  * transiciones de vista. Requiere !important: las reglas de componente de Astro tienen especificidad
  * (0,2,0) o superior por sus atributos data-astro-cid, y una regla de (0,1,1) no las vence.
  * El análisis en navegador lo detectó: sin !important, los componentes conservaban 0,15 s de transición.

@@ -114,6 +114,15 @@
   --radius-md: 0.75rem;
   --radius-pill: 999px;
 
+  /* Capas. Los <dialog> modales viven en la capa superior del navegador, por encima de todas. */
+  --z-header: 10;
+  --z-banner: 30;
+  --z-floating: 40;
+  --z-tooltip: 50;
+  --z-intro: 60;
+  --z-fullscreen: 70;
+  --z-skip: 100;
+
   /* Objetivo táctil mínimo recomendado (WCAG 2.5.5) */
   --target-min: 44px;
 

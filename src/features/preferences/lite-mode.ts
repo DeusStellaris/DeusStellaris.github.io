@@ -4,8 +4,8 @@ import { STORAGE_KEYS, writeLocal } from './storage';
  * Lite Mode: modo de rendimiento. Activo por defecto; solo un 'off' guardado lo desactiva
  * (decisión tomada en public/js/preferences-init.js antes del primer pintado).
  * Activo = clase `lite-mode` en <html>. Las reglas CSS de esa clase desactivan
- * animaciones, transiciones y efectos decorativos. `prefers-reduced-motion` sigue
- * vigente por separado: este modo nunca cambia esa preferencia del sistema.
+ * animaciones, transiciones y efectos decorativos. Apagarlo es una decisión explícita y vence a
+ * `prefers-reduced-motion` del sistema operativo (ver motion.css).
  */
 
 const TOGGLE_SELECTOR = '[data-lite-toggle]';

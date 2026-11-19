@@ -14,7 +14,7 @@ const { locale } = Astro.props;
   class="icon-button profile-button"
   data-profile-open
   aria-label={t(locale, 'profile.open')}
-  title={t(locale, 'profile.open')}
+  data-tooltip={t(locale, 'profile.open')}
 >
   <svg class="profile-button__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
     <circle cx="12" cy="8" r="4" fill="none" stroke="currentColor" stroke-width="1.75" />

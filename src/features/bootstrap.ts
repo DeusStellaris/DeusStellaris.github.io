@@ -12,6 +12,7 @@ import { initPushPanel } from './push/push-panel';
 import { registerServiceWorker } from './pwa/register';
 import { initRum } from './rum/rum';
 import { initSearchWidgets } from './search/search-widget';
+import { initTooltips } from './tooltips/tooltips';
 
 /**
  * Módulos de una sola página: se descargan solo si la página contiene su raíz, así el paquete
@@ -54,6 +55,7 @@ function initPage(): void {
 
 registerServiceWorker();
 initRum();
+initTooltips();
 initThemePreferences();
 initLiteMode();
 initPage();

@@ -35,7 +35,10 @@ export function syncThemeToggles(): void {
   const theme = currentTheme();
   for (const button of document.querySelectorAll<HTMLButtonElement>(TOGGLE_SELECTOR)) {
     const label = theme === 'dark' ? button.dataset.labelToLight : button.dataset.labelToDark;
-    if (label) button.setAttribute('aria-label', label);
+    if (label) {
+      button.setAttribute('aria-label', label);
+      button.dataset.tooltip = label;
+    }
   }
 }
 
