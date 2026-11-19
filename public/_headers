@@ -1,5 +1,5 @@
-# Cabeceras de caché para hosts que las admiten (Cloudflare Pages, Netlify). GitHub Pages las ignora
-# y aplica su propia política (ver docs/setup/performance.md).
+# Cabeceras de Cloudflare Pages: caché por tipo de recurso y seguridad para todo el sitio.
+# Ver docs/setup/performance.md y docs/security/csp.md.
 
 # Recursos con hash en el nombre (CSS, JS, fuentes, imágenes optimizadas): inmutables un año.
 /_astro/*
@@ -27,7 +27,16 @@
 /demos/*
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
-# Páginas HTML: se revalidan siempre y el CDN puede servir una copia vencida mientras actualiza.
+# Seguridad para todo el sitio. Complementa la CSP de <meta> que genera Astro (con hashes por página):
+# varias CSP se intersecan, así que esta solo agrega lo que <meta> no puede expresar.
+# Sin Cache-Control aquí: Cloudflare Pages une valores repetidos con comas y anularía los de arriba.
+# El HTML usa el valor por defecto de Pages (max-age=0, must-revalidate).
+# COOP same-origin-allow-popups: Decap CMS (/admin/) necesita window.opener en su ventana de OAuth.
 /*
-  Cache-Control: public, max-age=0, s-maxage=300, stale-while-revalidate=86400
+  Content-Security-Policy: frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests
+  X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=(), hid=(), midi=(), browsing-topics=(), fullscreen=(self), gamepad=(self)
+  Strict-Transport-Security: max-age=63072000; includeSubDomains
+  Cross-Origin-Opener-Policy: same-origin-allow-popups

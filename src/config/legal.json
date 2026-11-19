@@ -2,8 +2,8 @@
   "_nota": "Datos del titular y versiones de los documentos. Un valor null se muestra en el sitio como marcador PENDIENTE y debe completarse antes de publicar los documentos como definitivos. No inventar valores.",
   "versions": {
     "terms": "2026-11-05.1",
-    "privacy": "2026-11-06.1",
-    "cookies": "2026-11-05.1",
+    "privacy": "2026-11-19.1",
+    "cookies": "2026-11-19.1",
     "refund": "2026-11-06.1",
     "eula": "2026-11-19.1"
   },
@@ -18,12 +18,12 @@
     {
       "id": "github",
       "name": "GitHub, Inc.",
-      "purpose": "Alojamiento del sitio (GitHub Pages), autenticación del panel de administración y comentarios (GitHub Discussions)"
+      "purpose": "Repositorio, autenticación del panel de administración y comentarios (GitHub Discussions)"
     },
     {
       "id": "cloudflare",
       "name": "Cloudflare, Inc.",
-      "purpose": "Servicios de servidor (Workers) para la autenticación del panel y la API de me gusta y consentimientos"
+      "purpose": "Alojamiento del sitio (Cloudflare Pages) y servicios de servidor (Workers) para la autenticación del panel y la API"
     },
     {
       "id": "supabase",

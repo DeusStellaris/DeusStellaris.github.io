@@ -7,6 +7,6 @@
 
 export const LEGAL_VERSIONS = Object.freeze({
   terms: '2026-11-05.1',
-  privacy: '2026-11-06.1',
-  cookies: '2026-11-05.1',
+  privacy: '2026-11-19.1',
+  cookies: '2026-11-19.1',
 });

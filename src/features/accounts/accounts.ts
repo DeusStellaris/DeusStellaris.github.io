@@ -1,13 +1,10 @@
-import { writeSession } from '../preferences/storage';
-
 /**
  * Cuenta opcional (account/AccountPanel.astro). Crea la cuenta o inicia sesión contra el Worker.
  * La contraseña viaja solo por HTTPS al Worker, que la guarda como hash Argon2id; aquí nunca se
- * guarda. El token de sesión (una hora) vive en sessionStorage y se pierde al cerrar la pestaña.
+ * guarda. La sesión (una hora) es una cookie HttpOnly del Worker: este código nunca ve el token.
  */
 
 const ROOT_SELECTOR = '[data-account]';
-const TOKEN_KEY = 'deus:account-token';
 const API_TIMEOUT_MS = 15_000;
 
 type Action = 'register' | 'login';
@@ -20,16 +17,16 @@ async function send(
   api: string,
   action: Action,
   credentials: { email: string; password: string },
-): Promise<{ status: number; token: string | null }> {
+): Promise<number> {
   const response = await fetch(`${api}/accounts/${action}`, {
     method: 'POST',
-    credentials: 'omit',
+    // include: el login recibe la cookie de sesión HttpOnly (SameSite=Strict) del Worker.
+    credentials: 'include',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
     body: JSON.stringify(credentials),
     signal: AbortSignal.timeout(API_TIMEOUT_MS),
   });
-  const body = (await response.json().catch(() => null)) as { token?: unknown } | null;
-  return { status: response.status, token: typeof body?.token === 'string' ? body.token : null };
+  return response.status;
 }
 
 function messageFor(status: number, messages: Record<string, string>): string {
@@ -63,8 +60,7 @@ function initAccount(root: HTMLElement): void {
     };
     status.textContent = messages.working ?? '';
     send(api, action, credentials)
-      .then(({ status: code, token }) => {
-        if (token) writeSession(TOKEN_KEY, token);
+      .then((code) => {
         status.textContent = messageFor(code, messages);
       })
       .catch(() => {

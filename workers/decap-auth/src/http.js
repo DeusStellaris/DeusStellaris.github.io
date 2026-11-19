@@ -13,6 +13,8 @@ function baseHeaders(contentSecurityPolicy) {
     'X-Content-Type-Options': 'nosniff',
     'X-Frame-Options': 'DENY',
     'Content-Security-Policy': contentSecurityPolicy,
+    'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+    'Strict-Transport-Security': 'max-age=63072000; includeSubDomains',
   };
 }
 

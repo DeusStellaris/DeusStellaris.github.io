@@ -9,7 +9,9 @@ function corsHeaders(origin) {
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, PUT, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    // Necesario para la cookie de sesión de cuentas; solo se emite a orígenes de la lista.
+    'Access-Control-Allow-Credentials': 'true',
     'Access-Control-Max-Age': '600',
     Vary: 'Origin',
   };
@@ -20,12 +22,17 @@ function originHeaders(origin) {
   return origin ? corsHeaders(origin) : {};
 }
 
-const SECURITY_HEADERS = {
+/** Cabeceras de toda respuesta: la API solo devuelve JSON, nunca se enmarca ni usa APIs del navegador. */
+export const SECURITY_HEADERS = Object.freeze({
   'Cache-Control': 'no-store',
   'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
   'Referrer-Policy': 'no-referrer',
   'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'",
-};
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=()',
+  'Strict-Transport-Security': 'max-age=63072000; includeSubDomains',
+  'Cross-Origin-Opener-Policy': 'same-origin',
+});
 
 /**
  * @param {unknown} body

@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "description": "Portafolio personal de Deus. Sitio estático generado con Astro.",
   "engines": {
     "node": ">=22.23.4"

@@ -31,14 +31,15 @@ const isLocalized = (value: unknown): value is Record<Locale, string> =>
   typeof (value as Record<string, unknown>).es === 'string' &&
   typeof (value as Record<string, unknown>).en === 'string';
 
+/** Portada: ruta relativa dentro de /public con extensión de imagen; sin esquemas, `..`, `//` ni `\`. */
+const COVER_PATH = /^(?!.*\/\/)[A-Za-z0-9][A-Za-z0-9_/-]*\.(?:avif|webp|jpe?g|png|svg)$/;
+
 function parseDemo(raw: unknown): Demo | null {
   if (typeof raw !== 'object' || raw === null) return null;
   const item = raw as Record<string, unknown>;
   if (typeof item.slug !== 'string' || !SLUG_PATTERN.test(item.slug)) return null;
   if (!isLocalized(item.title) || !isLocalized(item.description)) return null;
-  if (typeof item.cover !== 'string' || item.cover.startsWith('/') || item.cover.includes('..')) {
-    return null;
-  }
+  if (typeof item.cover !== 'string' || !COVER_PATH.test(item.cover)) return null;
   if (typeof item.sizeMb !== 'number' || !(item.sizeMb > 0)) return null;
 
   const controls = (item.controls ?? {}) as Record<string, unknown>;

@@ -58,3 +58,21 @@ test('POST /vitals: 204 con origen permitido, 403 sin él, 400 con cuerpo invál
   }
   assert.equal(JSON.parse(logged[0]).event, 'rum');
 });
+
+test('toda respuesta de la API lleva las cabeceras de seguridad estrictas', async () => {
+  const response = await worker.fetch(
+    { url: 'https://api.example.workers.dev/nada', method: 'GET', headers: new Headers() },
+    env,
+  );
+  assert.equal(response.status, 404);
+  const expected = {
+    'x-frame-options': 'DENY',
+    'x-content-type-options': 'nosniff',
+    'referrer-policy': 'no-referrer',
+    'content-security-policy': "default-src 'none'; frame-ancestors 'none'",
+  };
+  for (const [name, value] of Object.entries(expected))
+    assert.equal(response.headers.get(name), value);
+  assert.match(response.headers.get('permissions-policy') ?? '', /camera=\(\)/);
+  assert.match(response.headers.get('strict-transport-security') ?? '', /max-age=\d+/);
+});

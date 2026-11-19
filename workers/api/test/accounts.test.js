@@ -4,6 +4,8 @@ import {
   argonParams,
   parseBackupPayload,
   parseCredentials,
+  readSessionCookie,
+  SESSION_COOKIE,
   signToken,
   verifyToken,
 } from '../src/accounts.js';
@@ -33,7 +35,7 @@ function makeRequest(path, body, { method = 'POST', token, origin = ORIGIN } = {
     'content-type': 'application/json',
   });
   if (origin) headers.set('origin', origin);
-  if (token) headers.set('authorization', `Bearer ${token}`);
+  if (token) headers.set('cookie', `otra=1; ${SESSION_COOKIE}=${token}`);
   return { url: `${API}${path}`, method, headers, text: async () => JSON.stringify(body) };
 }
 
@@ -111,11 +113,11 @@ test('valida el correo y exige contraseñas de 12 a 128 caracteres', () => {
 test('el token firmado caduca y no admite manipulación', async () => {
   const secret = 's'.repeat(40);
   const token = await signToken(secret, 'acc-1', 1000);
-  assert.equal(await verifyToken(secret, `Bearer ${token}`, 1100), 'acc-1');
-  assert.equal(await verifyToken(secret, `Bearer ${token}`, 1000 + 3601), null);
-  assert.equal(await verifyToken('otro'.repeat(10), `Bearer ${token}`, 1100), null);
-  assert.equal(await verifyToken(secret, `Bearer ${token}x`, 1100), null);
-  assert.equal(await verifyToken(secret, null, 1100), null);
+  assert.equal(await verifyToken(secret, token, 1100), 'acc-1');
+  assert.equal(await verifyToken(secret, token, 1000 + 3601), null);
+  assert.equal(await verifyToken('otro'.repeat(10), token, 1100), null);
+  assert.equal(await verifyToken(secret, `${token}x`, 1100), null);
+  assert.equal(await verifyToken(secret, '', 1100), null);
 });
 
 test('el respaldo solo admite claves conocidas y datos con forma válida', () => {
@@ -179,10 +181,16 @@ test('login: devuelve token con la contraseña correcta y 401 idéntico si falla
     env,
   );
   assert.equal(ok.status, 200);
+  const cookie = ok.headers.get('set-cookie') ?? '';
+  for (const flag of ['HttpOnly', 'Secure', 'SameSite=Strict', 'Path=/', 'Max-Age=3600']) {
+    assert.ok(cookie.includes(flag), flag);
+  }
   assert.equal(
-    await verifyToken(env.ACCOUNT_TOKEN_SECRET, `Bearer ${(await ok.json()).token}`),
-    'acc-1',
+    (await ok.json()).token,
+    undefined,
+    'el token nunca llega al JavaScript de la página',
   );
+  assert.equal(await verifyToken(env.ACCOUNT_TOKEN_SECRET, readSessionCookie(cookie)), 'acc-1');
 
   const wrong = await worker.fetch(
     makeRequest('/accounts/login', { email: 'a@b.co', password: 'contraseña equivocada!!' }),
@@ -248,4 +256,16 @@ test('respaldo: exige token y guarda solo un payload válido', async () => {
     env,
   );
   assert.deepEqual((await get.json()).payload, { favorites: ['deusdeck'] });
+});
+
+test('respaldo: rechaza el token por Authorization y las peticiones cross-site (CSRF)', async () => {
+  installFetch({ account: null, backup: null });
+  const token = await signToken(env.ACCOUNT_TOKEN_SECRET, 'acc-1');
+  const bearer = makeRequest('/accounts/backup', null, { method: 'GET' });
+  bearer.headers.set('authorization', `Bearer ${token}`);
+  assert.equal((await worker.fetch(bearer, env)).status, 401);
+
+  const crossSite = makeRequest('/accounts/backup', null, { method: 'GET', token });
+  crossSite.headers.set('sec-fetch-site', 'cross-site');
+  assert.equal((await worker.fetch(crossSite, env)).status, 403);
 });

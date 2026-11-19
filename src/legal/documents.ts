@@ -354,13 +354,17 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
             'Un identificador anónimo y aleatorio de visitante para los me gusta. El servidor guarda solo un valor derivado con un secreto (HMAC), nunca el identificador original.',
             'La dirección IP se usa de forma transitoria para limitar la frecuencia de solicitudes. Se guarda solo como valor derivado con un secreto, no en claro.',
             'Registro de aceptación de los términos, de la política de privacidad y de la preferencia de cookies: tipo de consentimiento, versión del documento, idioma, fecha y hora en UTC generadas por el servidor, y un valor derivado de un identificador de sesión de consentimiento. No se registran nombre, correo ni dirección IP.',
+            'Reseñas de demos (si publicás una): puntuación, comentario de texto plano, idioma y fecha. Se asocian a un valor derivado (HMAC) de tu identificador anónimo, nunca al identificador original.',
+            'Avisos push (si los activás): la dirección de entrega y las claves de cifrado que genera tu navegador, el modo elegido, las categorías o proyectos y el idioma. Sin nombre, correo ni IP. Darte de baja borra el registro.',
+            'Cuenta opcional (si la creás): el correo solo como valor derivado con un secreto (HMAC), la contraseña solo como hash Argon2id y, si lo pedís, un respaldo de tus preferencias. La sesión usa una cookie técnica HttpOnly de una hora.',
+            'Métricas de rendimiento (Web Vitals) de una muestra del 10 % de las visitas: nombre de la métrica, valor y ruta de la página. Sin cookies, sin identificadores y sin IP; no se guardan en base de datos. No se miden si tu navegador envía Do Not Track o Global Privacy Control, ni con ahorro de datos.',
             'Datos técnicos que tratan los proveedores de alojamiento y servidor para prestar el servicio (registros del servidor).',
           ],
         },
         {
           heading: '3. Finalidades',
           paragraphs: [
-            'Mostrar y operar el sitio; recordar tus preferencias; contar me gusta de forma agregada; prevenir abuso y proteger el servicio; acreditar la aceptación de los términos y de la política de privacidad.',
+            'Mostrar y operar el sitio; recordar tus preferencias; contar me gusta y reseñas de forma agregada; enviar los avisos que elegiste; guardar el respaldo de tu cuenta; medir el rendimiento real del sitio; prevenir abuso y proteger el servicio; acreditar la aceptación de los términos y de la política de privacidad.',
             'Publicidad: desactivada en la actualidad. Si se activara, solo se cargaría con tu consentimiento y se describiría en esta política antes de hacerlo.',
           ],
         },
@@ -374,9 +378,10 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
           heading: '5. Destinatarios y encargados del tratamiento',
           paragraphs: ['Proveedores que prestan servicios técnicos al sitio:'],
           items: [
-            'GitHub, Inc.: alojamiento (GitHub Pages), panel de administración y comentarios (GitHub Discussions).',
-            'Cloudflare, Inc.: servidores (Workers) de autenticación y de la API de me gusta y consentimientos.',
-            'Supabase, Inc.: base de datos de me gusta agregados y registro de consentimientos.',
+            'Cloudflare, Inc.: alojamiento del sitio (Cloudflare Pages) y servidores (Workers) de autenticación y de la API.',
+            'GitHub, Inc.: repositorio, panel de administración y comentarios (GitHub Discussions).',
+            'Supabase, Inc.: base de datos de me gusta, reseñas, suscripciones push, cuentas opcionales y registro de consentimientos.',
+            'Servicios push del navegador (por ejemplo, Google, Mozilla o Apple): entregan los avisos, solo si los activás.',
             'giscus: carga de comentarios, solo cuando la solicitas.',
           ],
         },
@@ -389,7 +394,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
         {
           heading: '7. Plazos de conservación',
           paragraphs: [
-            'Preferencias locales: hasta que las borres desde tu navegador. Registro de consentimientos: {{PENDING:plazo de conservación del registro de consentimientos}}. Límites de frecuencia: se eliminan de forma periódica. {{PENDING:plazo de conservación de los registros de los proveedores de servidor}}',
+            'Preferencias locales: hasta que las borres desde tu navegador. Reseñas, cuenta y respaldo: hasta que pidas su eliminación. Suscripción push: hasta que te des de baja. Métricas de rendimiento: no se guardan; solo quedan en los registros del proveedor. Registro de consentimientos: {{PENDING:plazo de conservación del registro de consentimientos}}. Límites de frecuencia: se eliminan de forma periódica. {{PENDING:plazo de conservación de los registros de los proveedores de servidor}}',
           ],
         },
         {
@@ -406,7 +411,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
           paragraphs: [
             'Escribe a {{EMAIL}}. {{PENDING:canal y plazo de respuesta, a confirmar}}',
             'Solicitud de borrado o cancelación de suscripción: podés pedir la eliminación de tus datos desde el enlace «Solicitar borrado de datos / Cancelar suscripción» del pie de página. La solicitud se atiende por el canal de contacto publicado en el sitio; no se confirma ninguna eliminación hasta que el responsable la haya ejecutado.',
-            'Qué puede eliminarse: tus preferencias guardadas en este navegador (que también podés borrar desde su configuración), tu registro de consentimientos y los me gusta asociados a tu visitante. Qué podría conservarse: los registros que una obligación legal exija o que sean necesarios para acreditar un consentimiento o atender una reclamación, durante el plazo del apartado 7.',
+            'Qué puede eliminarse: tus preferencias guardadas en este navegador (que también podés borrar desde su configuración), tu registro de consentimientos, los me gusta y las reseñas asociados a tu visitante, tu suscripción push (también al darte de baja desde el panel de avisos) y tu cuenta con su respaldo. Qué podría conservarse: los registros que una obligación legal exija o que sean necesarios para acreditar un consentimiento o atender una reclamación, durante el plazo del apartado 7.',
             '{{PENDING:procedimiento automatizado de borrado en el servidor, pendiente de implementación}}',
           ],
         },
@@ -425,7 +430,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
         {
           heading: '12. Seguridad',
           paragraphs: [
-            'Aplicamos medidas técnicas: políticas de seguridad de contenido (CSP), acceso a la base de datos restringido por políticas de seguridad a nivel de fila, claves de servidor que no se envían al navegador, y límites de frecuencia en los servicios de servidor. Ninguna medida es absoluta.',
+            'Aplicamos medidas técnicas: políticas de seguridad de contenido (CSP) y cabeceras de seguridad estrictas, contraseñas con Argon2id, sesión en cookie HttpOnly, Secure y SameSite=Strict, acceso a la base de datos restringido por políticas de seguridad a nivel de fila, claves de servidor que no se envían al navegador, y límites de frecuencia en los servicios de servidor. Ninguna medida es absoluta.',
           ],
         },
         {
@@ -456,13 +461,17 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
             'A random anonymous visitor identifier for likes. The server stores only a value derived with a secret (HMAC), never the original identifier.',
             'The IP address is used transiently to limit request frequency. It is stored only as a value derived with a secret, not in clear.',
             'Record of acceptance of the terms, the privacy policy and the cookie preference: type of consent, document version, language, date and time in UTC generated by the server, and a value derived from a consent session identifier. No name, email or IP address is recorded.',
+            'Demo reviews (if you post one): rating, plain-text comment, language and date. They are linked to a value derived (HMAC) from your anonymous identifier, never to the original identifier.',
+            'Push notifications (if you turn them on): the delivery address and encryption keys generated by your browser, the chosen mode, categories or projects, and language. No name, email or IP. Unsubscribing deletes the record.',
+            'Optional account (if you create one): your email only as a value derived with a secret (HMAC), your password only as an Argon2id hash and, if you ask for it, a backup of your preferences. The session uses a one-hour technical HttpOnly cookie.',
+            'Performance metrics (Web Vitals) from a 10% sample of visits: metric name, value and page path. No cookies, no identifiers and no IP; they are not stored in a database. They are not measured if your browser sends Do Not Track or Global Privacy Control, or with data saver on.',
             'Technical data processed by the hosting and server providers to deliver the service (server logs).',
           ],
         },
         {
           heading: '3. Purposes',
           paragraphs: [
-            'Operating and displaying the site; remembering your preferences; counting likes in aggregate; preventing abuse and protecting the service; evidencing acceptance of the terms and the privacy policy.',
+            'Operating and displaying the site; remembering your preferences; counting likes and reviews in aggregate; sending the notifications you chose; storing your account backup; measuring real site performance; preventing abuse and protecting the service; evidencing acceptance of the terms and the privacy policy.',
             'Advertising: currently disabled. If enabled, it would only load with your consent, and this policy would describe it before it is activated.',
           ],
         },
@@ -476,9 +485,10 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
           heading: '5. Recipients and processors',
           paragraphs: ['Providers that deliver technical services to the site:'],
           items: [
-            'GitHub, Inc.: hosting (GitHub Pages), admin panel and comments (GitHub Discussions).',
-            'Cloudflare, Inc.: authentication and likes and consent API servers (Workers).',
-            'Supabase, Inc.: database of aggregated likes and consent records.',
+            'Cloudflare, Inc.: site hosting (Cloudflare Pages) and authentication and API servers (Workers).',
+            'GitHub, Inc.: repository, admin panel and comments (GitHub Discussions).',
+            'Supabase, Inc.: database of likes, reviews, push subscriptions, optional accounts and consent records.',
+            'Browser push services (for example Google, Mozilla or Apple): deliver notifications, only if you turn them on.',
             'giscus: comment loading, only when you request it.',
           ],
         },
@@ -491,7 +501,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
         {
           heading: '7. Retention periods',
           paragraphs: [
-            'Local preferences: until you delete them from your browser. Consent records: {{PENDING:retention period for consent records}}. Rate-limit records: removed periodically. {{PENDING:retention period for server provider logs}}',
+            'Local preferences: until you delete them from your browser. Reviews, account and backup: until you request their deletion. Push subscription: until you unsubscribe. Performance metrics: not stored; they only remain in the provider logs. Consent records: {{PENDING:retention period for consent records}}. Rate-limit records: removed periodically. {{PENDING:retention period for server provider logs}}',
           ],
         },
         {
@@ -508,7 +518,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
           paragraphs: [
             'Write to {{EMAIL}}. {{PENDING:response channel and time frame, to be confirmed}}',
             'Data deletion or subscription cancellation: you can request the deletion of your data from the "Request data deletion / Cancel subscription" link in the page footer. Requests are handled through the contact channel published on the site; no deletion is confirmed until the controller has carried it out.',
-            'What can be deleted: your preferences stored in this browser (you can also clear them from its settings), your consent record and the likes linked to your visitor identifier. What may be kept: records that a legal obligation requires or that are needed to prove a consent or handle a claim, for the period in section 7.',
+            'What can be deleted: your preferences stored in this browser (you can also clear them from its settings), your consent record, the likes and reviews linked to your visitor identifier, your push subscription (also by unsubscribing from the notifications panel) and your account with its backup. What may be kept: records that a legal obligation requires or that are needed to prove a consent or handle a claim, for the period in section 7.',
             '{{PENDING:automated server-side deletion procedure, not yet implemented}}',
           ],
         },
@@ -527,7 +537,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
         {
           heading: '12. Security',
           paragraphs: [
-            'We apply technical measures: content security policies (CSP), database access restricted by row-level security policies, server keys that are never sent to the browser, and rate limits on server services. No measure is absolute.',
+            'We apply technical measures: content security policies (CSP) and strict security headers, Argon2id password hashing, a session cookie that is HttpOnly, Secure and SameSite=Strict, database access restricted by row-level security policies, server keys that are never sent to the browser, and rate limits on server services. No measure is absolute.',
           ],
         },
         {
@@ -544,7 +554,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
     es: {
       title: 'Política de cookies y almacenamiento local',
       intro:
-        'Este sitio no crea cookies propias. Usa almacenamiento local de tu navegador para recordar preferencias. Aquí se describe qué se guarda y cómo cambiar tus decisiones.',
+        'Este sitio no usa cookies de seguimiento. Usa almacenamiento local de tu navegador para recordar preferencias y, solo si iniciás sesión en una cuenta opcional, una cookie técnica de sesión. Aquí se describe qué se guarda y cómo cambiar tus decisiones.',
       sections: [
         {
           heading: '1. Almacenamiento que usa el sitio',
@@ -558,29 +568,37 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
             'deus:likes: proyectos a los que diste me gusta desde este navegador. Necesario para mostrar tu estado.',
             'deus:visitor: identificador anónimo y aleatorio para los me gusta.',
             'deus:consent: decisiones sobre términos, privacidad y cookies, con su versión y fecha.',
+            'deus:push-preferences: modo, categorías y proyectos elegidos para los avisos push.',
             'deus:intro-played (sesión): indica que la bienvenida ya se mostró en esta sesión.',
+            'deus:consent-dismissed (sesión): recuerda que pospusiste el aviso de consentimiento en esta sesión.',
           ],
         },
         {
-          heading: '2. Categorías',
+          heading: '2. Cookie técnica de sesión',
           paragraphs: [
-            'Esenciales: tema, modo rendimiento y bienvenida. Preferencias: favoritos, me gusta y perfil local. Publicidad: no hay publicidad activa. {{PENDING:clasificación definitiva de cada almacenamiento y si requiere consentimiento}}',
+            '__Host-deus_session: solo existe si iniciás sesión en la cuenta opcional. La crea el servidor de la API, dura una hora, es HttpOnly (el JavaScript de la página no puede leerla), Secure y SameSite=Strict, y no sirve para seguimiento. Es estrictamente necesaria para la sesión.',
           ],
         },
         {
-          heading: '3. Cookies de terceros',
+          heading: '3. Categorías',
+          paragraphs: [
+            'Esenciales: tema, modo rendimiento, bienvenida y cookie de sesión. Preferencias: favoritos, me gusta, avisos push y perfil local. Publicidad: no hay publicidad activa. {{PENDING:clasificación definitiva de cada almacenamiento y si requiere consentimiento}}',
+          ],
+        },
+        {
+          heading: '4. Cookies de terceros',
           paragraphs: [
             'Comentarios: si pulsas «Cargar comentarios», se cargan recursos de giscus y de GitHub, que pueden usar sus propias cookies. Publicidad: no está activa. Si se activara, se cargaría solo con tu consentimiento.',
           ],
         },
         {
-          heading: '4. Cambiar tus preferencias',
+          heading: '5. Cambiar tus preferencias',
           paragraphs: [
             'Puedes cambiar tus preferencias de cookies en esta página en cualquier momento, y volver a revisar la aceptación de los términos y de la privacidad desde el mismo panel. También puedes borrar estos datos desde la configuración de tu navegador.',
           ],
         },
         {
-          heading: '5. Vigencia',
+          heading: '6. Vigencia',
           paragraphs: [
             'Esta política tiene una versión con fecha visible. {{PENDING:revisión legal de esta política}}',
           ],
@@ -590,7 +608,7 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
     en: {
       title: 'Cookie and local storage policy',
       intro:
-        'This site does not create its own cookies. It uses your browser local storage to remember preferences. This page describes what is stored and how to change your choices.',
+        'This site uses no tracking cookies. It uses your browser local storage to remember preferences and, only if you sign in to an optional account, a technical session cookie. This page describes what is stored and how to change your choices.',
       sections: [
         {
           heading: '1. Storage used by the site',
@@ -602,29 +620,37 @@ export const DOCUMENTS: Record<DocumentKind, Record<LegalLocale, LegalDocumentCo
             'deus:likes: projects you liked from this browser. Needed to show your status.',
             'deus:visitor: random anonymous identifier used for likes.',
             'deus:consent: decisions about the terms, privacy and cookies, with their version and date.',
+            'deus:push-preferences: mode, categories and projects chosen for push notifications.',
             'deus:intro-played (session): records that the welcome animation was shown in this session.',
+            'deus:consent-dismissed (session): remembers that you postponed the consent notice in this session.',
           ],
         },
         {
-          heading: '2. Categories',
+          heading: '2. Technical session cookie',
           paragraphs: [
-            'Essential: theme, performance mode and welcome state. Preferences: favorites, likes and local profile. Advertising: no advertising is active. {{PENDING:final classification of each storage item and whether it requires consent}}',
+            '__Host-deus_session: only exists if you sign in to the optional account. It is set by the API server, lasts one hour, is HttpOnly (page JavaScript cannot read it), Secure and SameSite=Strict, and is not used for tracking. It is strictly necessary for the session.',
           ],
         },
         {
-          heading: '3. Third-party cookies',
+          heading: '3. Categories',
+          paragraphs: [
+            'Essential: theme, performance mode, welcome state and session cookie. Preferences: favorites, likes, push notifications and local profile. Advertising: no advertising is active. {{PENDING:final classification of each storage item and whether it requires consent}}',
+          ],
+        },
+        {
+          heading: '4. Third-party cookies',
           paragraphs: [
             'Comments: if you press "Load comments", resources from giscus and GitHub are loaded, which may use their own cookies. Advertising: not active. If enabled, it would only load with your consent.',
           ],
         },
         {
-          heading: '4. Changing your preferences',
+          heading: '5. Changing your preferences',
           paragraphs: [
             'You can change your cookie preferences on this page at any time, and review your acceptance of the terms and privacy policy from the same panel. You can also delete this data from your browser settings.',
           ],
         },
         {
-          heading: '5. Validity',
+          heading: '6. Validity',
           paragraphs: [
             'This policy has a visible dated version. {{PENDING:legal review of this policy}}',
           ],

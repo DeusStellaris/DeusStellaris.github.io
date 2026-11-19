@@ -4,13 +4,18 @@
 
 `astro.config.mjs` → `security.csp.directives`. Astro genera la etiqueta `<meta http-equiv="content-security-policy">` en cada página y añade los hashes de los scripts y estilos que produce.
 
-## Por qué `<meta>` y no cabecera
+## `<meta>` más cabecera (Cloudflare Pages)
 
-GitHub Pages no permite configurar cabeceras HTTP. Consecuencias:
+La CSP principal sigue en `<meta>` porque Astro calcula hashes distintos por página. `public/_headers` agrega una
+segunda CSP por cabecera con lo que `<meta>` no puede expresar: `frame-ancestors 'none'`, `object-src 'none'`,
+`base-uri 'self'`, `form-action 'self'` y `upgrade-insecure-requests`. El navegador aplica ambas (intersección).
 
-- No se puede usar `frame-ancestors` (solo existe en cabeceras). La protección contra incrustación (clickjacking) no está disponible en este hosting.
-- `report-uri` no se puede usar en `<meta>`.
-- Si el hosting cambia a uno que permita cabeceras, la política debe moverse allí y añadir `frame-ancestors 'none'`.
+Cabeceras de todo el sitio: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`,
+`Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy` (todo denegado salvo `fullscreen` y
+`gamepad` propios para las demos), HSTS de dos años y `Cross-Origin-Opener-Policy: same-origin-allow-popups`
+(Decap CMS necesita `window.opener` en su ventana de OAuth). Los Workers responden con `default-src 'none'`,
+`frame-ancestors 'none'`, `X-Frame-Options: DENY`, `Permissions-Policy` y HSTS. Pruebas: `tests/build/` y
+`workers/*/test/`.
 
 ## Directivas actuales
 

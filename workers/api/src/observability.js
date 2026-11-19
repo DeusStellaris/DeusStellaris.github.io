@@ -10,7 +10,7 @@
  */
 
 import { canonicalizeOrigin, readConfig } from './config.js';
-import { errorResponse } from './http.js';
+import { errorResponse, SECURITY_HEADERS } from './http.js';
 
 export const SLOW_REQUEST_MS = 800;
 const MAX_VITALS_BODY_BYTES = 1024;
@@ -98,11 +98,6 @@ export async function handleVitals(request, env) {
   console.log(JSON.stringify({ event: 'rum', ...sample }));
   return new Response(null, {
     status: 204,
-    headers: {
-      'Access-Control-Allow-Origin': origin,
-      Vary: 'Origin',
-      'Cache-Control': 'no-store',
-      'X-Content-Type-Options': 'nosniff',
-    },
+    headers: { ...SECURITY_HEADERS, 'Access-Control-Allow-Origin': origin, Vary: 'Origin' },
   });
 }

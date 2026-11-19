@@ -3,15 +3,18 @@
  * sin ACCOUNTS_ENABLED=true y ACCOUNT_TOKEN_SECRET todas las rutas responden 404.
  *
  *   POST /accounts/register  { email, password }   →  201 { registered: true }
- *   POST /accounts/login     { email, password }   →  200 { token, expiresIn }
- *   GET  /accounts/backup    (Bearer)              →  200 { payload, updatedAt } | 404
- *   PUT  /accounts/backup    (Bearer) { payload }  →  200 { saved: true }
+ *   POST /accounts/login     { email, password }   →  200 { loggedIn: true, expiresIn } + cookie de sesión
+ *   GET  /accounts/backup    (cookie)              →  200 { payload, updatedAt } | 404
+ *   PUT  /accounts/backup    (cookie) { payload }  →  200 { saved: true }
  *
  * Privacy by Design:
  *  - La contraseña se guarda solo como hash Argon2id con sal propia (argon2.js). Nunca en claro ni en logs.
  *  - El correo se guarda solo como HMAC con un secreto del servidor: no hay lista de correos que filtrar.
  *    Consecuencia: no hay recuperación por correo. Se decide al lanzar la función.
- *  - El acceso usa un token firmado (HMAC) de una hora; no hay sesiones en el servidor.
+ *  - El acceso usa un token firmado (HMAC) de una hora en una cookie __Host- HttpOnly, Secure y
+ *    SameSite=Strict: el JavaScript de la página nunca lo ve. No hay sesiones en el servidor.
+ *  - CSRF: SameSite=Strict, lista de orígenes, rechazo de Sec-Fetch-Site cross-site y cuerpo JSON
+ *    obligatorio (fuerza preflight CORS en toda escritura).
  *  - Errores genéricos: iniciar sesión no revela si el correo existe y siempre ejecuta un Argon2id.
  */
 
@@ -30,6 +33,7 @@ import {
 import { readJsonBody, SLUG_PATTERN } from './validation.js';
 
 const TOKEN_TTL_SECONDS = 3600;
+export const SESSION_COOKIE = '__Host-deus_session';
 const MAX_AUTH_BODY_BYTES = 2048;
 const MAX_BACKUP_BYTES = 32_768;
 const MIN_PASSWORD_LENGTH = 12;
@@ -143,13 +147,33 @@ export async function signToken(secret, accountId, nowSeconds = Math.floor(Date.
 }
 
 /**
+ * Cookie de sesión. __Host- obliga a Secure, Path=/ y sin Domain: solo la recibe el host de la API.
+ * @param {string} token Vacío para borrarla.
+ */
+export function sessionCookie(token) {
+  const maxAge = token === '' ? 0 : TOKEN_TTL_SECONDS;
+  return `${SESSION_COOKIE}=${token}; Max-Age=${maxAge}; Path=/; HttpOnly; Secure; SameSite=Strict`;
+}
+
+/**
+ * Token de la cookie de sesión, o cadena vacía.
+ * @param {string | null} header Valor de Cookie.
+ */
+export function readSessionCookie(header) {
+  for (const part of (header ?? '').split(';')) {
+    const [name, ...value] = part.trim().split('=');
+    if (name === SESSION_COOKIE) return value.join('=');
+  }
+  return '';
+}
+
+/**
  * @param {string} secret
- * @param {string | null} header Valor de Authorization.
+ * @param {string} token Token firmado (valor de la cookie).
  * @param {number} nowSeconds
  * @returns {Promise<string | null>} Id de la cuenta o null.
  */
-export async function verifyToken(secret, header, nowSeconds = Math.floor(Date.now() / 1000)) {
-  const token = header?.startsWith('Bearer ') ? header.slice(7) : '';
+export async function verifyToken(secret, token, nowSeconds = Math.floor(Date.now() / 1000)) {
   const [payload, signature, extra] = token.split('.');
   if (!payload || !signature || extra !== undefined) return null;
 
@@ -190,6 +214,9 @@ function guard(request, env) {
     };
   }
   if (!origin || !loaded.config.allowedOrigins.includes(origin)) {
+    return { response: errorResponse(403, 'Origen no permitido.', null) };
+  }
+  if (request.headers.get('sec-fetch-site') === 'cross-site') {
     return { response: errorResponse(403, 'Origen no permitido.', null) };
   }
   return { origin, config: loaded.config, secret };
@@ -281,7 +308,9 @@ export async function handleLogin(request, env) {
     if (!account || !valid) return errorResponse(401, 'Credenciales incorrectas.', origin);
 
     const token = await signToken(secret, account.id);
-    return jsonResponse({ token, expiresIn: TOKEN_TTL_SECONDS }, 200, origin);
+    return jsonResponse({ loggedIn: true, expiresIn: TOKEN_TTL_SECONDS }, 200, origin, {
+      'Set-Cookie': sessionCookie(token),
+    });
   } catch (error) {
     return storageFailure(error, origin);
   }
@@ -293,7 +322,7 @@ export async function handleBackup(request, env) {
   if ('response' in ready) return ready.response;
   const { origin, config, secret } = ready;
 
-  const accountId = await verifyToken(secret, request.headers.get('authorization'));
+  const accountId = await verifyToken(secret, readSessionCookie(request.headers.get('cookie')));
   if (!accountId) return errorResponse(401, 'Sesión no válida.', origin);
 
   try {

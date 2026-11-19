@@ -1,0 +1,15 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": ["src/components/deusdeck/HubGallery.astro"],
+        "createdAt": "2026-11-19T22:51:39.420Z",
+        "reason": "claude: img sin src es intencional; hub.ts asigna src desde resource.previewUrl y la imagen queda hidden hasta entonces (plantilla y diálogo)"
+      }
+    ]
+  }
+}

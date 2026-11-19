@@ -2,11 +2,12 @@
 
 ## Entrega estática y caché
 
-- `public/_headers` define las cabeceras de caché (Cloudflare Pages / Netlify): `immutable` por un año para
-  `/_astro/*` (nombres con hash), revalidación corta para HTML, `sw.js` y los JSON públicos.
-- **GitHub Pages no admite cabeceras personalizadas**: aplica `Cache-Control: max-age=600` y compresión gzip. Para
-  obtener caché inmutable y **Brotli** hay que servir el sitio desde Cloudflare Pages (Brotli viene activo por
-  defecto en su CDN y en Workers; no requiere configuración) o poner Cloudflare delante del dominio propio.
+- Despliegue: **Cloudflare Pages** (sitio) + **Workers** (API y autenticación). Brotli viene activo por defecto en
+  ambos; no requiere configuración.
+- `public/_headers` define la caché: `immutable` por un año para `/_astro/*` (nombres con hash) y revalidación corta
+  para `sw.js` y los JSON públicos. El HTML usa el valor por defecto de Pages (`max-age=0, must-revalidate`): la regla
+  global `/*` no fija `Cache-Control` porque Pages une con comas los valores repetidos.
+- La misma regla `/*` agrega las cabeceras de seguridad (ver `docs/security/csp.md`).
 - El Worker de la API responde `Cache-Control: no-store` salvo `GET /reviews`, que usa
   `public, max-age=15, stale-while-revalidate=60`. Tras publicar una reseña, el cliente fuerza una lectura fresca.
 

@@ -134,3 +134,32 @@ test('el hash del script de la CSP coincide cuando hay scripts inline (si los hu
     }
   }
 });
+
+test('el sitio publicado no contiene secretos de servidor', () => {
+  const SECRET =
+    /service_role|SERVICE_ROLE_KEY|sb_secret_|VISITOR_HASH_PEPPER|ACCOUNT_TOKEN_SECRET|VAPID_PRIVATE|PRIVATE KEY-----|ghp_[A-Za-z0-9]{20,}/;
+  const TEXT = /\.(html|js|mjs|css|json|txt|xml|webmanifest)$/;
+  const leaks = FILES.filter((file) => TEXT.test(file) && SECRET.test(readFileSync(file, 'utf8')));
+  assert.deepEqual(
+    leaks.map((file) => relative(DIST, file)),
+    [],
+  );
+});
+
+test('_headers publica cabeceras de seguridad estrictas y caché inmutable para /_astro', () => {
+  const headers = read('_headers');
+  for (const rule of [
+    "frame-ancestors 'none'",
+    'X-Frame-Options: DENY',
+    'X-Content-Type-Options: nosniff',
+    'Referrer-Policy: strict-origin-when-cross-origin',
+    'camera=()',
+    'Strict-Transport-Security: max-age=',
+    'max-age=31536000, immutable',
+  ]) {
+    assert.ok(headers.includes(rule), rule);
+  }
+  // Cloudflare Pages une valores repetidos: la regla global no debe fijar Cache-Control.
+  const globalRule = headers.split(/^\/\*$/m)[1] ?? '';
+  assert.doesNotMatch(globalRule, /Cache-Control/);
+});
