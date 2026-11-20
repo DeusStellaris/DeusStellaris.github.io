@@ -34,6 +34,8 @@ const en: Partial<Dictionary> = {
       title: 'Deus',
       subtitle: 'Technical environments, content creation and custom development.',
       exploreHeading: 'Explore the sections',
+      contactCta: 'Get in touch',
+      contactCtaTooltip: 'Go to the contact section.',
     },
     games: {
       title: 'Games',

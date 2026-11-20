@@ -132,7 +132,8 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
 
   /*
    * Móvil (≤ 767 px): tres filas ordenadas en una grilla de 4 columnas. Fila 1: logotipo e idioma.
-   * Fila 2: los cuatro botones repartidos. Fila 3: las cuatro secciones, una por columna.
+   * Fila 2: las cuatro secciones, una por columna, separadas por un divisor. Fila 3: los cuatro
+   * botones de ajustes repartidos, para que no se lean como íconos de las secciones.
    * El encabezado deja de ser fijo para no ocupar casi un cuarto de la pantalla al desplazarse.
    */
   @media (max-width: 47.99em) {
@@ -161,12 +162,13 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
     }
 
     .site-header__controls :global(.icon-button) {
-      grid-row: 2;
+      grid-row: 3;
       justify-self: center;
     }
 
     .site-nav {
-      grid-area: 3 / 1 / 4 / 5;
+      grid-area: 2 / 1 / 3 / 5;
+      border-bottom: 1px solid var(--color-border);
     }
 
     .site-nav__list {

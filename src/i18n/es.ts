@@ -32,6 +32,8 @@ const es = {
       title: 'Deus',
       subtitle: 'Entornos técnicos, creación de contenido y desarrollo a medida.',
       exploreHeading: 'Explorá las secciones',
+      contactCta: 'Contactame',
+      contactCtaTooltip: 'Ir a la sección de contacto.',
     },
     games: {
       title: 'Juegos',

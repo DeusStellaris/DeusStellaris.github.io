@@ -22,6 +22,9 @@ const latest = await listProjects(locale, { limit: 3 });
   <header class="home__hero">
     <h1>{t(locale, 'sections.home.title')}</h1>
     <p class="home__subtitle">{t(locale, 'sections.home.subtitle')}</p>
+    <a class="home__cta" href={sectionHref('contact', locale)} data-tooltip={t(locale, 'sections.home.contactCtaTooltip')}>
+      {t(locale, 'sections.home.contactCta')}
+    </a>
   </header>
 
   <section class="home__block" aria-labelledby="home-explore-heading">
@@ -59,6 +62,31 @@ const latest = await listProjects(locale, { limit: 3 });
     max-width: 40rem;
     color: var(--color-text-muted);
     font-size: var(--text-lg);
+  }
+
+  /* Acceso directo a Contacto: único elemento con acento en el primer viewport. */
+  .home__cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    margin-top: var(--space-6);
+    padding-inline: var(--space-6);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-pill);
+    color: var(--color-accent-strong);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      transform 0.18s ease,
+      opacity 0.18s ease;
+  }
+
+  .home__cta:hover {
+    transform: translateY(-2px);
+  }
+
+  .home__cta:active {
+    transform: translateY(0) scale(0.98);
   }
 
   .home__block {
