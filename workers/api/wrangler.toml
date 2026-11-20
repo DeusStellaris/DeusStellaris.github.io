@@ -10,14 +10,15 @@ workers_dev = true
 
 [vars]
 # Origenes que pueden llamar a la API (lista explicita, separada por comas).
-ALLOWED_ORIGINS = "https://DeusStellaris.github.io"
+ALLOWED_ORIGINS = "https://deusstellaris-github-io.pages.dev"
 # Indice de busqueda publicado: fuente del catalogo de proyectos.
-SITE_INDEX_URL = "https://DeusStellaris.github.io/search-index.json"
+SITE_INDEX_URL = "https://deusstellaris-github-io.pages.dev/search-index.json"
 # Indice de demos publicadas: fuente de las demos que admiten resenas.
-DEMOS_INDEX_URL = "https://DeusStellaris.github.io/demos-index.json"
+DEMOS_INDEX_URL = "https://deusstellaris-github-io.pages.dev/demos-index.json"
 # URL del proyecto de Supabase. No es secreta: la seguridad depende de RLS y de los secretos.
-# Marcador vacio hasta crear el proyecto; sin valor el Worker responde 503 de forma controlada.
-SUPABASE_URL = ""
+SUPABASE_URL = "https://bxadgyvcztbpouvuzulx.supabase.co"
+# Habilita los endpoints de cuentas de usuario (/accounts/*).
+ACCOUNTS_ENABLED = "true"
 
 # Trazas y registros de Workers (exportables a OpenTelemetry desde el panel). Muestreo bajo: las
 # peticiones lentas y las muestras RUM se emiten como líneas JSON (ver src/observability.js).
