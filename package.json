@@ -24,6 +24,7 @@
     "test:workers": "npm --prefix workers/decap-auth test && npm --prefix workers/api test",
     "test": "npm run test:unit && npm run test:workers",
     "test:build": "node --test tests/build/",
+    "test:load": "k6 run tests/load/smoke.js",
     "test:e2e": "playwright test",
     "test:e2e:content": "node scripts/e2e-content.mjs"
   },
