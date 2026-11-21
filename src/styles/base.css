@@ -68,6 +68,8 @@ h4 {
 
 h1 {
   font-size: var(--text-3xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 
 h2 {

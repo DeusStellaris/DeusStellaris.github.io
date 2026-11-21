@@ -30,7 +30,7 @@ const labelToDark = t(locale, 'preferences.themeToDark');
     <defs>
       <mask id="theme-toggle-mask">
         <rect x="-10" y="-10" width="44" height="44" fill="#fff" />
-        <circle class="theme-toggle__mask" cx="12" cy="12" r="5.5" fill="#000" />
+        <circle class="theme-toggle__mask" cx="12" cy="12" r="7.3" fill="#000" />
       </mask>
     </defs>
     <circle class="theme-toggle__core" cx="12" cy="12" r="5" fill="currentColor" mask="url(#theme-toggle-mask)" />
@@ -76,7 +76,7 @@ const labelToDark = t(locale, 'preferences.themeToDark');
    * Tema claro (data-theme="light" en <html>): sol completo, la máscara se aleja y aparecen los rayos.
    */
   :root:not([data-theme='light']) .theme-toggle__mask {
-    transform: translate(5px, -5px);
+    transform: translate(2.5px, -2.5px);
   }
 
   :root[data-theme='light'] .theme-toggle__mask {

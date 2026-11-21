@@ -12,7 +12,7 @@ test.describe('Fase 3: sistema visual', () => {
 
     // Segunda navegación de la sesión: no vuelve a mostrarse.
     await page
-      .locator('nav a', { hasText: /Juegos|Games/ })
+      .locator('.section-card', { hasText: /Juegos|Games/ })
       .first()
       .click();
     await page.waitForURL(/juegos|games/);
@@ -63,7 +63,7 @@ test.describe('Fase 3: sistema visual', () => {
     await expect(page.locator('html')).toHaveClass(/lite-mode/);
     const transition = () =>
       page
-        .locator('.site-nav__link')
+        .locator('.section-card')
         .first()
         .evaluate((el) => getComputedStyle(el).transitionDuration);
     expect(await transition()).toMatch(/^0s/);
@@ -112,7 +112,7 @@ test.describe('Fase 3: sistema visual', () => {
     const page = await context.newPage();
     await page.goto('/');
     const duration = await page
-      .locator('.site-nav__link')
+      .locator('.section-card')
       .first()
       .evaluate((el) => getComputedStyle(el).transitionDuration);
     expect(Number.parseFloat(duration), `duración reducida: ${duration}`).toBeLessThanOrEqual(

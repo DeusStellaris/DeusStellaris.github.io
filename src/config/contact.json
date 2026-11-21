@@ -1,9 +1,5 @@
 {
-  "_nota": "PLACEHOLDERS. Un valor null significa 'pendiente de configurar' y no se muestra como enlace. El correo se protegerá en la Fase 3; aquí no se guarda en claro.",
-  "email": {
-    "user": null,
-    "domain": null
-  },
+  "_nota": "PLACEHOLDERS. Un valor null significa 'pendiente de configurar' y no se muestra como enlace. El correo de contacto sale de legal.json (titular).",
   "socials": [
     { "id": "github", "label": "GitHub", "url": "https://github.com/DeusStellaris" },
     { "id": "youtube", "label": "YouTube", "url": null },

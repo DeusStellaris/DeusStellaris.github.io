@@ -49,6 +49,18 @@ function initAccount(root: HTMLElement): void {
   const status = root.querySelector<HTMLElement>('[data-account-status]');
   if (!form || !status || api === '') return;
 
+  const reveal = root.querySelector<HTMLButtonElement>('[data-account-reveal]');
+  const password = form.querySelector<HTMLInputElement>('input[name="password"]');
+  reveal?.addEventListener('click', () => {
+    if (!password) return;
+    const visible = password.type === 'password';
+    password.type = visible ? 'text' : 'password';
+    reveal.setAttribute('aria-pressed', String(visible));
+    const label = (visible ? reveal.dataset.labelHide : reveal.dataset.labelShow) ?? '';
+    reveal.setAttribute('aria-label', label);
+    reveal.dataset.tooltip = label;
+  });
+
   form.addEventListener('submit', (event) => {
     event.preventDefault();
     const action = (event.submitter as HTMLElement | null)?.dataset.accountAction;

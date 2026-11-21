@@ -79,7 +79,7 @@ test.describe('Fase 6: legalidad, consentimiento y publicidad', () => {
     await waitForIntroDone(page);
     await page.locator('[data-consent-later]').click();
     await expect(page.locator('[data-consent-banner]')).toBeHidden();
-    await page.locator('nav a').first().click();
+    await page.locator('.section-card').first().click();
     await expect(page.locator('[data-consent-banner]')).toBeHidden();
     const record = await page.evaluate(() => localStorage.getItem('deus:consent'));
     expect(record).toBeNull();

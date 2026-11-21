@@ -4,6 +4,7 @@ import {
   adsGranted,
   type ConsentRecord,
   type DocumentVersions,
+  isIsoUtc,
   type LegalKind,
   markPending,
   markRegistered,
@@ -59,12 +60,6 @@ function readContext(root: HTMLElement): Context {
     versions,
     locale: root.dataset.locale ?? 'es',
   };
-}
-
-function isIsoUtc(value: unknown): value is string {
-  return (
-    typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/.test(value)
-  );
 }
 
 /**

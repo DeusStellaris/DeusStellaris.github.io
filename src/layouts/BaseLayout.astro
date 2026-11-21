@@ -102,7 +102,7 @@ const switchHrefs = switchTargets(paths ?? {});
   <body data-section={section ?? 'home'}>
     <IntroOverlay locale={locale} />
     <a class="skip-link" href="#main">{t(locale, 'common.skipToContent')}</a>
-    <SiteHeader locale={locale} section={section ?? 'home'} switchHrefs={switchHrefs} />
+    <SiteHeader locale={locale} section={section ?? 'home'} showNav={section !== 'home'} switchHrefs={switchHrefs} />
     <main id="main" tabindex="-1">
       <slot />
     </main>

@@ -42,6 +42,8 @@ test.describe('Tema detectado por el navegador', () => {
     await waitForIntroDone(page);
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
     expect(await page.evaluate(() => localStorage.getItem('deus:theme'))).toBeNull();
+    // El aviso de consentimiento tapa el pie en pantallas medianas: se cierra una vez por sesión.
+    await page.locator('[data-consent-later]').click();
 
     for (const name of ['Términos', 'Privacidad', 'Cookies']) {
       await page.goto('/');
@@ -55,7 +57,7 @@ test.describe('Tema detectado por el navegador', () => {
   test('el tema efectivo también sobrevive a la navegación entre secciones', async ({ page }) => {
     await page.goto('/');
     await waitForIntroDone(page);
-    await page.locator('nav a', { hasText: 'Juegos' }).first().click();
+    await page.locator('.section-card', { hasText: 'Juegos' }).first().click();
     await page.waitForURL(/juegos/);
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   });

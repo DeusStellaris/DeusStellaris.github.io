@@ -155,6 +155,13 @@ test('registro: correo repetido 409 genérico; origen ajeno 403; contraseña cor
   );
 });
 
+test('registro e inicio de sesión se aceptan desde el sitio público (cross-site con origen permitido)', async () => {
+  installFetch({ account: null });
+  const request = makeRequest('/accounts/register', { email: 'x@y.co', password: PASSWORD });
+  request.headers.set('sec-fetch-site', 'cross-site');
+  assert.equal((await worker.fetch(request, env)).status, 201);
+});
+
 test('login: devuelve token con la contraseña correcta y 401 idéntico si falla o no existe', async () => {
   const passwordHash = await hashPassword(PASSWORD);
   installFetch({ account: { id: 'acc-1', password_hash: passwordHash } });

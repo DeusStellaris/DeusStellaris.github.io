@@ -44,7 +44,7 @@ test.describe('Animaciones y movimiento reducido del sistema', () => {
     await expect(page.locator('html')).not.toHaveClass(/lite-mode/);
     expect(await logoAnimation(page)).toEqual({ name: 'brand-glint', duration: '7s' });
     const transition = await page
-      .locator('.site-nav__link')
+      .locator('.section-card')
       .first()
       .evaluate((el) => getComputedStyle(el).transitionDuration);
     expect(Number.parseFloat(transition)).toBeGreaterThan(0.01);

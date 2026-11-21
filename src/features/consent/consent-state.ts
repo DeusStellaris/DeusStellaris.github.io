@@ -141,3 +141,11 @@ export function requiredChecksOk(termsChecked: boolean, privacyChecked: boolean)
 export function adsGranted(record: ConsentRecord): boolean {
   return record.ads?.granted === true;
 }
+
+/** Hora UTC que devuelve el servidor: con Z o +00:00 y hasta 6 decimales (Postgres usa +00:00). */
+export function isIsoUtc(value: unknown): value is string {
+  return (
+    typeof value === 'string' &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(?:Z|\+00:00)$/.test(value)
+  );
+}

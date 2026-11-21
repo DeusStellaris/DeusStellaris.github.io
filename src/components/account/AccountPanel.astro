@@ -33,7 +33,25 @@ const messages = JSON.stringify(
     <label for="account-email">{t(locale, 'account.emailLabel')}</label>
     <input id="account-email" name="email" type="email" autocomplete="email" maxlength="254" required />
     <label for="account-password">{t(locale, 'account.passwordLabel')}</label>
-    <input id="account-password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" required />
+    <div class="account__password">
+      <input id="account-password" name="password" type="password" autocomplete="current-password" minlength="12" maxlength="128" required />
+      <button
+        type="button"
+        class="account__reveal"
+        data-account-reveal
+        data-label-show={t(locale, 'account.showPassword')}
+        data-label-hide={t(locale, 'account.hidePassword')}
+        aria-label={t(locale, 'account.showPassword')}
+        data-tooltip={t(locale, 'account.showPassword')}
+        aria-pressed="false"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12Z" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" />
+          <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.75" />
+          <path class="account__slash" d="M4 4l16 16" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+        </svg>
+      </button>
+    </div>
     <p class="account__hint">{t(locale, 'account.passwordHint')}</p>
     <p class="account__status" role="status" data-account-status></p>
     <div class="account__actions">
@@ -68,6 +86,51 @@ const messages = JSON.stringify(
     border-radius: var(--radius-md);
     background: var(--color-surface);
     color: var(--color-text);
+  }
+
+  /* Se oculta el ojo nativo del navegador: el propio tiene cursor, tooltip y etiqueta traducida. */
+  .account__password {
+    position: relative;
+    display: grid;
+  }
+
+  .account__password input {
+    padding-inline-end: calc(var(--target-min) + var(--space-1));
+  }
+
+  .account__password input::-ms-reveal {
+    display: none;
+  }
+
+  .account__reveal {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    display: grid;
+    place-items: center;
+    width: var(--target-min);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-muted);
+    cursor: pointer;
+  }
+
+  .account__reveal:hover {
+    color: var(--color-kintsugi);
+  }
+
+  .account__reveal svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .account__slash {
+    opacity: 0;
+  }
+
+  .account__reveal[aria-pressed='true'] .account__slash {
+    opacity: 1;
   }
 
   .account__actions {

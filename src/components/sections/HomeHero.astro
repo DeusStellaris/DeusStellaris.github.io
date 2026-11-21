@@ -31,7 +31,7 @@ const latest = await listProjects(locale, { limit: 3 });
     <h2 id="home-explore-heading" class="home__heading">{t(locale, 'sections.home.exploreHeading')}</h2>
     <div class="home__cards">
       {
-        NAV_SECTIONS.map((section) => {
+        NAV_SECTIONS.filter((section) => section !== 'contact').map((section) => {
           const copy = sectionCopy(locale, section);
           return (
             <SectionCard href={sectionHref(section, locale)} section={section} title={copy.title} intro={copy.intro} />
@@ -108,16 +108,10 @@ const latest = await listProjects(locale, { limit: 3 });
     gap: var(--space-4);
   }
 
-  /* Mobile-first: 1 columna; 2 desde md; 4 desde lg. */
+  /* Mobile-first: 1 columna; 3 desde md. */
   @media (min-width: 48em) {
     .home__cards {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 64em) {
-    .home__cards {
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>

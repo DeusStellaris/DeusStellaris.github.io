@@ -43,10 +43,3 @@
   :is(.section-card, .project-card, .demos__card, .hub__card, .featured) {
   background-image: linear-gradient(165deg, var(--panel-wash), transparent 55%);
 }
-
-/* Paneles de Juegos y Programas: el marco toma el acento de la sección en vez del oro. */
-body[data-section="games"],
-body[data-section="programs"] {
-  --panel-border: color-mix(in srgb, var(--color-accent) 38%, transparent);
-  --panel-border-active: var(--color-accent);
-}

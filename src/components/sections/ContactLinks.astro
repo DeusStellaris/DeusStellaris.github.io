@@ -1,45 +1,109 @@
 ---
 import contact from '../../config/contact.json';
-import type { Locale } from '../../i18n';
-import { t } from '../../i18n';
+import legal from '../../config/legal.json';
+import { type Locale, t } from '../../i18n';
 
 interface Props {
   locale: Locale;
 }
 
 const { locale } = Astro.props;
-
+// El correo de contacto es el del titular, ya publicado en los documentos legales.
+const email = legal.controller.email;
 // Solo se muestran enlaces con URL configurada. Los null son placeholders pendientes.
-const availableSocials = contact.socials.flatMap((social) =>
+const socials = contact.socials.flatMap((social) =>
   social.url === null ? [] : [{ label: social.label, url: social.url }],
 );
 ---
 
-<section class="contact-links" aria-labelledby="contact-social-heading">
+<!-- Contacto. El botón de copiar lo gestiona src/features/contact/contact.ts. -->
+<section class="contact" aria-labelledby="contact-email-heading">
   {
-    availableSocials.length === 0 ? (
-      <p class="contact-links__empty">{t(locale, 'sections.contact.noLinks')}</p>
-    ) : (
-      <>
-        <h2 id="contact-social-heading" class="visually-hidden">
-          {t(locale, 'nav.contact')}
+    email && (
+      <div class="contact__card">
+        <h2 id="contact-email-heading" class="contact__label">
+          {t(locale, 'sections.contact.emailLabel')}
         </h2>
-        <ul class="contact-links__list">
-          {availableSocials.map((social) => (
+        <p class="contact__email">{email}</p>
+        <div class="contact__actions">
+          <button
+            type="button"
+            class="contact__button contact__button--primary"
+            data-copy-email={email}
+            data-msg-copied={t(locale, 'sections.contact.emailCopied')}
+            data-msg-failed={t(locale, 'sections.contact.emailCopyFailed')}
+            data-tooltip={t(locale, 'sections.contact.copyEmailTooltip')}
+          >
+            {t(locale, 'sections.contact.copyEmail')}
+          </button>
+          <a
+            class="contact__button"
+            href={`mailto:${email}`}
+            data-tooltip={t(locale, 'sections.contact.writeEmailTooltip')}
+          >
+            {t(locale, 'sections.contact.writeEmail')}
+          </a>
+        </div>
+      </div>
+    )
+  }
+
+  {
+    socials.length > 0 && (
+      <div class="contact__card">
+        <h2 class="contact__label">{t(locale, 'sections.contact.socialsHeading')}</h2>
+        <ul class="contact__list">
+          {socials.map((social) => (
             <li>
-              <a class="contact-links__link" href={social.url} rel="me noopener noreferrer">
+              <a class="contact__button" href={social.url} rel="me noopener noreferrer">
                 {social.label}
               </a>
             </li>
           ))}
         </ul>
-      </>
+      </div>
     )
   }
 </section>
 
 <style>
-  .contact-links__list {
+  .contact {
+    display: grid;
+    gap: var(--space-4);
+    max-width: 40rem;
+    margin-bottom: var(--space-16);
+  }
+
+  /* Tarjeta de mármol con filo dorado (kintsugi) arriba. */
+  .contact__card {
+    padding: var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background:
+      linear-gradient(155deg, rgb(124 58 237 / 0.12), transparent 50%),
+      var(--color-surface);
+    box-shadow: inset 0 2px 0 var(--color-kintsugi);
+  }
+
+  .contact__label {
+    margin: 0 0 var(--space-2);
+    color: var(--color-text-muted);
+    font-family: var(--font-sans);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .contact__email {
+    margin: 0 0 var(--space-4);
+    font-family: var(--font-display);
+    font-size: var(--text-xl);
+    overflow-wrap: anywhere;
+  }
+
+  .contact__actions,
+  .contact__list {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
@@ -48,21 +112,31 @@ const availableSocials = contact.socials.flatMap((social) =>
     list-style: none;
   }
 
-  .contact-links__link {
+  .contact__button {
     display: inline-flex;
     align-items: center;
     min-height: var(--target-min);
     padding-inline: var(--space-4);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    font: inherit;
     text-decoration: none;
+    cursor: pointer;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
   }
 
-  .contact-links__link:hover {
-    border-color: var(--color-accent);
+  .contact__button:hover {
+    border-color: var(--color-kintsugi);
+    transform: translateY(-1px);
   }
 
-  .contact-links__empty {
-    color: var(--color-text-muted);
+  .contact__button--primary {
+    border-color: var(--color-violet);
+    background: var(--color-violet);
+    color: #fff;
   }
 </style>

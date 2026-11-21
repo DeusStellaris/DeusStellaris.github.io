@@ -9,7 +9,7 @@ test.describe('Pulido de interfaz', () => {
     await page.goto('/');
     await waitForIntroDone(page);
     const mask = page.locator('.theme-toggle__mask');
-    await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 5, -5)');
+    await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 2.5, -2.5)');
     await page.locator('[data-theme-toggle]').click();
     await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 24, -24)');
   });
@@ -50,5 +50,61 @@ test.describe('Pulido de interfaz', () => {
   test('el acordeón FAQ existe en inglés', async ({ page }) => {
     await page.goto('/en/freelance/');
     await expect(page.locator('#faq-heading')).toHaveText('Frequently asked questions');
+  });
+
+  test('Inicio tiene un solo acceso a Contacto, sin barra de secciones y con tres tarjetas', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await waitForIntroDone(page);
+    await expect(page.locator('.site-nav')).toHaveCount(0);
+    await expect(
+      page.locator('header a[href="/contacto/"], main a[href="/contacto/"]'),
+    ).toHaveCount(1);
+    await expect(page.locator('.section-card')).toHaveCount(3);
+  });
+
+  test('las páginas internas muestran la barra con Contacto', async ({ page }) => {
+    await page.goto('/juegos/');
+    await expect(page.locator('.site-nav__link')).toHaveCount(4);
+  });
+
+  test('las tarjetas se expanden hacia los costados sin moverse en vertical', async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name === 'mobile', 'sin hover táctil');
+    await page.addInitScript(() => localStorage.setItem('deus:lite-mode', 'off'));
+    await page.goto('/');
+    await waitForIntroDone(page);
+    const card = page.locator('.section-card').first();
+    const before = await card.boundingBox();
+    await card.hover();
+    await expect(card).toHaveCSS('transform', /matrix\(1\.05, 0, 0, 1, 0, 0\)/);
+    const after = await card.boundingBox();
+    expect(Math.abs((after?.y ?? 0) - (before?.y ?? 0))).toBeLessThan(1);
+    expect(after?.width ?? 0).toBeGreaterThan(before?.width ?? 0);
+  });
+
+  test('el ojo de la contraseña tiene cursor pointer y alterna la visibilidad', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await waitForIntroDone(page);
+    await page.locator('[data-profile-open]:visible').first().click();
+    const reveal = page.locator('[data-account-reveal]');
+    await expect(reveal).toHaveCSS('cursor', 'pointer');
+    const input = page.locator('#account-password');
+    await reveal.click();
+    await expect(input).toHaveAttribute('type', 'text');
+    await expect(reveal).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  test('Contacto muestra el correo y copiarlo dispara un toast', async ({ page, context }) => {
+    await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+    await page.goto('/contacto/');
+    await waitForIntroDone(page);
+    await expect(page.locator('.contact__email')).toContainText('@');
+    await page.locator('[data-copy-email]').click();
+    await expect(page.locator('.toast')).toHaveText('Correo copiado');
   });
 });

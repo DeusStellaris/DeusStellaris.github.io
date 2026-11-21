@@ -55,24 +55,6 @@
   --ambient-dust: rgb(255 244 214 / 0.9);
   --ambient-shimmer: rgb(255 240 210 / 0.14);
 
-  /* Identidades de sección (Juegos y Programas fijan su paleta oscura en cualquier tema) */
-  --color-blueprint-bg: #0a1220;
-  --color-blueprint-surface: #0f1a2e;
-  --color-blueprint-text: #e6eefc;
-  --color-blueprint-muted: #9fb3d1;
-  --color-blueprint-line: rgb(127 179 255 / 0.18);
-  --color-blueprint-grid: rgb(127 179 255 / 0.1);
-  --color-blueprint-accent: #7fb3ff;
-  --color-blueprint-accent-strong: #bcd6ff;
-  --color-terminal-bg: #060708;
-  --color-terminal-surface: #0b0d0c;
-  --color-terminal-raised: #111513;
-  --color-terminal-text: #d7e3d7;
-  --color-terminal-muted: #8fa892;
-  --color-terminal-accent: #7fdc9a;
-  --color-terminal-border: rgb(127 220 154 / 0.22);
-  --color-terminal-selection: rgb(127 220 154 / 0.25);
-
   /* Foco visible y consistente en todo el sitio */
   --color-focus: #f3e3bd;
 
@@ -81,8 +63,6 @@
     "Inter Variable", "Inter", "Deus Inter Fallback", system-ui, -apple-system, "Segoe UI",
     sans-serif;
   --font-display: "Playfair Display", "Deus Playfair Fallback", Georgia, serif;
-  --font-pixel: "Silkscreen", "VT323", monospace;
-  --font-terminal: "VT323", "JetBrains Mono", monospace;
   --font-mono:
     "JetBrains Mono", "Deus JetBrains Fallback", ui-monospace, "SFMono-Regular", Consolas, monospace;
 
@@ -174,24 +154,8 @@
   --ambient-shimmer: rgb(255 255 255 / 0.5);
 
   /* Blueprint diurno (Juegos): celeste grisáceo pálido, trazos azules técnicos */
-  --color-blueprint-bg: #eef3f9;
-  --color-blueprint-surface: #ffffff;
-  --color-blueprint-text: #0f1f38;
-  --color-blueprint-muted: #3d5573;
-  --color-blueprint-line: rgb(29 78 216 / 0.22);
-  --color-blueprint-grid: rgb(29 78 216 / 0.09);
-  --color-blueprint-accent: #1d4ed8;
-  --color-blueprint-accent-strong: #1e3a8a;
 
   /* Editor de código en modo día (Programas): fondo claro, sintaxis legible */
-  --color-terminal-bg: #f7f8f7;
-  --color-terminal-surface: #ffffff;
-  --color-terminal-raised: #eceee9;
-  --color-terminal-text: #1e2327;
-  --color-terminal-muted: #5b6670;
-  --color-terminal-accent: #6d28d9;
-  --color-terminal-border: rgb(30 35 39 / 0.14);
-  --color-terminal-selection: rgb(109 40 217 / 0.16);
 }
 
 /* Posición de la textura por breakpoint (mobile-first). Escritorio centrado; móvil desplaza para conservar las vetas. */

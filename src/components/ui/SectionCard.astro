@@ -21,6 +21,7 @@ const { href, section, title, intro } = Astro.props;
 
 <style>
   .section-card {
+    --card-grow: 1.05;
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
@@ -35,9 +36,33 @@ const { href, section, title, intro } = Astro.props;
       transform var(--duration-base) var(--ease-out);
   }
 
+  /*
+   * Expansión lateral: el marco se ensancha sin moverse en vertical y el contenido contrarresta la
+   * escala para que la tipografía no se deforme. Solo transform; Lite Mode la deja quieta.
+   */
   .section-card:hover {
     border-color: var(--color-accent);
-    transform: translateY(-2px);
+  }
+
+  .section-card:is(:hover, :focus-visible) {
+    transform: scaleX(var(--card-grow));
+  }
+
+  .section-card > :is(.section-card__icon, .section-card__title, .section-card__intro) {
+    transform-origin: left center;
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .section-card:is(:hover, :focus-visible)
+    > :is(.section-card__icon, .section-card__title, .section-card__intro) {
+    transform: scaleX(calc(1 / var(--card-grow)));
+  }
+
+  :global(html.lite-mode) .section-card:is(:hover, :focus-visible),
+  :global(html.lite-mode)
+    .section-card:is(:hover, :focus-visible)
+    > :is(.section-card__icon, .section-card__title, .section-card__intro) {
+    transform: none;
   }
 
   .section-card__icon {

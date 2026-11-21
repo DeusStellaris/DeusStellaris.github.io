@@ -181,11 +181,14 @@ export async function verifyToken(secret, token, nowSeconds = Math.floor(Date.no
 }
 
 /**
- * Comprobaciones comunes: función encendida, configuración y origen permitido.
+ * Comprobaciones comunes: función encendida, configuración y origen permitido. El sitio y la API
+ * viven en dominios distintos (cross-site), así que registro e inicio de sesión se aceptan con
+ * origen de la lista; solo las rutas que usan la cookie de sesión rechazan peticiones cross-site.
  * @param {Request} request
  * @param {Record<string, string | undefined>} env
+ * @param {boolean} [cookieAuth]
  */
-function guard(request, env) {
+function guard(request, env, cookieAuth = false) {
   const origin = canonicalizeOrigin(request.headers.get('origin'));
   const secret = env.ACCOUNT_TOKEN_SECRET ?? '';
   if (env.ACCOUNTS_ENABLED !== 'true' || secret.length < 32) {
@@ -201,7 +204,7 @@ function guard(request, env) {
   if (!origin || !loaded.config.allowedOrigins.includes(origin)) {
     return { response: errorResponse(403, 'Origen no permitido.', null) };
   }
-  if (request.headers.get('sec-fetch-site') === 'cross-site') {
+  if (cookieAuth && request.headers.get('sec-fetch-site') === 'cross-site') {
     return { response: errorResponse(403, 'Origen no permitido.', null) };
   }
   return { origin, config: loaded.config, secret };
@@ -303,7 +306,7 @@ export async function handleLogin(request, env) {
 
 /** @param {Request} request @param {Record<string, string | undefined>} env */
 export async function handleBackup(request, env) {
-  const ready = guard(request, env);
+  const ready = guard(request, env, true);
   if ('response' in ready) return ready.response;
   const { origin, config, secret } = ready;
 

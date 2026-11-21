@@ -13,11 +13,13 @@ import ThemeToggle from '../ui/ThemeToggle.astro';
 interface Props {
   locale: Locale;
   section: SectionId;
+  /** La barra de secciones se oculta solo en la portada, donde las secciones ya son tarjetas. */
+  showNav: boolean;
   /** Destino del selector de idioma por cada locale (página equivalente). */
   switchHrefs: Record<Locale, string>;
 }
 
-const { locale, section, switchHrefs } = Astro.props;
+const { locale, section, showNav, switchHrefs } = Astro.props;
 
 const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
   games: 'nav.games',
@@ -27,10 +29,12 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
 };
 ---
 
-<header class="site-header">
+<header class:list={['site-header', { 'site-header--home': !showNav }]}>
   <div class="container site-header__inner">
     <Logo locale={locale} />
 
+    {
+      showNav && (
     <nav class="site-nav" aria-label={t(locale, 'nav.primaryLabel')}>
       <ul class="site-nav__list">
         {
@@ -53,6 +57,8 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
         }
       </ul>
     </nav>
+      )
+    }
 
     <div class="site-header__controls">
       <ProfileButton locale={locale} />
@@ -164,6 +170,10 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
     .site-header__controls :global(.icon-button) {
       grid-row: 3;
       justify-self: center;
+    }
+
+    .site-header--home :global(.icon-button) {
+      grid-row: 2;
     }
 
     .site-nav {

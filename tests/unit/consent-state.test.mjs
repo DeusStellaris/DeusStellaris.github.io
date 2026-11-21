@@ -3,6 +3,7 @@ import { test } from 'node:test';
 import {
   adsGranted,
   emptyRecord,
+  isIsoUtc,
   markPending,
   markRegistered,
   needsBanner,
@@ -119,4 +120,13 @@ test('las casillas obligatorias deben estar ambas marcadas', () => {
   assert.equal(requiredChecksOk(true, false), false);
   assert.equal(requiredChecksOk(false, true), false);
   assert.equal(requiredChecksOk(false, false), false);
+});
+
+test('isIsoUtc acepta la hora de Postgres (+00:00 con microsegundos) y rechaza otras zonas', () => {
+  assert.equal(isIsoUtc('2026-11-21T02:43:14.428631+00:00'), true);
+  assert.equal(isIsoUtc('2026-11-21T02:43:14Z'), true);
+  assert.equal(isIsoUtc('2026-11-21T02:43:14.428Z'), true);
+  assert.equal(isIsoUtc('2026-11-21T02:43:14+03:00'), false);
+  assert.equal(isIsoUtc('ayer'), false);
+  assert.equal(isIsoUtc(null), false);
 });
