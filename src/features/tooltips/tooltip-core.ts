@@ -1,26 +1,36 @@
 /**
  * Lógica pura del posicionamiento de tooltips. Sin DOM: se prueba en Node.
- * El tooltip se ancla al borde derecho de su control; si queda fuera del margen se desplaza.
+ * El cuadro se centra bajo su control, se mantiene dentro del viewport con margen y pasa arriba
+ * si no cabe debajo.
  */
 
 export const TOOLTIP_MARGIN = 12;
+const GAP = 8;
 
-/** Desplazamiento horizontal (px) para que el cuadro quede dentro del viewport con el margen dado. */
-export function tooltipShift(anchorRight: number, width: number, viewportWidth: number): number {
-  const left = anchorRight - width;
-  if (left < TOOLTIP_MARGIN) return TOOLTIP_MARGIN - left;
-  const overflow = anchorRight - (viewportWidth - TOOLTIP_MARGIN);
-  return overflow > 0 ? -overflow : 0;
+export interface Box {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
 }
 
-/** Si el tooltip no cabe debajo del control, se muestra arriba. */
-export function tooltipFlipsUp(
-  anchorBottom: number,
-  anchorTop: number,
-  height: number,
-  viewportHeight: number,
-): boolean {
-  const gap = 8;
-  const fitsBelow = anchorBottom + gap + height <= viewportHeight - TOOLTIP_MARGIN;
-  return !fitsBelow && anchorTop - gap - height >= TOOLTIP_MARGIN;
+export interface Placement {
+  left: number;
+  top: number;
+}
+
+/** Coordenadas (fixed) del tooltip para un control, un tamaño y un viewport dados. */
+export function tooltipPlacement(
+  anchor: Box,
+  size: { width: number; height: number },
+  viewport: { width: number; height: number },
+): Placement {
+  const centered = (anchor.left + anchor.right) / 2 - size.width / 2;
+  const maxLeft = viewport.width - TOOLTIP_MARGIN - size.width;
+  const left = Math.max(TOOLTIP_MARGIN, Math.min(centered, maxLeft));
+
+  const fitsBelow = anchor.bottom + GAP + size.height <= viewport.height - TOOLTIP_MARGIN;
+  const fitsAbove = anchor.top - GAP - size.height >= TOOLTIP_MARGIN;
+  const top = fitsBelow || !fitsAbove ? anchor.bottom + GAP : anchor.top - GAP - size.height;
+  return { left, top };
 }

@@ -130,3 +130,15 @@ test('isIsoUtc acepta la hora de Postgres (+00:00 con microsegundos) y rechaza o
   assert.equal(isIsoUtc('ayer'), false);
   assert.equal(isIsoUtc(null), false);
 });
+
+test('un registro guardado con la hora +00:00 del servidor sigue siendo válido al releerlo', () => {
+  const stored = markRegistered(
+    markRegistered(emptyRecord(), 'terms', 'v1', '2026-11-21T02:43:14.428631+00:00'),
+    'privacy',
+    'v1',
+    '2026-11-21T02:43:14.428631+00:00',
+  );
+  const reread = parseConsentRecord(JSON.parse(JSON.stringify(stored)));
+  assert.notEqual(reread, null);
+  assert.equal(needsBanner(reread, { terms: 'v1', privacy: 'v1', cookies: 'v1' }), false);
+});

@@ -1,0 +1,94 @@
+/*
+ * Atmósfera de cada sección. Todas comparten el mármol de Deus (textures.css); cada una cambia el
+ * encuadre de la textura y suma un velo de color liviano (gradientes estáticos, sin imágenes
+ * nuevas ni animación), así Modo Lite no necesita desactivarlos. Los velos usan la paleta de la
+ * marca: violeta para Juegos, trazo de código para Programas, oro kintsugi para Freelance.
+ */
+body[data-section="games"] {
+  --section-tint:
+    radial-gradient(70rem 40rem at 0% 0%, rgb(124 58 237 / 0.28), transparent 70%),
+    linear-gradient(180deg, rgb(11 9 20 / 0.25), transparent 40%);
+  background-position: 0% 30%;
+  background-size: 150% auto;
+}
+
+body[data-section="programs"] {
+  /* Cuadrícula tenue de editor sobre el mármol, en el tono de texto del tema. */
+  --section-tint:
+    repeating-linear-gradient(
+      0deg,
+      color-mix(in srgb, var(--color-text) 5%, transparent) 0 1px,
+      transparent 1px 28px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-text) 5%, transparent) 0 1px,
+      transparent 1px 28px
+    ),
+    radial-gradient(60rem 36rem at 100% 100%, rgb(124 58 237 / 0.22), transparent 70%);
+  background-position: 100% 100%;
+  background-size: 150% auto;
+}
+
+body[data-section="freelance"] {
+  --section-tint:
+    radial-gradient(70rem 40rem at 100% 0%, rgb(212 175 55 / 0.24), transparent 70%),
+    linear-gradient(0deg, rgb(11 9 20 / 0.2), transparent 45%);
+  background-position: 100% 0%;
+  background-size: 150% auto;
+}
+
+body[data-section="contact"] {
+  --section-tint:
+    radial-gradient(50rem 30rem at 50% 0%, rgb(124 58 237 / 0.2), transparent 70%),
+    radial-gradient(40rem 26rem at 50% 100%, rgb(212 175 55 / 0.16), transparent 70%);
+  background-position: 50% 100%;
+  background-size: 130% auto;
+}
+
+/* El velo de color es una capa fija estática bajo el contenido: no repinta al desplazar. */
+body:is(
+  [data-section="games"],
+  [data-section="programs"],
+  [data-section="freelance"],
+  [data-section="contact"]
+)::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--section-tint);
+}
+
+body main,
+body .site-footer {
+  position: relative;
+  z-index: 1;
+}
+
+:root[data-theme="light"] body[data-section="programs"] {
+  --section-tint:
+    repeating-linear-gradient(0deg, rgb(11 9 20 / 0.05) 0 1px, transparent 1px 28px),
+    repeating-linear-gradient(90deg, rgb(11 9 20 / 0.05) 0 1px, transparent 1px 28px),
+    radial-gradient(60rem 36rem at 100% 100%, rgb(124 58 237 / 0.12), transparent 70%);
+}
+
+:root[data-theme="light"]
+  body:is([data-section="games"], [data-section="freelance"], [data-section="contact"]) {
+  --section-tint: radial-gradient(
+    60rem 36rem at var(--tint-x, 50%) var(--tint-y, 0%),
+    rgb(124 58 237 / 0.1),
+    transparent 70%
+  );
+}
+
+:root[data-theme="light"] body[data-section="freelance"] {
+  --tint-x: 100%;
+  --tint-y: 0%;
+}
+
+:root[data-theme="light"] body[data-section="games"] {
+  --tint-x: 0%;
+  --tint-y: 0%;
+}

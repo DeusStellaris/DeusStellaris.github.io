@@ -51,8 +51,7 @@ test.describe('Luces ambientales y Modo Lite', () => {
     const toggle = page.locator('[data-lite-toggle]');
     await expect(toggle).toHaveAttribute('data-tooltip', /CPU.*GPU.*batería/);
     await toggle.hover();
-    const content = await toggle.evaluate((el) => getComputedStyle(el, '::after').content);
-    expect(content).toMatch(/CPU/);
+    await expect(page.locator('#tooltip-layer')).toContainText(/CPU/);
   });
 });
 

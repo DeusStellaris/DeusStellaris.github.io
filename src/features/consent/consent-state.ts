@@ -30,7 +30,8 @@ export interface ConsentRecord {
 export type DocumentVersions = Record<LegalKind | 'cookies', string>;
 
 const VERSION_PATTERN = /^[0-9a-zA-Z.-]{1,32}$/;
-const ISO_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
+// Hora UTC del servidor: Postgres la devuelve con +00:00 y microsegundos, no solo con Z.
+const ISO_PATTERN = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(?:Z|\+00:00)$/;
 const STATUSES: readonly RegistrationStatus[] = ['registered', 'pending'];
 
 export function emptyRecord(): ConsentRecord {
@@ -142,10 +143,7 @@ export function adsGranted(record: ConsentRecord): boolean {
   return record.ads?.granted === true;
 }
 
-/** Hora UTC que devuelve el servidor: con Z o +00:00 y hasta 6 decimales (Postgres usa +00:00). */
+/** Hora UTC que devuelve el servidor, validada con el mismo patrón que el registro guardado. */
 export function isIsoUtc(value: unknown): value is string {
-  return (
-    typeof value === 'string' &&
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,6})?(?:Z|\+00:00)$/.test(value)
-  );
+  return typeof value === 'string' && ISO_PATTERN.test(value);
 }

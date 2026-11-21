@@ -1,35 +1,63 @@
-import { tooltipFlipsUp, tooltipShift } from './tooltip-core';
+import { tooltipPlacement } from './tooltip-core';
 
 /**
- * Posiciona los tooltips de [data-tooltip] (tooltip.css) al apuntarlos o enfocarlos: los desplaza
- * para que nunca se corten en el borde del viewport y los pasa arriba si no caben debajo.
- * El tamaño se lee del pseudo-elemento ::after ya renderizado; el resultado va en variables CSS.
+ * Tooltips de [data-tooltip]. Un único cuadro vive en la capa superior del navegador (popover),
+ * así ningún contenedor con overflow (modales, aviso de consentimiento) puede recortarlo. Se coloca
+ * con coordenadas fijas dentro del viewport (ver tooltip-core.ts) y se oculta al salir, perder el
+ * foco, desplazar o pulsar Escape. En pantallas táctiles solo aparece con el foco del teclado.
  */
 
 const SELECTOR = '[data-tooltip]';
+const LAYER_ID = 'tooltip-layer';
 let bound = false;
+let current: HTMLElement | null = null;
 
-function place(control: HTMLElement): void {
-  const box = getComputedStyle(control, '::after');
-  const width = Number.parseFloat(box.width);
-  const height = Number.parseFloat(box.height);
-  if (!Number.isFinite(width) || !Number.isFinite(height)) return;
+function layer(): HTMLElement {
+  let element = document.getElementById(LAYER_ID);
+  if (!element) {
+    element = document.createElement('div');
+    element.id = LAYER_ID;
+    element.className = 'tooltip';
+    element.setAttribute('role', 'tooltip');
+    element.setAttribute('popover', 'manual');
+    document.body.append(element);
+  }
+  return element;
+}
 
-  const rect = control.getBoundingClientRect();
-  control.style.setProperty(
-    '--tooltip-shift',
-    `${tooltipShift(rect.right, width, document.documentElement.clientWidth)}px`,
+function hide(): void {
+  current = null;
+  const element = document.getElementById(LAYER_ID);
+  if (element?.matches(':popover-open')) element.hidePopover();
+}
+
+function show(control: HTMLElement): void {
+  const text = control.dataset.tooltip ?? '';
+  if (text === '') return;
+  const element = layer();
+  element.textContent = text;
+  if (!element.matches(':popover-open')) element.showPopover();
+  const { width, height } = element.getBoundingClientRect();
+  const { left, top } = tooltipPlacement(
+    control.getBoundingClientRect(),
+    { width, height },
+    { width: document.documentElement.clientWidth, height: window.innerHeight },
   );
-  control.toggleAttribute(
-    'data-tooltip-up',
-    tooltipFlipsUp(rect.bottom, rect.top, height, window.innerHeight),
-  );
+  element.style.left = `${left}px`;
+  element.style.top = `${top}px`;
+  current = control;
 }
 
 function onActivate(event: Event): void {
+  if (event instanceof PointerEvent && event.pointerType === 'touch') return;
   if (!(event.target instanceof Element)) return;
   const control = event.target.closest<HTMLElement>(SELECTOR);
-  if (control) place(control);
+  if (control) show(control);
+}
+
+function onLeave(event: Event): void {
+  if (!(event.target instanceof Element)) return;
+  if (current && event.target.closest(SELECTOR) === current) hide();
 }
 
 /** Registra los listeners de documento una sola vez; sobreviven a View Transitions. */
@@ -38,4 +66,11 @@ export function initTooltips(): void {
   bound = true;
   document.addEventListener('pointerover', onActivate, { passive: true });
   document.addEventListener('focusin', onActivate, { passive: true });
+  document.addEventListener('pointerout', onLeave, { passive: true });
+  document.addEventListener('focusout', onLeave, { passive: true });
+  document.addEventListener('pointerdown', hide, { passive: true });
+  document.addEventListener('scroll', hide, { passive: true, capture: true });
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') hide();
+  });
 }

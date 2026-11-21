@@ -91,7 +91,7 @@ test.describe('Fase 6: legalidad, consentimiento y publicidad', () => {
     await page.goto('/cookies/');
     await expect(page.locator('[data-consent-manager]')).toContainText('no hay publicidad activa');
     await expect(page.locator('[data-consent-manager-ads]')).toHaveCount(0);
-    await page.locator('[data-consent-reopen]').click();
+    await page.locator('[data-consent-manager] [data-consent-reopen]').click();
     await expect(page.locator('[data-consent-banner]')).toBeVisible();
   });
 });

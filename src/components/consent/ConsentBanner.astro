@@ -237,14 +237,6 @@ const apiBaseUrl = services.apiBaseUrl ?? '';
     transform: translateY(0);
   }
 
-  /* El aviso recorta lo que sobresale: el tooltip se abre hacia arriba y dentro de sus bordes. */
-  .consent__button[data-tooltip]::after {
-    top: auto;
-    bottom: calc(100% + var(--space-2));
-    inset-inline: 0 auto;
-    max-width: min(14rem, 70vw);
-  }
-
   .consent__button--primary {
     border-color: var(--color-violet);
     background: var(--color-violet);

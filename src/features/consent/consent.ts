@@ -201,9 +201,19 @@ function initBanner(root: HTMLElement): void {
     }
   })();
 
-  const ads = root.querySelector<HTMLInputElement>('[data-consent-ads]');
-  if (ads) ads.checked = adsGranted(record);
+  syncChecks(root, record, context.versions);
   showBanner(root, !dismissed && needsBanner(record, context.versions));
+}
+
+/** Refleja en las casillas lo ya aceptado, para que reabrir el aviso no lo muestre desmarcado. */
+function syncChecks(root: HTMLElement, record: ConsentRecord, versions: DocumentVersions): void {
+  const accepted = (kind: LegalKind) => record.legal[kind]?.version === versions[kind];
+  const terms = root.querySelector<HTMLInputElement>('[data-consent-terms]');
+  const privacy = root.querySelector<HTMLInputElement>('[data-consent-privacy]');
+  const ads = root.querySelector<HTMLInputElement>('[data-consent-ads]');
+  if (terms) terms.checked = accepted('terms');
+  if (privacy) privacy.checked = accepted('privacy');
+  if (ads) ads.checked = adsGranted(record);
 }
 
 function initManager(root: HTMLElement): void {
@@ -228,20 +238,21 @@ function initManager(root: HTMLElement): void {
       setStatus(root, acceptedAt ? messages.registered : messages.localSaved);
     });
   });
+}
 
-  root.querySelector<HTMLButtonElement>('[data-consent-reopen]')?.addEventListener('click', () => {
-    try {
-      window.sessionStorage.removeItem(DISMISS_KEY);
-    } catch {
-      // Sin sessionStorage no hay nada que limpiar.
-    }
-    const banner = document.querySelector<HTMLElement>(BANNER_SELECTOR);
-    if (banner) {
-      initBanner(banner);
-      showBanner(banner, true);
-      banner.querySelector<HTMLInputElement>('[data-consent-terms]')?.focus();
-    }
-  });
+/** Vuelve a mostrar el aviso desde el pie o la página de cookies: única forma de reabrirlo. */
+function reopenBanner(): void {
+  try {
+    window.sessionStorage.removeItem(DISMISS_KEY);
+  } catch {
+    // Sin sessionStorage no hay nada que limpiar.
+  }
+  const banner = document.querySelector<HTMLElement>(BANNER_SELECTOR);
+  if (!banner) return;
+  initBanner(banner);
+  syncChecks(banner, loadConsentRecord(), readContext(banner).versions);
+  showBanner(banner, true);
+  banner.querySelector<HTMLInputElement>('[data-consent-terms]')?.focus();
 }
 
 let listenersBound = false;
@@ -251,6 +262,10 @@ function bindOnce(): void {
   listenersBound = true;
   document.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return;
+    if (event.target.closest('[data-consent-reopen]')) {
+      reopenBanner();
+      return;
+    }
     const root = event.target.closest<HTMLElement>(BANNER_SELECTOR);
     if (!root) return;
     if (event.target.closest('[data-consent-later],[data-consent-close]')) {

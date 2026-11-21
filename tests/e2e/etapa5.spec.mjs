@@ -83,21 +83,16 @@ test.describe('Tooltips dentro del viewport', () => {
       for (let index = 0; index < count; index++) {
         const control = controls.nth(index);
         await control.focus();
-        const box = await control.evaluate((el) => {
-          const pseudo = getComputedStyle(el, '::after');
+        const box = await page.locator('#tooltip-layer').evaluate((el) => {
           const rect = el.getBoundingClientRect();
-          const shift = Number.parseFloat(el.style.getPropertyValue('--tooltip-shift') || '0');
-          const tooltipWidth = Number.parseFloat(pseudo.width);
           return {
-            left: rect.right - tooltipWidth + shift,
-            right: rect.right + shift,
-            width: tooltipWidth,
+            left: rect.left,
+            right: rect.right,
             viewport: document.documentElement.clientWidth,
           };
         });
         expect(box.left, `tooltip ${index} izquierda`).toBeGreaterThanOrEqual(11.5);
         expect(box.right, `tooltip ${index} derecha`).toBeLessThanOrEqual(box.viewport - 11.5);
-        expect(box.width).toBeLessThanOrEqual(box.viewport - 24 + 0.5);
       }
     });
   }

@@ -84,8 +84,7 @@ const es = {
     themeToLight: 'Activar modo claro',
     themeToDark: 'Activar modo oscuro',
     liteMode: 'Modo rendimiento',
-    liteModeHint:
-      'Modo Lite activo por defecto para ahorrar CPU, GPU, RAM y batería. Pulsalo para encender los efectos ambientales completos; volvé a pulsarlo para ahorrar de nuevo.',
+    liteModeHint: 'Ahorra CPU, GPU, RAM y batería. Apagalo para ver todos los efectos.',
   },
   search: {
     heading: 'Buscar',
@@ -139,6 +138,7 @@ const es = {
   },
   profile: {
     open: 'Perfil local',
+    openTooltip: 'Tus favoritos, ajustes y cuenta.',
     title: 'Tu perfil local',
     privacy:
       'Este perfil es anónimo y se guarda solo en este navegador. No hay cuenta ni datos enviados a un servidor.',
@@ -242,6 +242,7 @@ const es = {
       'El registro de aceptaciones todavía no está disponible. El sitio no la da por registrada.',
     localSaved: 'Tus decisiones de cookies se guardaron en este navegador.',
     open: 'Revisar consentimientos',
+    openTooltip: 'Vuelve a abrir el aviso para cambiar tus decisiones.',
     manageTitle: 'Preferencias de cookies',
     manageIntro: 'Podés cambiar estas decisiones cuando quieras.',
     adsDisabled: 'Actualmente no hay publicidad activa en el sitio.',
@@ -259,7 +260,7 @@ const es = {
   },
   push: {
     open: 'Notificaciones',
-    openHint: 'Elegí qué avisos querés recibir. Solo se activan si vos lo decidís.',
+    openHint: 'Elegí qué avisos querés recibir.',
     title: 'Preferencias de notificaciones',
     close: 'Cerrar',
     intro:

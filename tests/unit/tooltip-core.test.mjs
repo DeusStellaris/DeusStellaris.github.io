@@ -1,16 +1,26 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { tooltipFlipsUp, tooltipShift } from '../../src/features/tooltips/tooltip-core.ts';
+import { tooltipPlacement } from '../../src/features/tooltips/tooltip-core.ts';
 
-test('tooltipShift mantiene el cuadro dentro del viewport con 12 px de margen', () => {
-  assert.equal(tooltipShift(243, 288, 360), 57);
-  assert.equal(tooltipShift(300, 200, 360), 0);
-  assert.equal(tooltipShift(355, 100, 360), -7);
-  assert.equal(tooltipShift(400, 288, 1440), 0);
+const viewport = { width: 360, height: 844 };
+const size = { width: 200, height: 60 };
+const box = (left, width, top = 100, height = 44) => ({
+  left,
+  right: left + width,
+  top,
+  bottom: top + height,
 });
 
-test('tooltipFlipsUp solo sube si no cabe debajo y sí arriba', () => {
-  assert.equal(tooltipFlipsUp(60, 20, 80, 844), false);
-  assert.equal(tooltipFlipsUp(800, 756, 80, 844), true);
-  assert.equal(tooltipFlipsUp(40, 0, 900, 844), false);
+test('se centra bajo el control cuando cabe', () => {
+  assert.deepEqual(tooltipPlacement(box(130, 100), size, viewport), { left: 80, top: 152 });
+});
+
+test('nunca se recorta a la izquierda ni a la derecha (margen de 12 px)', () => {
+  assert.equal(tooltipPlacement(box(0, 40), size, viewport).left, 12);
+  assert.equal(tooltipPlacement(box(330, 30), size, viewport).left, 148);
+});
+
+test('pasa arriba solo si no cabe debajo y sí arriba', () => {
+  assert.equal(tooltipPlacement(box(100, 40, 780), size, viewport).top, 712);
+  assert.equal(tooltipPlacement(box(100, 40, 20), size, viewport).top, 72);
 });

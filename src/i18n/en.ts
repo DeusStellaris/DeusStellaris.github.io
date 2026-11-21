@@ -85,8 +85,7 @@ const en: Partial<Dictionary> = {
     themeToLight: 'Switch to light mode',
     themeToDark: 'Switch to dark mode',
     liteMode: 'Performance mode',
-    liteModeHint:
-      'Lite Mode is on by default to save CPU, GPU, RAM and battery. Press it to turn on the full ambient effects; press again to save resources.',
+    liteModeHint: 'Saves CPU, GPU, RAM and battery. Turn it off to see all effects.',
   },
   search: {
     heading: 'Search',
@@ -141,6 +140,7 @@ const en: Partial<Dictionary> = {
   },
   profile: {
     open: 'Local profile',
+    openTooltip: 'Your favorites, settings and account.',
     title: 'Your local profile',
     privacy:
       'This profile is anonymous and is stored only in this browser. There is no account and no data is sent to a server.',
@@ -244,6 +244,7 @@ const en: Partial<Dictionary> = {
       'Acceptance registration is not available yet. The site does not treat it as registered.',
     localSaved: 'Your cookie choices were saved in this browser.',
     open: 'Review consents',
+    openTooltip: 'Reopens the notice so you can change your choices.',
     manageTitle: 'Cookie preferences',
     manageIntro: 'You can change these choices at any time.',
     adsDisabled: 'There is currently no active advertising on the site.',
@@ -261,7 +262,7 @@ const en: Partial<Dictionary> = {
   },
   push: {
     open: 'Notifications',
-    openHint: 'Choose which alerts you want to receive. They only turn on if you decide so.',
+    openHint: 'Choose which alerts you want to receive.',
     title: 'Notification preferences',
     close: 'Close',
     intro:

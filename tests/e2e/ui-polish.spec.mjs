@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import legal from '../../src/config/legal.json' with { type: 'json' };
 import { waitForIntroDone, watchPage } from './helpers.mjs';
 
 /** Pulido de interfaz: media luna, toasts, skeleton de likes y acordeón FAQ. */
@@ -106,5 +107,73 @@ test.describe('Pulido de interfaz', () => {
     await expect(page.locator('.contact__email')).toContainText('@');
     await page.locator('[data-copy-email]').click();
     await expect(page.locator('.toast')).toHaveText('Correo copiado');
+  });
+
+  test('lo aceptado en Inicio no reabre el aviso en las demás secciones, solo el botón del pie', async ({
+    page,
+  }) => {
+    const record = {
+      version: 1,
+      legal: {
+        terms: {
+          version: legal.versions.terms,
+          status: 'registered',
+          acceptedAt: '2026-11-21T02:43:14.428631+00:00',
+        },
+        privacy: {
+          version: legal.versions.privacy,
+          status: 'registered',
+          acceptedAt: '2026-11-21T02:43:14.428631+00:00',
+        },
+      },
+      ads: null,
+    };
+    await page.addInitScript((value) => {
+      localStorage.setItem('deus:consent', JSON.stringify(value));
+      sessionStorage.setItem('deus:intro-played', 'yes');
+    }, record);
+    for (const path of ['/', '/juegos/', '/programas/', '/freelance/', '/contacto/']) {
+      await page.goto(path);
+      await expect(page.locator('[data-consent-banner]'), path).toBeHidden();
+    }
+    await page.locator('[data-consent-reopen]').first().click();
+    await expect(page.locator('[data-consent-banner]')).toBeVisible();
+    await expect(page.locator('[data-consent-terms]')).toBeChecked();
+    await expect(page.locator('[data-consent-privacy]')).toBeChecked();
+  });
+
+  test('los tooltips del modal de perfil quedan dentro del viewport', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 700 });
+    await page.addInitScript(() => sessionStorage.setItem('deus:intro-played', 'yes'));
+    await page.goto('/');
+    await page.locator('[data-consent-later]').click();
+    await page.locator('[data-profile-open]:visible').first().click();
+    const controls = page.locator('[data-profile-dialog] [data-tooltip]');
+    const count = await controls.count();
+    expect(count).toBeGreaterThan(3);
+    for (let index = 0; index < count; index++) {
+      await controls.nth(index).scrollIntoViewIfNeeded();
+      // El desplazamiento oculta el tooltip: se espera a que termine antes de enfocar.
+      await page.waitForTimeout(150);
+      await controls.nth(index).focus();
+      const box = await page.locator('#tooltip-layer').boundingBox();
+      expect(box, `tooltip ${index}`).not.toBeNull();
+      expect(box?.x ?? 0).toBeGreaterThanOrEqual(11.5);
+      expect((box?.x ?? 0) + (box?.width ?? 0)).toBeLessThanOrEqual(360 - 11.5);
+    }
+  });
+
+  test('cada sección tiene su propia atmósfera de fondo', async ({ page }) => {
+    const tints = new Set();
+    for (const path of ['/juegos/', '/programas/', '/freelance/', '/contacto/']) {
+      await page.goto(path);
+      tints.add(
+        await page.evaluate(() =>
+          getComputedStyle(document.body).getPropertyValue('--section-tint'),
+        ),
+      );
+    }
+    expect(tints.size).toBe(4);
+    expect([...tints].every((tint) => tint.trim() !== '')).toBe(true);
   });
 });
