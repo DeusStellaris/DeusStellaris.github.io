@@ -101,7 +101,7 @@ export const reviewsEn: typeof reviewsEs = {
 export const accountEs = {
   heading: 'Cuenta y respaldo en la nube',
   intro:
-    'Opcional. Con una cuenta podés sincronizar tus favoritos y preferencias entre dispositivos. Tu contraseña se guarda solo como hash Argon2id y tu correo solo como huella: no podemos leerlos.',
+    'Opcional. Con una cuenta podés sincronizar tus favoritos y preferencias entre dispositivos. Tu contraseña se guarda solo como hash PBKDF2-SHA256 y tu correo solo como huella: no podemos leerlos.',
   emailLabel: 'Correo',
   passwordLabel: 'Contraseña',
   passwordHint: 'Entre 12 y 128 caracteres.',
@@ -122,7 +122,7 @@ export const accountEs = {
 export const accountEn: typeof accountEs = {
   heading: 'Account and cloud backup',
   intro:
-    'Optional. With an account you can sync your favorites and preferences across devices. Your password is stored only as an Argon2id hash and your email only as a fingerprint: we cannot read them.',
+    'Optional. With an account you can sync your favorites and preferences across devices. Your password is stored only as a PBKDF2-SHA256 hash and your email only as a fingerprint: we cannot read them.',
   emailLabel: 'Email',
   passwordLabel: 'Password',
   passwordHint: 'Between 12 and 128 characters.',

@@ -8,6 +8,19 @@ interface Props {
 }
 
 const { locale } = Astro.props;
+
+/** Opciones del panel de ajustes: textos y impacto en recursos ya traducidos. */
+const impactLabels = ['Ram', 'Vram', 'Cpu', 'Battery'] as const;
+function settingsInfo(prefix: 'lite' | 'theme'): string {
+  return JSON.stringify({
+    title: t(locale, `profile.${prefix}Title`),
+    text: t(locale, `profile.${prefix}Text`),
+    impact: impactLabels.map((name) => ({
+      label: t(locale, `profile.impact${name}`),
+      value: t(locale, `profile.${prefix}${name}`),
+    })),
+  });
+}
 ---
 
 <!--
@@ -22,10 +35,6 @@ const { locale } = Astro.props;
   data-msg-no-favorites={t(locale, 'profile.noFavorites')}
   data-msg-unavailable={t(locale, 'favorites.unavailable')}
   data-msg-remove={t(locale, 'profile.remove')}
-  data-msg-theme-light={t(locale, 'profile.themeLight')}
-  data-msg-theme-dark={t(locale, 'profile.themeDark')}
-  data-msg-lite-on={t(locale, 'profile.on')}
-  data-msg-lite-off={t(locale, 'profile.off')}
 >
   <div class="profile__inner">
     <header class="profile__header">
@@ -52,16 +61,50 @@ const { locale } = Astro.props;
 
     <section class="profile__section" aria-labelledby="profile-prefs-heading">
       <h3 id="profile-prefs-heading">{t(locale, 'profile.preferencesHeading')}</h3>
-      <dl class="profile__prefs">
-        <dt>{t(locale, 'profile.themeLabel')}</dt>
-        <dd data-profile-theme></dd>
-        <dt>{t(locale, 'profile.liteLabel')}</dt>
-        <dd data-profile-lite></dd>
-      </dl>
+      <p class="settings__hint">{t(locale, 'profile.settingsHint')}</p>
+      <ul class="settings" role="list">
+        <li>
+          <button
+            type="button"
+            class="settings__row"
+            data-settings-row
+            data-settings-info={settingsInfo('lite')}
+            data-settings-toggle="lite"
+            data-state-on={t(locale, 'profile.on')}
+            data-state-off={t(locale, 'profile.off')}
+            data-tooltip={t(locale, 'profile.liteTooltip')}
+          >
+            <span>{t(locale, 'profile.liteLabel')}</span>
+            <span class="settings__state" data-settings-state></span>
+          </button>
+        </li>
+        <li>
+          <button
+            type="button"
+            class="settings__row"
+            data-settings-row
+            data-settings-info={settingsInfo('theme')}
+            data-settings-toggle="theme"
+            data-state-on={t(locale, 'profile.themeLight')}
+            data-state-off={t(locale, 'profile.themeDark')}
+            data-tooltip={t(locale, 'profile.themeTooltip')}
+          >
+            <span>{t(locale, 'profile.themeLabel')}</span>
+            <span class="settings__state" data-settings-state></span>
+          </button>
+        </li>
+      </ul>
     </section>
 
     {services.accountsEnabled === true && <AccountPanel locale={locale} api={services.apiBaseUrl ?? ''} />}
     </div>
+
+    <footer class="profile__detail" data-settings-detail aria-live="polite">
+      <h4 data-settings-title></h4>
+      <p data-settings-text></p>
+      <p class="profile__detail-label">{t(locale, 'profile.impactLabel')}</p>
+      <dl class="profile__impact" data-settings-impact></dl>
+    </footer>
   </div>
 </dialog>
 
@@ -140,19 +183,94 @@ const { locale } = Astro.props;
     color: var(--color-text-muted);
   }
 
-  .profile__prefs {
+  .settings {
     display: grid;
-    grid-template-columns: auto 1fr;
-    gap: var(--space-2) var(--space-4);
+    gap: var(--space-2);
     margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
-  .profile__prefs dt {
+  .settings__hint {
+    margin: 0 0 var(--space-3);
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .settings__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    width: 100%;
+    min-height: var(--target-min);
+    padding-inline: var(--space-4);
+    border: 1px solid var(--color-border);
+    border-left: 3px solid transparent;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    cursor: pointer;
+    text-align: start;
+    transition:
+      transform var(--duration-fast) var(--ease-out),
+      border-color var(--duration-fast) var(--ease-out);
+  }
+
+  .settings__row:hover,
+  .settings__row[data-selected] {
+    border-left-color: var(--color-kintsugi);
+    transform: translateX(2px);
+  }
+
+  .settings__state {
+    color: var(--color-kintsugi);
+    font-size: var(--text-sm);
+    font-weight: 600;
+  }
+
+  /* Panel fijo inferior: descripción de la opción elegida e impacto en recursos. */
+  .profile__detail {
+    padding: var(--space-3) var(--space-6) var(--space-4);
+    border-top: 1px solid var(--color-kintsugi);
+    background:
+      linear-gradient(155deg, rgb(124 58 237 / 0.14), transparent 50%),
+      var(--color-surface);
+    font-size: var(--text-sm);
+  }
+
+  .profile__detail h4 {
+    margin: 0 0 var(--space-1);
+    font-size: var(--text-base);
+  }
+
+  .profile__detail p {
+    margin: 0 0 var(--space-2);
     color: var(--color-text-muted);
   }
 
-  .profile__prefs dd {
+  .profile__detail .profile__detail-label {
+    margin: 0 0 var(--space-1);
+    color: var(--color-kintsugi);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .profile__impact {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: var(--space-1) var(--space-3);
     margin: 0;
+  }
+
+  .profile__impact dt {
+    font-weight: 600;
+  }
+
+  .profile__impact dd {
+    margin: 0;
+    color: var(--color-text-muted);
   }
 
   .profile__close {
@@ -182,7 +300,9 @@ const { locale } = Astro.props;
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .profile__close:hover {
+    .profile__close:hover,
+    .settings__row:hover,
+    .settings__row[data-selected] {
       transform: none;
     }
   }

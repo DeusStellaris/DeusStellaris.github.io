@@ -34,6 +34,10 @@
   --color-accent-strong: #f3e3bd;
   --color-glow: rgb(227 207 160 / 0.18);
 
+  /* Identidad Deus: violeta de acción y oro kintsugi (filos y estados activos). */
+  --color-violet: #7c3aed;
+  --color-kintsugi: #d4af37;
+
   /* Textura de mármol real de Inicio y Freelance (WebP optimizado; cambia con el tema) */
   --texture-marble: url("../assets/backgrounds/marble-dark.webp");
   /* Encuadre de la textura por breakpoint (background-position); conserva las vetas doradas */

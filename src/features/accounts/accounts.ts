@@ -1,6 +1,6 @@
 /**
  * Cuenta opcional (account/AccountPanel.astro). Crea la cuenta o inicia sesión contra el Worker.
- * La contraseña viaja solo por HTTPS al Worker, que la guarda como hash Argon2id; aquí nunca se
+ * La contraseña viaja solo por HTTPS al Worker, que la guarda como hash PBKDF2-SHA256; aquí nunca se
  * guarda. La sesión (una hora) es una cookie HttpOnly del Worker: este código nunca ve el token.
  */
 

@@ -18,7 +18,7 @@ Privacidad por diseño y local primero: las preferencias (tema, Modo Lite, favor
 
 - **Me gusta y reseñas:** un identificador anónimo y aleatorio, guardado en el servidor solo como HMAC. Las reseñas guardan puntuación, comentario de texto plano, idioma y fecha.
 - **Avisos push (opcionales):** dirección de entrega y claves de cifrado del navegador, modo, categorías o proyectos e idioma. Darte de baja borra el registro.
-- **Cuenta (opcional):** correo solo como HMAC, contraseña solo como hash Argon2id y, si lo pedís, un respaldo de preferencias. Sesión en cookie `__Host-deus_session` de una hora, `HttpOnly`, `Secure` y `SameSite=Strict`.
+- **Cuenta (opcional):** correo solo como HMAC, contraseña solo como hash PBKDF2-SHA256 y, si lo pedís, un respaldo de preferencias. Sesión en cookie `__Host-deus_session` de una hora, `HttpOnly`, `Secure` y `SameSite=Strict`.
 - **Consentimientos:** tipo, versión del documento, idioma, fecha UTC y un HMAC de la sesión de consentimiento. Sin nombre, correo ni IP.
 - **Rendimiento (RUM):** Web Vitals (LCP, INP, CLS, FCP, TTFB) de una muestra del 10 % de visitas: métrica, valor y ruta. Sin cookies, identificadores ni IP; no se guardan en base de datos. Se omite con Do Not Track, Global Privacy Control o ahorro de datos.
 - **IP:** solo de forma transitoria para limitar la frecuencia de solicitudes, guardada como HMAC.
@@ -45,7 +45,7 @@ Privacy by design and local-first: preferences (theme, Lite Mode, favorites, pro
 
 - **Likes and reviews:** a random anonymous identifier, stored on the server only as an HMAC. Reviews store rating, plain-text comment, language and date.
 - **Push notifications (optional):** browser delivery address and encryption keys, mode, categories or projects and language. Unsubscribing deletes the record.
-- **Account (optional):** email only as an HMAC, password only as an Argon2id hash and, if you ask for it, a preferences backup. One-hour `__Host-deus_session` cookie, `HttpOnly`, `Secure` and `SameSite=Strict`.
+- **Account (optional):** email only as an HMAC, password only as a PBKDF2-SHA256 hash and, if you ask for it, a preferences backup. One-hour `__Host-deus_session` cookie, `HttpOnly`, `Secure` and `SameSite=Strict`.
 - **Consents:** type, document version, language, UTC date and an HMAC of the consent session. No name, email or IP.
 - **Performance (RUM):** Web Vitals (LCP, INP, CLS, FCP, TTFB) from a 10% sample of visits: metric, value and path. No cookies, identifiers or IP; not stored in a database. Skipped with Do Not Track, Global Privacy Control or data saver.
 - **IP:** only transiently to rate-limit requests, stored as an HMAC.

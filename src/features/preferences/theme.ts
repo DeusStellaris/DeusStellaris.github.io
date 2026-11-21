@@ -55,7 +55,7 @@ export function setThemePreference(theme: Theme): void {
   applyTheme(theme);
 }
 
-function toggleTheme(): void {
+export function toggleTheme(): void {
   setThemePreference(currentTheme() === 'dark' ? 'light' : 'dark');
 }
 

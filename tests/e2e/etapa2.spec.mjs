@@ -298,10 +298,12 @@ test.describe('DeusDeck Hub', () => {
   });
 });
 
-test.describe('Cuentas y demos, preparadas pero apagadas', () => {
-  test('el panel de cuenta no se incluye mientras accountsEnabled sea false', async ({ page }) => {
+test.describe('Cuentas y demos', () => {
+  test('el panel de cuenta se incluye en el perfil mientras accountsEnabled sea true', async ({
+    page,
+  }) => {
     await page.goto('/');
-    expect(await page.locator('[data-account]').count()).toBe(0);
+    expect(await page.locator('[data-account]').count()).toBeGreaterThan(0);
   });
 
   test('sin demos publicadas no hay páginas de demo ni lista en Juegos', async ({

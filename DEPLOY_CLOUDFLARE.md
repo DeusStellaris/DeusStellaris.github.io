@@ -32,8 +32,6 @@ Variables públicas (van en `wrangler.toml`, sección `[vars]`):
 | `DEMOS_INDEX_URL`   | `https://tu-proyecto.pages.dev/demos-index.json`                       |
 | `SUPABASE_URL`      | URL del proyecto de Supabase                                           |
 | `ACCOUNTS_ENABLED`  | `true` solo si querés cuentas; sin definir, `/accounts/*` responde 404 |
-| `ARGON2_MEMORY_KIB` | Opcional, ajuste de Argon2id                                           |
-| `ARGON2_ITERATIONS` | Opcional, ajuste de Argon2id                                           |
 
 Secretos (se cargan con `npx wrangler@4.151.3 secret put NOMBRE`, o en el panel: _Workers & Pages_ → el Worker → _Settings_ → _Variables and Secrets_ → _Secret_):
 

@@ -8,6 +8,7 @@ import { initLikes, initRankings } from './likes/likes';
 import { initLiteMode } from './preferences/lite-mode';
 import { initThemePreferences } from './preferences/theme';
 import { initProfile } from './profile/profile';
+import { initSettingsPanel } from './settings/settings-panel';
 import { initPushPanel } from './push/push-panel';
 import { registerServiceWorker } from './pwa/register';
 import { initRum } from './rum/rum';
@@ -42,6 +43,7 @@ function initPageModules(): void {
 function initPage(): void {
   initFavorites();
   initProfile();
+  initSettingsPanel();
   initPushPanel();
   initAssistant();
   initSearchWidgets();

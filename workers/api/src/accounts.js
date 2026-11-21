@@ -8,17 +8,17 @@
  *   PUT  /accounts/backup    (cookie) { payload }  →  200 { saved: true }
  *
  * Privacy by Design:
- *  - La contraseña se guarda solo como hash Argon2id con sal propia (argon2.js). Nunca en claro ni en logs.
+ *  - La contraseña se guarda solo como hash PBKDF2-SHA256 con sal propia (password.js). Nunca en claro ni en logs.
  *  - El correo se guarda solo como HMAC con un secreto del servidor: no hay lista de correos que filtrar.
  *    Consecuencia: no hay recuperación por correo. Se decide al lanzar la función.
  *  - El acceso usa un token firmado (HMAC) de una hora en una cookie __Host- HttpOnly, Secure y
  *    SameSite=Strict: el JavaScript de la página nunca lo ve. No hay sesiones en el servidor.
  *  - CSRF: SameSite=Strict, lista de orígenes, rechazo de Sec-Fetch-Site cross-site y cuerpo JSON
  *    obligatorio (fuerza preflight CORS en toda escritura).
- *  - Errores genéricos: iniciar sesión no revela si el correo existe y siempre ejecuta un Argon2id.
+ *  - Errores genéricos: iniciar sesión no revela si el correo existe y siempre ejecuta un PBKDF2.
  */
 
-import { ARGON2_DEFAULTS, hashPassword, verifyPassword } from './argon2.js';
+import { hashPassword, verifyPassword } from './password.js';
 import { canonicalizeOrigin, readConfig } from './config.js';
 import { pseudonymize } from './hash.js';
 import { errorResponse, jsonResponse } from './http.js';
@@ -51,21 +51,6 @@ const encoder = new TextEncoder();
 
 /** @type {Promise<string> | null} */
 let dummyHash = null;
-
-/**
- * Parámetros de Argon2id. Por defecto, los de OWASP. ARGON2_MEMORY_KIB y ARGON2_ITERATIONS permiten
- * ajustarlos al plan de CPU del Worker; los valores por debajo de un piso razonable se ignoran.
- * @param {Record<string, string | undefined>} env
- */
-export function argonParams(env) {
-  const memory = Number(env.ARGON2_MEMORY_KIB);
-  const iterations = Number(env.ARGON2_ITERATIONS);
-  return {
-    m: Number.isInteger(memory) && memory >= 1024 ? memory : ARGON2_DEFAULTS.m,
-    t: Number.isInteger(iterations) && iterations >= 1 ? iterations : ARGON2_DEFAULTS.t,
-    p: ARGON2_DEFAULTS.p,
-  };
-}
 
 /** @param {unknown} body */
 export function parseCredentials(body) {
@@ -259,7 +244,7 @@ export async function handleRegister(request, env) {
       return tooMany(origin);
     }
     const emailHash = await pseudonymize(config.pepper, 'account-email', credentials.email);
-    const passwordHash = await hashPassword(credentials.password, argonParams(env));
+    const passwordHash = await hashPassword(credentials.password);
     await insertAccount(config.supabase, { emailHash, passwordHash });
     return jsonResponse({ registered: true }, 201, origin);
   } catch (error) {
@@ -299,8 +284,8 @@ export async function handleLogin(request, env) {
     if (!withinIp || !withinAccount) return tooMany(origin);
 
     const account = await findAccount(config.supabase, emailHash);
-    // Con o sin cuenta se ejecuta un Argon2id: la respuesta no delata si el correo existe.
-    dummyHash ??= hashPassword('contraseña-de-relleno', argonParams(env));
+    // Con o sin cuenta se ejecuta un PBKDF2: la respuesta no delata si el correo existe.
+    dummyHash ??= hashPassword('contraseña-de-relleno');
     const valid = await verifyPassword(
       credentials.password,
       account?.passwordHash ?? (await dummyHash),

@@ -14,10 +14,6 @@ interface ProfileMessages {
   noFavorites: string;
   unavailable: string;
   remove: string;
-  themeLight: string;
-  themeDark: string;
-  liteOn: string;
-  liteOff: string;
 }
 
 function readMessages(dialog: HTMLDialogElement): ProfileMessages {
@@ -26,10 +22,6 @@ function readMessages(dialog: HTMLDialogElement): ProfileMessages {
     noFavorites: data.msgNoFavorites ?? '',
     unavailable: data.msgUnavailable ?? '',
     remove: data.msgRemove ?? '',
-    themeLight: data.msgThemeLight ?? '',
-    themeDark: data.msgThemeDark ?? '',
-    liteOn: data.msgLiteOn ?? '',
-    liteOff: data.msgLiteOff ?? '',
   };
 }
 
@@ -100,24 +92,9 @@ async function renderFavorites(
   list.append(ul);
 }
 
-function renderPreferences(dialog: HTMLDialogElement, messages: ProfileMessages): void {
-  const theme = dialog.querySelector<HTMLElement>('[data-profile-theme]');
-  if (theme) {
-    theme.textContent =
-      document.documentElement.dataset.theme === 'light' ? messages.themeLight : messages.themeDark;
-  }
-  const lite = dialog.querySelector<HTMLElement>('[data-profile-lite]');
-  if (lite) {
-    lite.textContent = document.documentElement.classList.contains('lite-mode')
-      ? messages.liteOn
-      : messages.liteOff;
-  }
-}
-
 async function refresh(dialog: HTMLDialogElement): Promise<void> {
   const messages = readMessages(dialog);
   await renderFavorites(dialog, messages);
-  renderPreferences(dialog, messages);
 }
 
 let listenersBound = false;

@@ -95,7 +95,5 @@ Detalle completo en `docs/setup/etapa2-deusdeck.md`.
 | Ruta                                          | Qué hace                                                                     |
 | --------------------------------------------- | ---------------------------------------------------------------------------- |
 | `GET /reviews?slug=` · `POST /reviews`        | Reseñas reales de demos. Exige `DEMOS_INDEX_URL` (público, `wrangler.toml`). |
-| `POST /accounts/register` · `/accounts/login` | Cuentas con Argon2id. Apagadas: 404 salvo `ACCOUNTS_ENABLED=true`.           |
+| `POST /accounts/register` · `/accounts/login` | Cuentas con PBKDF2-SHA256. Apagadas: 404 salvo `ACCOUNTS_ENABLED=true`.      |
 | `GET` · `PUT /accounts/backup`                | Respaldo del perfil (JSON de hasta 32 KB) con token de sesión.               |
-
-Variables nuevas: `DEMOS_INDEX_URL` (público), `ACCOUNTS_ENABLED` (público), `ACCOUNT_TOKEN_SECRET` (**secreto**, 32 caracteres o más) y, opcionales, `ARGON2_MEMORY_KIB` y `ARGON2_ITERATIONS`.

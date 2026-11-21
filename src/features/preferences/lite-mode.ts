@@ -22,7 +22,7 @@ export function syncLiteToggles(): void {
   }
 }
 
-function toggleLiteMode(): void {
+export function toggleLiteMode(): void {
   const next = !document.documentElement.classList.contains('lite-mode');
   writeLocal(STORAGE_KEYS.liteMode, next ? 'on' : 'off');
   applyLiteMode(next);

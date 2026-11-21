@@ -10,7 +10,8 @@ Base de datos de los "me gusta" y del ranking. Las escrituras las hace solo el W
 | `migrations/0002_legal_consents.sql`     | Registro inmutable de consentimientos (términos, privacidad, publicidad)         |
 | `migrations/0003_push_subscriptions.sql` | Suscripciones push con preferencias por modo, categoría y proyecto               |
 | `migrations/0004_reviews.sql`            | Reseñas reales de demos (una por visitante), saneadas, solo accesibles al Worker |
-| `migrations/0005_accounts.sql`           | Cuentas opcionales (Argon2id, correo solo como HMAC) y respaldo del perfil       |
+| `migrations/0005_accounts.sql`           | Cuentas opcionales (PBKDF2-SHA256, correo solo como HMAC) y respaldo del perfil       |
+| `migrations/0007_accounts_pbkdf2.sql`     | El CHECK de contraseñas acepta el formato PBKDF2-SHA256 (y el Argon2id previo)           |
 | `tests/rls/rls.test.sql`                 | Pruebas de RLS, permisos y restricciones. Termina sin error si todo se cumple.   |
 
 ## Modelo de seguridad

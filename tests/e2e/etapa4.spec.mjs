@@ -49,7 +49,7 @@ test.describe('Etapa 4: documentos legales bilingües', () => {
     await prepare(page, { theme: 'dark', lite: 'on' });
     await page.goto('/privacidad/');
     await expect(page.locator('main')).toContainText('Web Vitals');
-    await expect(page.locator('main')).toContainText('Argon2id');
+    await expect(page.locator('main')).toContainText('PBKDF2');
     await expect(page.locator('main')).toContainText('Cloudflare Pages');
     await page.goto('/en/privacy/');
     await expect(page.locator('main')).toContainText('Do Not Track');

@@ -309,7 +309,7 @@ begin
   reset role;
 end $$;
 
--- 15. accounts: anon no accede; la base rechaza contraseñas que no sean hashes Argon2id.
+-- 15. accounts: anon no accede; la base rechaza contraseñas que no sean hashes PBKDF2-SHA256.
 do $$
 begin
   set local role anon;
@@ -324,12 +324,12 @@ begin
   set local role service_role;
   begin
     insert into public.accounts (email_hash, password_hash) values (repeat('d', 64), 'contraseña-en-texto-plano');
-    raise exception 'FALLO: se aceptó una contraseña que no es un hash Argon2id';
+    raise exception 'FALLO: se aceptó una contraseña que no es un hash PBKDF2-SHA256';
   exception when check_violation then
     null;
   end;
   insert into public.accounts (email_hash, password_hash)
-  values (repeat('d', 64), '$argon2id$v=19$m=19456,t=2,p=1$c2FsdHNhbHRzYWx0c2E$aGFzaGhhc2hoYXNoaGFzaGhhc2hoYXNoaGFzaGhhc2g');
+  values (repeat('d', 64), '$pbkdf2-sha256$i=100000$c2FsdHNhbHRzYWx0c2E$aGFzaGhhc2hoYXNoaGFzaGhhc2hoYXNoaGFzaGhhc2g');
   insert into public.profile_backups (account_id, payload)
   select id, '{"favorites": ["deusdeck"]}'::jsonb from public.accounts where email_hash = repeat('d', 64);
   delete from public.accounts where email_hash = repeat('d', 64);

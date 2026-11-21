@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import { afterEach, beforeEach, test } from 'node:test';
 import {
-  argonParams,
   parseBackupPayload,
   parseCredentials,
   readSessionCookie,
@@ -9,12 +8,11 @@ import {
   signToken,
   verifyToken,
 } from '../src/accounts.js';
-import { hashPassword, verifyPassword } from '../src/argon2.js';
+import { hashPassword, verifyPassword } from '../src/password.js';
 import worker from '../src/index.js';
 
 const ORIGIN = 'https://DeusStellaris.github.io';
 const API = 'https://deus-likes-api.example.workers.dev';
-const FAST = { m: 1024, t: 1, p: 1 };
 const PASSWORD = 'una contraseña larga y segura';
 
 const env = {
@@ -25,8 +23,6 @@ const env = {
   ALLOWED_ORIGINS: 'https://DeusStellaris.github.io',
   ACCOUNTS_ENABLED: 'true',
   ACCOUNT_TOKEN_SECRET: 's'.repeat(40),
-  ARGON2_MEMORY_KIB: '1024',
-  ARGON2_ITERATIONS: '1',
 };
 
 function makeRequest(path, body, { method = 'POST', token, origin = ORIGIN } = {}) {
@@ -73,30 +69,16 @@ afterEach(() => {
   globalThis.fetch = originalFetch;
 });
 
-test('Argon2id: hash PHC con sal propia, que verifica y que nunca contiene la contraseña', async () => {
-  const first = await hashPassword(PASSWORD, FAST);
-  const second = await hashPassword(PASSWORD, FAST);
-  assert.match(first, /^\$argon2id\$v=19\$m=1024,t=1,p=1\$[A-Za-z0-9+/]+\$[A-Za-z0-9+/]+$/);
+test('PBKDF2: hash con sal propia, 100.000 iteraciones, que verifica y no contiene la contraseña', async () => {
+  const first = await hashPassword(PASSWORD);
+  const second = await hashPassword(PASSWORD);
+  assert.match(first, /^\$pbkdf2-sha256\$i=100000\$[A-Za-z0-9+/]+\$[A-Za-z0-9+/]+$/);
   assert.notEqual(first, second);
   assert.equal(first.includes(PASSWORD), false);
   assert.equal(await verifyPassword(PASSWORD, first), true);
   assert.equal(await verifyPassword('otra contraseña distinta', first), false);
   assert.equal(await verifyPassword(PASSWORD, 'no-es-un-hash'), false);
-  assert.equal(await verifyPassword(PASSWORD, '$argon2i$v=19$m=1024,t=1,p=1$AAAA$AAAA'), false);
-});
-
-test('los parámetros por defecto son los de OWASP y los valores débiles se ignoran', () => {
-  assert.deepEqual(argonParams({}), { m: 19456, t: 2, p: 1 });
-  assert.deepEqual(argonParams({ ARGON2_MEMORY_KIB: '8', ARGON2_ITERATIONS: '0' }), {
-    m: 19456,
-    t: 2,
-    p: 1,
-  });
-  assert.deepEqual(argonParams({ ARGON2_MEMORY_KIB: '32768', ARGON2_ITERATIONS: '3' }), {
-    m: 32768,
-    t: 3,
-    p: 1,
-  });
+  assert.equal(await verifyPassword(PASSWORD, '$pbkdf2-sha256$i=999999$AAAA$AAAA'), false);
 });
 
 test('valida el correo y exige contraseñas de 12 a 128 caracteres', () => {
@@ -139,7 +121,7 @@ test('apagada por defecto: sin ACCOUNTS_ENABLED todas las rutas responden 404', 
   }
 });
 
-test('registro: guarda solo el hash Argon2id y el correo como HMAC, nunca en claro', async () => {
+test('registro: guarda solo el hash PBKDF2 y el correo como HMAC, nunca en claro', async () => {
   const state = {};
   installFetch(state);
   const response = await worker.fetch(
@@ -147,7 +129,7 @@ test('registro: guarda solo el hash Argon2id y el correo como HMAC, nunca en cla
     env,
   );
   assert.equal(response.status, 201);
-  assert.match(state.inserted.password_hash, /^\$argon2id\$/);
+  assert.match(state.inserted.password_hash, /^\$pbkdf2-sha256\$/);
   assert.match(state.inserted.email_hash, /^[0-9a-f]{64}$/);
   assert.equal(JSON.stringify(state.inserted).includes(PASSWORD), false);
   assert.equal(JSON.stringify(state.inserted).toLowerCase().includes('deus@example.com'), false);
@@ -174,7 +156,7 @@ test('registro: correo repetido 409 genérico; origen ajeno 403; contraseña cor
 });
 
 test('login: devuelve token con la contraseña correcta y 401 idéntico si falla o no existe', async () => {
-  const passwordHash = await hashPassword(PASSWORD, FAST);
+  const passwordHash = await hashPassword(PASSWORD);
   installFetch({ account: { id: 'acc-1', password_hash: passwordHash } });
   const ok = await worker.fetch(
     makeRequest('/accounts/login', { email: 'a@b.co', password: PASSWORD }),

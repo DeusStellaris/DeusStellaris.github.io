@@ -38,11 +38,11 @@ Programas destaca DeusDeck con una tarjeta. Las rutas de demo y las reseñas se 
 - Worker: `GET /reviews?slug=` y `POST /reviews`. Valida origen, que la demo exista en `DEMOS_INDEX_URL`, puntuación 1-5, saneo del comentario y límites de frecuencia por IP y por visitante. El navegador pinta todo con `textContent`.
 - No hay ninguna reseña sembrada. Sin API configurada (`apiBaseUrl: null`) la sección dice que las reseñas todavía no están disponibles.
 
-## Cuentas con Argon2id (apagadas)
+## Cuentas con PBKDF2-SHA256 (apagadas)
 
-- Migración `0005`: `accounts` (correo solo como HMAC, contraseña solo como hash Argon2id; un `CHECK` rechaza cualquier otro formato) y `profile_backups` (JSON de hasta 32 KB).
+- Migración `0005`: `accounts` (correo solo como HMAC, contraseña solo como hash PBKDF2-SHA256; un `CHECK` rechaza cualquier otro formato) y `profile_backups` (JSON de hasta 32 KB).
 - Worker (`workers/api/src/accounts.js`): `register`, `login` (token firmado de una hora) y `backup` GET/PUT. Todo responde 404 salvo que `ACCOUNTS_ENABLED=true` y exista el secreto `ACCOUNT_TOKEN_SECRET` (32 caracteres o más). Parámetros OWASP (19 MiB, 2 iteraciones, 1 hilo); se pueden ajustar con `ARGON2_MEMORY_KIB` y `ARGON2_ITERATIONS`.
-- Argon2id consume CPU: en Cloudflare requiere el plan que permita más tiempo de CPU por petición. Probar con carga antes de activar.
+- PBKDF2 corre en código nativo (Web Crypto, 100.000 iteraciones) y entra en el plan gratuito de Workers.
 - UI: `src/components/account/AccountPanel.astro`, incluida en el perfil solo si `src/config/services.json` tiene `accountsEnabled: true`. Hoy no está en el DOM.
 - Decisión pendiente: al guardar el correo solo como HMAC no hay recuperación de contraseña por correo.
 
