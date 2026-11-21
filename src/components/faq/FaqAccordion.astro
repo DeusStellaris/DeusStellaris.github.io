@@ -1,0 +1,137 @@
+---
+import { type Locale, t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const items = [1, 2, 3, 4, 5] as const;
+---
+
+<!-- Preguntas frecuentes de Freelance. Lo gestiona src/features/faq/faq.ts. -->
+<section class="faq" aria-labelledby="faq-heading" data-faq>
+  <h2 id="faq-heading">{t(locale, 'faq.heading')}</h2>
+  <ul class="faq__list">
+    {
+      items.map((n) => (
+        <li class="faq__item">
+          <h3 class="faq__question">
+            <button
+              type="button"
+              class="faq__trigger"
+              id={`faq-q${n}`}
+              aria-expanded="false"
+              aria-controls={`faq-a${n}`}
+            >
+              <span>{t(locale, `faq.q${n}`)}</span>
+              <span class="faq__icon" aria-hidden="true" />
+            </button>
+          </h3>
+          <div class="faq__panel" id={`faq-a${n}`} role="region" aria-labelledby={`faq-q${n}`} hidden>
+            <p>{t(locale, `faq.a${n}`)}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</section>
+
+<style>
+  .faq {
+    margin-block: var(--space-12);
+  }
+
+  .faq__list {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .faq__item {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  .faq__item:has([aria-expanded='true']) {
+    border-color: var(--color-kintsugi);
+  }
+
+  .faq__question {
+    margin: 0;
+    font-size: var(--text-base);
+  }
+
+  .faq__trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    width: 100%;
+    min-height: var(--target-min);
+    padding: var(--space-3) var(--space-4);
+    border: 0;
+    background: transparent;
+    color: var(--color-text);
+    font: inherit;
+    font-weight: 600;
+    text-align: start;
+    cursor: pointer;
+  }
+
+  /* Cruz que gira a una raya al abrir: solo transform. */
+  .faq__icon {
+    position: relative;
+    flex-shrink: 0;
+    width: 0.875rem;
+    height: 0.875rem;
+    color: var(--color-kintsugi);
+    transition: transform var(--duration-base) var(--ease-out);
+  }
+
+  .faq__icon::before,
+  .faq__icon::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    height: 2px;
+    margin-top: -1px;
+    background: currentColor;
+  }
+
+  .faq__icon::after {
+    transform: rotate(90deg);
+  }
+
+  .faq__trigger[aria-expanded='true'] .faq__icon {
+    transform: rotate(45deg);
+  }
+
+  .faq__panel {
+    padding: 0 var(--space-4) var(--space-4);
+    color: var(--color-text-muted);
+    animation: faq-in var(--duration-base) var(--ease-out) both;
+  }
+
+  .faq__panel p {
+    margin: 0;
+  }
+
+  @keyframes faq-in {
+    from {
+      opacity: 0;
+      transform: translateY(-0.375rem);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq__panel,
+    .faq__icon {
+      animation: none;
+      transition: none;
+    }
+  }
+</style>

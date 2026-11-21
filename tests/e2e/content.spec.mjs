@@ -17,6 +17,15 @@ test.describe('Fase 4 y 5: proyectos publicados', () => {
     expect(titles.join(' ')).not.toContain('Borrador de prueba');
   });
 
+  test('las tarjetas muestran badges de etapa y de tecnología', async ({ page }) => {
+    await page.goto('/');
+    const uno = page.locator('.project-card', { hasText: 'Proyecto de prueba uno' });
+    await expect(uno.locator('.badge--live')).toHaveText('En vivo');
+    await expect(uno.locator('.badge--tech')).toHaveText('prueba');
+    const dos = page.locator('.project-card', { hasText: 'Proyecto de prueba dos' });
+    await expect(dos.locator('.badge--wip')).toHaveText('En desarrollo');
+  });
+
   test('el feed de inicio ordena por fecha de publicación, de la más reciente a la más antigua', async ({
     page,
   }) => {
@@ -130,11 +139,10 @@ test.describe('Fase 5: favoritos y me gusta sobre proyectos', () => {
     );
   });
 
-  test('el me gusta muestra que no está disponible sin la API configurada', async ({ page }) => {
+  test('el me gusta está habilitado con la API configurada', async ({ page }) => {
     await page.goto('/proyectos/fixture-uno/');
     const like = page.locator('[data-like-toggle][data-slug="fixture-uno"]');
-    await expect(like).toBeDisabled();
-    await expect(page.locator('[data-like-status]')).toContainText('todavía no están disponibles');
+    await expect(like).toBeEnabled();
   });
 
   test('los comentarios no cargan Giscus sin pulsar el botón y muestran su estado', async ({

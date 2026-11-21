@@ -7,6 +7,7 @@ cover:
   alt: Imagen de prueba dos
 published_at: 2026-10-15
 status: published
+stage: wip
 ---
 
 Solo en español.

@@ -95,6 +95,14 @@ collections:
           time_format: false,
           required: false,
         }
+      - label: Etapa
+        name: stage
+        widget: select
+        default: live
+        required: true
+        options:
+          - { label: En vivo, value: live }
+          - { label: En desarrollo, value: wip }
       - label: Estado
         name: status
         widget: select

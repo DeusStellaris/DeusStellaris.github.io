@@ -74,6 +74,7 @@ function writeLikedSet(slugs: Set<string>): void {
 function setCount(button: HTMLButtonElement, count: number | null): void {
   const target = button.querySelector<HTMLElement>('[data-like-count]');
   if (!target) return;
+  target.classList.remove('skeleton');
   target.textContent =
     count === null ? '' : (button.dataset.countTemplate ?? '').replace('{count}', String(count));
 }
@@ -132,6 +133,10 @@ async function fillCounts(buttons: readonly HTMLButtonElement[]): Promise<void> 
     }
   } catch {
     // Los contadores no son críticos: el botón sigue funcionando sin cifra.
+  } finally {
+    for (const button of buttons) {
+      button.querySelector('[data-like-count]')?.classList.remove('skeleton');
+    }
   }
 }
 

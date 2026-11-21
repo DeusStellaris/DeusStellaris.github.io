@@ -31,7 +31,7 @@ const available = apiBaseUrl !== '';
   >
     <span class="like__label like__label--off">{t(locale, 'likes.like')}</span>
     <span class="like__label like__label--on">{t(locale, 'likes.liked')}</span>
-    <span class="like__count" data-like-count></span>
+    <span class:list={['like__count', { skeleton: available }]} data-like-count></span>
   </button>
   <p class="like__status" aria-live="polite" data-like-status>
     {!available && t(locale, 'likes.unconfigured')}
@@ -82,6 +82,13 @@ const available = apiBaseUrl !== '';
   .like__count {
     color: var(--color-text-muted);
     font-size: var(--text-sm);
+  }
+
+  /* Reserva el ancho de la cifra mientras llega del Worker: evita saltos de diseño. */
+  .like__count:global(.skeleton) {
+    display: inline-block;
+    width: 3.5rem;
+    height: 1em;
   }
 
   .like__status {

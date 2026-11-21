@@ -109,6 +109,26 @@ const es = {
     removed: 'Quitado de favoritos',
     unavailable: 'Este navegador no permite guardar favoritos. Se perderán al recargar la página.',
   },
+  toast: {
+    preferenceSaved: 'Preferencia guardada',
+  },
+  badge: {
+    live: 'En vivo',
+    wip: 'En desarrollo',
+  },
+  faq: {
+    heading: 'Preguntas frecuentes',
+    q1: '¿Cómo es la forma de trabajo?',
+    a1: 'Empezamos con una charla corta para entender qué necesitás. Después te paso el alcance por escrito y recién ahí arranco. Durante el trabajo te muestro avances para validar el rumbo.',
+    q2: '¿Cuáles son los plazos?',
+    a2: 'Dependen del alcance. Tras la charla inicial te paso una estimación por escrito; si el alcance cambia, la estimación se actualiza y lo acordamos antes de seguir.',
+    q3: '¿Qué recibo al terminar?',
+    a3: 'El código fuente en un repositorio, las instrucciones para usarlo y desplegarlo, y los recursos finales. Todo queda documentado para que no dependas de mí.',
+    q4: '¿Puedo pedir cambios durante el proyecto?',
+    a4: 'Sí. Los ajustes dentro del alcance acordado están incluidos. Lo que lo excede se presupuesta aparte antes de hacerlo.',
+    q5: '¿Cómo te contacto?',
+    a5: 'Desde la sección Contacto. Contame qué necesitás y te respondo por el mismo medio.',
+  },
   profile: {
     open: 'Perfil local',
     title: 'Tu perfil local',

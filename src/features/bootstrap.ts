@@ -24,6 +24,7 @@ const PAGE_MODULES: ReadonlyArray<readonly [string, () => Promise<() => void>]> 
   ['[data-reviews]', async () => (await import('./reviews/reviews')).initReviews],
   ['[data-demo-player]', async () => (await import('./demos/demo-player')).initDemoPlayers],
   ['[data-deck-product]', async () => (await import('./deusdeck/product')).initDeckProduct],
+  ['[data-faq]', async () => (await import('./faq/faq')).initFaq],
   ['[data-giscus-root]', async () => (await import('./comments/giscus')).initComments],
 ];
 

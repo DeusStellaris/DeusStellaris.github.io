@@ -37,6 +37,8 @@ const cards = await Promise.all(
           publishedLabel={`${t(locale, 'projects.published')}: ${formatDate(item.entry.data.published_at, locale)}`}
           categoryLabel={categoryLabel}
           featured={item.entry.data.featured}
+          stage={item.entry.data.stage}
+          tags={item.entry.data.tags}
         />
       </li>
     ))

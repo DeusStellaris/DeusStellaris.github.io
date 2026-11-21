@@ -1,3 +1,4 @@
+import { showToast } from '../toast/toast';
 /**
  * Favoritos del perfil local. Se guardan en localStorage como una lista de slugs.
  *
@@ -9,7 +10,6 @@
 const STORAGE_KEY = 'deus:favorites';
 const SLUG_PATTERN = /^[A-Za-z0-9][A-Za-z0-9_-]{0,119}$/;
 const MAX_FAVORITES = 200;
-const LIVE_REGION_ID = 'deus-live-region';
 const TOGGLE_SELECTOR = '[data-favorite-toggle]';
 
 /** Copia en memoria usada solo cuando localStorage no permite escribir. */
@@ -65,19 +65,6 @@ export function clearFavorites(): void {
   writeStored([]);
 }
 
-function announce(message: string): void {
-  let region = document.getElementById(LIVE_REGION_ID);
-  if (!region) {
-    region = document.createElement('p');
-    region.id = LIVE_REGION_ID;
-    region.className = 'visually-hidden';
-    region.setAttribute('role', 'status');
-    region.setAttribute('aria-live', 'polite');
-    document.body.append(region);
-  }
-  region.textContent = message;
-}
-
 /** Refleja en cada botón si el proyecto es favorito (aria-pressed y etiqueta). */
 export function syncFavoriteButtons(): void {
   const favorites = new Set(listFavorites());
@@ -96,10 +83,10 @@ function handleToggle(button: HTMLButtonElement): void {
   syncFavoriteButtons();
 
   if (!result.persisted) {
-    announce(button.dataset.msgUnavailable ?? '');
+    showToast(button.dataset.msgUnavailable ?? '');
     return;
   }
-  announce(result.favorited ? (button.dataset.msgAdded ?? '') : (button.dataset.msgRemoved ?? ''));
+  showToast(result.favorited ? (button.dataset.msgAdded ?? '') : (button.dataset.msgRemoved ?? ''));
 }
 
 /**

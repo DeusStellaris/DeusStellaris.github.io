@@ -111,6 +111,26 @@ const en: Partial<Dictionary> = {
     unavailable:
       'This browser does not allow saving favorites. They will be lost when the page reloads.',
   },
+  toast: {
+    preferenceSaved: 'Preference saved',
+  },
+  badge: {
+    live: 'Live',
+    wip: 'In development',
+  },
+  faq: {
+    heading: 'Frequently asked questions',
+    q1: 'How do you work?',
+    a1: 'We start with a short chat to understand what you need. Then I send the scope in writing and only then I start. While working I show you progress so we can validate the direction.',
+    q2: 'What are the timelines?',
+    a2: 'They depend on the scope. After the first chat I send a written estimate; if the scope changes, the estimate is updated and we agree on it before continuing.',
+    q3: 'What do I get at the end?',
+    a3: 'The source code in a repository, instructions to use and deploy it, and the final assets. Everything is documented so you do not depend on me.',
+    q4: 'Can I ask for changes during the project?',
+    a4: 'Yes. Adjustments within the agreed scope are included. Anything beyond it is quoted separately before I do it.',
+    q5: 'How do I contact you?',
+    a5: 'Through the Contact section. Tell me what you need and I will reply the same way.',
+  },
   profile: {
     open: 'Local profile',
     title: 'Your local profile',

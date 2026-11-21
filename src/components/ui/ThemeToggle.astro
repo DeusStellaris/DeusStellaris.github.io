@@ -26,7 +26,7 @@ const labelToDark = t(locale, 'preferences.themeToDark');
   aria-label={labelToLight}
   data-tooltip={labelToLight}
 >
-  <svg class="theme-toggle__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+  <svg class="theme-toggle__icon" viewBox="0 0 24 24" shape-rendering="geometricPrecision" aria-hidden="true" focusable="false">
     <defs>
       <mask id="theme-toggle-mask">
         <rect x="-10" y="-10" width="44" height="44" fill="#fff" />
@@ -72,11 +72,11 @@ const labelToDark = t(locale, 'preferences.themeToDark');
   }
 
   /*
-   * Tema oscuro (por defecto, también sin data-theme): luna creciente. La máscara recorta el núcleo.
+   * Tema oscuro (por defecto, también sin data-theme): media luna simétrica respecto de la diagonal: la máscara recorta el núcleo.
    * Tema claro (data-theme="light" en <html>): sol completo, la máscara se aleja y aparecen los rayos.
    */
   :root:not([data-theme='light']) .theme-toggle__mask {
-    transform: translate(6px, -6px);
+    transform: translate(5px, -5px);
   }
 
   :root[data-theme='light'] .theme-toggle__mask {

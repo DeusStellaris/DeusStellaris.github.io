@@ -1,5 +1,6 @@
 import { toggleLiteMode } from '../preferences/lite-mode';
 import { toggleTheme } from '../preferences/theme';
+import { showToast } from '../toast/toast';
 
 /**
  * Panel de ajustes estilo menú de videojuego: al enfocar o pasar el mouse sobre una opción, el panel
@@ -68,7 +69,11 @@ function syncStates(): void {
 }
 
 /** Delegación de eventos: el diálogo vive en el layout y no se reemplaza al navegar. */
+let bound = false;
+
 export function initSettingsPanel(): void {
+  if (bound) return;
+  bound = true;
   for (const type of ['focusin', 'mouseover'] as const) {
     document.addEventListener(type, (event) => {
       if (!(event.target instanceof Element)) return;
@@ -83,6 +88,7 @@ export function initSettingsPanel(): void {
     if (kind === 'lite') toggleLiteMode();
     else toggleTheme();
     syncStates();
+    showToast(event.target.closest<HTMLElement>('[data-msg-saved]')?.dataset.msgSaved ?? '');
   });
   // Al abrir el perfil se muestra la primera opción, para que el panel nunca quede vacío.
   document.addEventListener('click', (event) => {

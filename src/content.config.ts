@@ -60,6 +60,7 @@ const projects = defineCollection({
       published_at: z.coerce.date(),
       updated_at: z.coerce.date().optional(),
       status: z.enum(['draft', 'published']).default('draft'),
+      stage: z.enum(['live', 'wip']).default('live'),
       featured: z.boolean().default(false),
       collaborators: z.array(reference('collaborators')).max(10).default([]),
       external_links: z.array(externalLinkSchema).max(10).default([]),

@@ -62,7 +62,7 @@ function settingsInfo(prefix: 'lite' | 'theme'): string {
     <section class="profile__section" aria-labelledby="profile-prefs-heading">
       <h3 id="profile-prefs-heading">{t(locale, 'profile.preferencesHeading')}</h3>
       <p class="settings__hint">{t(locale, 'profile.settingsHint')}</p>
-      <ul class="settings" role="list">
+      <ul class="settings" role="list" data-msg-saved={t(locale, 'toast.preferenceSaved')}>
         <li>
           <button
             type="button"

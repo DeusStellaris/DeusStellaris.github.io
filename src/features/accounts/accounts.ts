@@ -1,3 +1,4 @@
+import { showToast } from '../toast/toast';
 /**
  * Cuenta opcional (account/AccountPanel.astro). Crea la cuenta o inicia sesión contra el Worker.
  * La contraseña viaja solo por HTTPS al Worker, que la guarda como hash PBKDF2-SHA256; aquí nunca se
@@ -62,6 +63,7 @@ function initAccount(root: HTMLElement): void {
     send(api, action, credentials)
       .then((code) => {
         status.textContent = messageFor(code, messages);
+        if (code === 200 || code === 201) showToast(status.textContent);
       })
       .catch(() => {
         status.textContent = messages.error ?? '';
