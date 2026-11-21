@@ -11,11 +11,11 @@ interface Props {
 const { locale, hrefs } = Astro.props;
 ---
 
-<!--
+{/*
   Selector ES/EN tipo Sliding Pill. Es solo navegación entre URLs equivalentes:
   no necesita JavaScript. El indicador se desplaza según data-locale (sin estilos inline,
   porque la CSP no permite atributos style).
--->
+*/}
 <nav class="lang-pill" data-locale={locale} aria-label={t(locale, 'common.languageSwitchLabel')}>
   <span class="lang-pill__indicator" aria-hidden="true"></span>
   {

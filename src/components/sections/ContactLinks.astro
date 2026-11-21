@@ -16,7 +16,7 @@ const socials = contact.socials.flatMap((social) =>
 );
 ---
 
-<!-- Contacto. El botón de copiar lo gestiona src/features/contact/contact.ts. -->
+{/* Contacto. El botón de copiar lo gestiona src/features/contact/contact.ts. */}
 <section class="contact" aria-labelledby="contact-email-heading">
   {
     email && (
@@ -67,11 +67,18 @@ const socials = contact.socials.flatMap((social) =>
 </section>
 
 <style>
+  /* Una columna en móvil; dos tarjetas lado a lado, a todo el ancho, desde md. */
   .contact {
     display: grid;
     gap: var(--space-4);
-    max-width: 40rem;
     margin-bottom: var(--space-16);
+  }
+
+  @media (min-width: 48em) {
+    .contact {
+      grid-template-columns: 1fr 1fr;
+      align-items: stretch;
+    }
   }
 
   /* Tarjeta de mármol con filo dorado (kintsugi) arriba. */

@@ -23,12 +23,12 @@ const messages = JSON.stringify({
 });
 ---
 
-<!--
+{/*
   Click-to-Play: el juego no se pide hasta pulsar «Jugar demo». Lo gestiona src/features/demos/demo-player.ts,
   que crea un iframe aislado (sandbox sin allow-same-origin, solo scripts y puntero) con el juego de
   public/demos/<slug>/. Los botones táctiles envían las teclas al juego con postMessage
   ({ type: 'deus-input', key, pressed }); ver docs/setup/demos.md.
--->
+*/}
 <section
   class="player"
   data-demo-player

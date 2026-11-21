@@ -56,12 +56,12 @@ const switchHrefs = switchTargets(paths ?? {});
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <!--
+    {/*
       Tema, Lite Mode y bienvenida: script clásico, síncrono y lo más arriba posible del <head>.
       Se ejecuta antes de cualquier hoja de estilo o componente que dependa del tema y fija
       <html data-theme> antes del primer pintado. Externo (is:inline con src): cumple 'self' sin
       'unsafe-inline' y no requiere mantener hashes. Ver public/js/preferences-init.js.
-    -->
+    */}
     <script is:inline src={publicAssetUrl('js/preferences-init.js')}></script>
     <title>{title}</title>
     <meta name="description" content={description} />

@@ -28,10 +28,10 @@ const messages = JSON.stringify(
 );
 ---
 
-<!--
+{/*
   Reseñas reales de una demo (Zero Fake Reviews): vienen del Worker de la API, una por visitante.
   Lo gestiona src/features/reviews/reviews.ts, que pinta todo como texto plano.
--->
+*/}
 <section class="reviews" data-reviews data-api={api} data-slug={slug} data-locale={locale} data-messages={messages} aria-labelledby="reviews-title">
   <h2 id="reviews-title">{t(locale, 'reviews.heading')}</h2>
   <p class="reviews__real">{t(locale, 'reviews.realOnly')}</p>

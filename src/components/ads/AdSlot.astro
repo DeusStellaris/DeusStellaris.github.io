@@ -17,10 +17,10 @@ const slotId = config.slotId;
 const hasUnit = typeof publisherId === 'string' && typeof slotId === 'string';
 ---
 
-<!--
+{/*
   Espacio publicitario. Reserva su altura con min-height por breakpoint para evitar CLS.
   Lo gestiona src/features/ads/ads.ts (solo carga el script con consentimiento).
--->
+*/}
 {
   rendered && (
     <aside

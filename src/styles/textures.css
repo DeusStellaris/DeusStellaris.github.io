@@ -12,22 +12,34 @@ body {
 }
 
 /*
- * Velo legible solo para los bloques de texto que van directamente sobre el mármol: encabezados de
- * página, rótulos de sección y estados vacíos. Fondo translúcido, sin
- * sombras de texto ni contornos en las letras. Las tarjetas ya tienen superficie propia.
+ * Superficies de lectura sobre el mármol: encabezados de página, rótulos de sección, estados vacíos
+ * y pie. Opacidad alta y borde sutil, como las tarjetas, para que se lean igual en ambos temas.
+ * Juegos y Programas las dejan transparentes (ver sections.css).
  */
-body :is(.home__hero, .home__heading, .section-intro, .empty-state, .site-footer, .faq > h2),
+body {
+  --head-bg: color-mix(in srgb, var(--color-surface) 92%, transparent);
+  --head-border: var(--panel-border);
+}
+
+body :is(.home__hero, .home__heading, .section-intro, .empty-state, .faq > h2),
 body main h1:not(.home__hero h1, .section-intro h1) {
-  /* Velo difuminado sin bordes: el centro aclara el mármol para leer y los extremos se funden. */
-  background: radial-gradient(ellipse at 30% 50%, var(--veil-bg) 45%, transparent 100%);
+  border: 1px solid var(--head-border);
+  border-radius: var(--radius-md);
+  background: var(--head-bg);
+}
+
+body .site-footer {
+  border-top: 1px solid var(--head-border);
+  background: var(--head-bg);
 }
 
 body :is(.home__hero, .section-intro) {
   padding: var(--space-8) var(--space-6);
 }
 
-/* Rótulos de una línea: el velo ajusta su ancho al texto. */
+/* Rótulos de una línea: la superficie ajusta su ancho al texto. */
 body :is(.home__heading, .faq > h2, main h1:not(.home__hero h1, .section-intro h1)) {
   width: fit-content;
   padding: var(--space-1) var(--space-3);
+  color: var(--color-text);
 }

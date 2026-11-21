@@ -11,7 +11,7 @@ interface Props {
 const { locale } = Astro.props;
 ---
 
-<!-- El destello de marca (.brand-mark) se define en src/styles/brand.css, compartido con la bienvenida. -->
+{/* El destello de marca (.brand-mark) se define en src/styles/brand.css, compartido con la bienvenida. */}
 <a class="logo" href={sectionHref('home', locale)}>
   <span class="brand-mark logo__mark" data-logo-mark>
     <img src={publicAssetUrl('assets/logo/deus-samurai.webp')} alt="" width="40" height="40" />

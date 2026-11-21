@@ -10,7 +10,7 @@ test.describe('Pulido de interfaz', () => {
     await page.goto('/');
     await waitForIntroDone(page);
     const mask = page.locator('.theme-toggle__mask');
-    await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 4, -4)');
+    await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 4.3, -4.3)');
     await page.locator('[data-theme-toggle]').click();
     await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 24, -24)');
   });
@@ -163,26 +163,57 @@ test.describe('Pulido de interfaz', () => {
     }
   });
 
-  test('cada sección tiene su propia atmósfera y Programas es un plano blueprint sin mármol', async ({
+  test('cada sección tiene su fondo: blueprint en Juegos, puntos en Programas y mármol en el resto', async ({
     page,
   }) => {
-    const looks = new Map();
-    for (const path of ['/juegos/', '/programas/', '/freelance/', '/contacto/']) {
+    const image = async (path) => {
       await page.goto(path);
-      looks.set(
-        path,
-        await page.evaluate(() => {
-          const style = getComputedStyle(document.body);
-          return {
-            tint: style.getPropertyValue('--section-tint').trim(),
-            image: style.backgroundImage,
-          };
-        }),
-      );
+      return page.evaluate(() => getComputedStyle(document.body).backgroundImage);
+    };
+    const games = await image('/juegos/');
+    const programs = await image('/programas/');
+    expect(games).toContain('linear-gradient');
+    expect(games).not.toContain('marble');
+    expect(programs).toContain('radial-gradient');
+    expect(programs).not.toContain('linear-gradient');
+    expect(programs).not.toContain('marble');
+    for (const path of ['/', '/freelance/', '/contacto/']) {
+      expect(await image(path), path).toContain('marble');
     }
-    expect(new Set([...looks.values()].map((look) => look.tint + look.image)).size).toBe(4);
-    expect(looks.get('/programas/').image).not.toContain('marble');
-    expect(looks.get('/programas/').image).toContain('linear-gradient');
+  });
+
+  test('Contacto reparte las tarjetas en dos columnas a todo el ancho en escritorio', async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name === 'mobile', 'solo escritorio');
+    await page.goto('/contacto/');
+    const cards = page.locator('.contact__card');
+    await expect(cards).toHaveCount(2);
+    const [first, second] = await cards.evaluateAll((nodes) =>
+      nodes.map((node) => node.getBoundingClientRect()),
+    );
+    expect(Math.abs(first.top - second.top)).toBeLessThan(1);
+    const container = await page
+      .locator('.contact')
+      .evaluate((node) => node.getBoundingClientRect());
+    expect(second.right).toBeCloseTo(container.right, 0);
+  });
+
+  test('el modal de notificaciones no se mueve al recorrer las opciones', async ({ page }) => {
+    await page.addInitScript(() => sessionStorage.setItem('deus:intro-played', 'yes'));
+    await page.goto('/');
+    await page.locator('[data-consent-later]').click();
+    await page.locator('[data-push-open]:visible').first().click();
+    const options = page.locator('[data-push-dialog] label[data-push-option]:visible');
+    const boxes = new Set();
+    for (let round = 0; round < 2; round++) {
+      for (let index = 0; index < (await options.count()); index++) {
+        await options.nth(index).hover();
+        const box = await page.locator('[data-push-dialog]').boundingBox();
+        boxes.add(`${box?.y}/${box?.height}`);
+      }
+    }
+    expect(boxes.size).toBe(1);
   });
 
   test('las opciones con panel lateral no muestran tooltip y el tooltip no captura el puntero', async ({

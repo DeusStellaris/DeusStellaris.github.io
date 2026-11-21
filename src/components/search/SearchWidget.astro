@@ -22,10 +22,10 @@ const FILTER_KEYS: Record<(typeof NAV_SECTIONS)[number], TranslationKey> = {
 };
 ---
 
-<!--
+{/*
   Buscador reutilizable. El comportamiento lo gestiona src/features/search/search-widget.ts.
   Los mensajes viajan en data-msg-* para que el script no contenga texto traducido.
--->
+*/}
 <section
   class:list={['search-widget', `search-widget--${variant}`]}
   data-search-widget

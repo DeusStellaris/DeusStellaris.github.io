@@ -107,6 +107,8 @@ test.describe('Preferencias de notificaciones', () => {
 
     await dialog.getByText('Por categoría').click();
     await expect(dialog.locator('input[name="push-category"]')).toHaveCount(3);
+    // El detalle sigue al cursor: se vuelve a apuntar la opción tras desplegarse la lista.
+    await dialog.locator('label[data-push-option]', { hasText: 'Por categoría' }).hover();
     await expect(dialog.locator('[data-out-battery]')).toContainText('Muy baja');
 
     await dialog.getByText('Por proyecto').click();

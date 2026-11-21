@@ -22,10 +22,10 @@ const messages = JSON.stringify(
 );
 ---
 
-<!--
+{/*
   Cuenta opcional para respaldar el perfil. Solo se incluye en el perfil cuando services.json tiene
   accountsEnabled en true (apagada por defecto). Lo gestiona src/features/accounts/accounts.ts.
--->
+*/}
 <section class="account" data-account data-api={api} data-messages={messages} aria-labelledby="account-title">
   <h3 id="account-title">{t(locale, 'account.heading')}</h3>
   <p class="account__intro">{t(locale, 'account.intro')}</p>

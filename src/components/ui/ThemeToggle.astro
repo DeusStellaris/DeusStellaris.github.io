@@ -10,13 +10,13 @@ const labelToLight = t(locale, 'preferences.themeToLight');
 const labelToDark = t(locale, 'preferences.themeToDark');
 ---
 
-<!--
+{/*
   Selector de tema. Un solo SVG: el icono se transforma con un círculo-máscara.
   El icono NO tiene estado propio: se deriva de <html data-theme> con reglas CSS en la raíz.
   Así el icono correcto existe desde el primer pintado y ninguna recarga ni navegación lo anima
   desde un estado equivocado. JavaScript (src/features/preferences/theme.ts) solo sincroniza la
   etiqueta accesible. Única fuente de verdad: el atributo data-theme del documento.
--->
+*/}
 <button
   type="button"
   class="icon-button theme-toggle"
@@ -76,7 +76,7 @@ const labelToDark = t(locale, 'preferences.themeToDark');
    * Tema claro (data-theme="light" en <html>): sol completo, la máscara se aleja y aparecen los rayos.
    */
   :root:not([data-theme='light']) .theme-toggle__mask {
-    transform: translate(4px, -4px);
+    transform: translate(4.3px, -4.3px);
   }
 
   :root[data-theme='light'] .theme-toggle__mask {
@@ -84,11 +84,12 @@ const labelToDark = t(locale, 'preferences.themeToDark');
   }
 
   :root:not([data-theme='light']) .theme-toggle__core {
-    transform: scale(1.3);
+    /* Media luna de ~19 px: se agranda y se desplaza para quedar centrada en el ícono. */
+    transform: translate(4px, -4px) scale(1.9);
   }
 
   :root[data-theme='light'] .theme-toggle__core {
-    transform: scale(1);
+    transform: translate(0, 0) scale(1);
   }
 
   :root:not([data-theme='light']) .theme-toggle__rays {

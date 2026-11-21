@@ -7,7 +7,7 @@ interface Props {
 const { variant = 'tech' } = Astro.props;
 ---
 
-<!-- Etiqueta compacta. El estado se distingue por forma (punto) y texto, no solo por color. -->
+{/* Etiqueta compacta. El estado se distingue por forma (punto) y texto, no solo por color. */}
 <span class:list={['badge', `badge--${variant}`]}><slot /></span>
 
 <style>

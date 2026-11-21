@@ -21,10 +21,10 @@ const values = {
 const segmentsOf = (text: string) => parseLegalText(text, values, locale as LegalLocale);
 ---
 
-<!--
+{/*
   Aviso de borrador: visible en la parte superior de cada documento, no ocultable por estilos
   y repetido en ambos idiomas. No es un pie de página ni un elemento descartable.
--->
+*/}
 <article class="legal">
   <p class="legal__notice" role="note">
     <strong>{t(locale, 'legal.draftNotice')}</strong>

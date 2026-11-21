@@ -48,11 +48,11 @@ const statusMessages = Object.fromEntries(
 );
 ---
 
-<!--
+{/*
   Preferencias de notificaciones, estilo menú de ajustes: opciones a la izquierda y panel fijo de
   detalle (descripción e impacto en batería y datos) a la derecha o debajo. Lo gestiona
   src/features/push/push-panel.ts. El <dialog> modal aporta foco, Escape y retorno del foco.
--->
+*/}
 <dialog
   class="push"
   data-push-dialog
@@ -255,7 +255,9 @@ const statusMessages = Object.fromEntries(
     outline-offset: 2px;
   }
 
+  /* Altura mínima fija: el texto cambia al recorrer las opciones y el modal centrado no debe moverse. */
   .push__detail {
+    min-height: 24rem;
     padding: var(--space-4);
     border: 1px solid var(--color-accent);
     border-radius: var(--radius-md);
