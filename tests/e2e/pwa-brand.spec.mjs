@@ -65,9 +65,9 @@ test.describe('PWA', () => {
     await page.addInitScript(() => sessionStorage.setItem('deus:intro-played', 'yes'));
     await page.goto('/');
     await waitForIntroDone(page);
-    await expect(page.locator('[data-install-app]')).toBeHidden();
+    await expect(page.locator('[data-pwa-install]')).toBeHidden();
     await page.locator('[data-profile-open]:visible').first().click();
-    await expect(page.locator('[data-install-app]')).toBeHidden();
+    await expect(page.locator('[data-pwa-install]')).toBeHidden();
   });
 
   test('el botón de instalar aparece con beforeinstallprompt y lo dispara', async ({ page }) => {
@@ -84,7 +84,7 @@ test.describe('PWA', () => {
       window.dispatchEvent(event);
     });
     await page.locator('[data-profile-open]:visible').first().click();
-    const install = page.locator('[data-install-app]');
+    const install = page.locator('[data-pwa-install]');
     await expect(install).toBeVisible();
     await expect(install).toHaveAttribute('data-tooltip', /pantalla de inicio/);
     await install.click();

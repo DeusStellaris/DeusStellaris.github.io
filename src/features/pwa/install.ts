@@ -11,7 +11,7 @@ interface InstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
 }
 
-const BUTTON = '[data-install-app]';
+const BUTTON = '[data-pwa-install]';
 const IOS_NOTE = '[data-install-ios]';
 let deferred: InstallPromptEvent | null = null;
 let bound = false;

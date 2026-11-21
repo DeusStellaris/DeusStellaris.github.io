@@ -99,7 +99,7 @@ function settingsInfo(prefix: 'lite' | 'theme'): string {
       <button
         type="button"
         class="profile__clear"
-        data-install-app
+        data-pwa-install
         data-msg-installed={t(locale, 'profile.installed')}
         data-tooltip={t(locale, 'profile.installTooltip')}
         hidden
@@ -287,6 +287,13 @@ function settingsInfo(prefix: 'lite' | 'theme'): string {
   }
 
   /* Móvil: todo el perfil scrollea de corrido; el panel de impacto deja de quedar fijo y tapar campos. */
+  /* Con la app ya instalada no hay nada que instalar: el botón no se muestra. */
+  @media (display-mode: standalone) {
+    [data-pwa-install] {
+      display: none;
+    }
+  }
+
   @media (max-width: 45em) {
     .profile__inner {
       overflow-y: auto;
@@ -298,6 +305,7 @@ function settingsInfo(prefix: 'lite' | 'theme'): string {
 
     .profile__detail {
       position: static;
+      bottom: auto;
     }
   }
 
