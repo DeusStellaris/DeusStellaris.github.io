@@ -162,7 +162,6 @@ const es = {
     impactCpu: 'CPU',
     impactBattery: 'Batería',
     liteTitle: 'Modo rendimiento (Lite)',
-    liteTooltip: 'Activa o desactiva el modo Lite: sin animaciones ni efectos decorativos.',
     liteText:
       'Activado: se apagan animaciones, transiciones y efectos ambientales. Desactivado: se muestran los efectos completos (polvo estelar, destellos, microanimaciones).',
     liteRam: 'Menor con Lite',
@@ -170,7 +169,6 @@ const es = {
     liteCpu: 'Baja con Lite',
     liteBattery: 'Máximo ahorro con Lite',
     themeTitle: 'Tema de color',
-    themeTooltip: 'Alterna entre Mármol Negro (oscuro) y Mármol Blanco (claro).',
     themeText:
       'Cambia la paleta de todo el sitio. El oscuro usa Mármol Negro con violeta y oro; el claro usa Mármol Blanco.',
     themeRam: 'Sin diferencia apreciable',
@@ -279,7 +277,6 @@ const es = {
     modes: {
       all: {
         label: 'Todo',
-        tooltip: 'Recibir un aviso por cada novedad del sitio.',
         description:
           'Un aviso por cada novedad publicada, sin importar la sección. Es la opción más completa.',
         battery: 'Baja: cada aviso despierta el dispositivo unos segundos.',
@@ -287,7 +284,6 @@ const es = {
       },
       none: {
         label: 'Nada',
-        tooltip: 'No recibir avisos y cancelar la suscripción de este dispositivo.',
         description:
           'No llega ningún aviso. Se cancela la suscripción de este dispositivo y se borra del servidor.',
         battery: 'Ninguno.',
@@ -295,7 +291,6 @@ const es = {
       },
       categories: {
         label: 'Por categoría',
-        tooltip: 'Elegir una o más secciones: Juegos, Programas o Freelance.',
         description:
           'Solo recibís avisos de las secciones que marques: Juegos, Programas o Freelance.',
         battery: 'Muy baja: llegan menos avisos que con Todo.',
@@ -303,7 +298,6 @@ const es = {
       },
       projects: {
         label: 'Por proyecto',
-        tooltip: 'Seguir proyectos puntuales, por ejemplo DeusDeck.',
         description:
           'Solo recibís avisos de los proyectos que sigas, como DeusDeck. Es la opción más silenciosa.',
         battery: 'Mínima: solo avisos de lo que seguís.',

@@ -10,7 +10,7 @@ test.describe('Pulido de interfaz', () => {
     await page.goto('/');
     await waitForIntroDone(page);
     const mask = page.locator('.theme-toggle__mask');
-    await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 2.5, -2.5)');
+    await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 4, -4)');
     await page.locator('[data-theme-toggle]').click();
     await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 24, -24)');
   });
@@ -163,17 +163,46 @@ test.describe('Pulido de interfaz', () => {
     }
   });
 
-  test('cada sección tiene su propia atmósfera de fondo', async ({ page }) => {
-    const tints = new Set();
+  test('cada sección tiene su propia atmósfera y Programas es un plano blueprint sin mármol', async ({
+    page,
+  }) => {
+    const looks = new Map();
     for (const path of ['/juegos/', '/programas/', '/freelance/', '/contacto/']) {
       await page.goto(path);
-      tints.add(
-        await page.evaluate(() =>
-          getComputedStyle(document.body).getPropertyValue('--section-tint'),
-        ),
+      looks.set(
+        path,
+        await page.evaluate(() => {
+          const style = getComputedStyle(document.body);
+          return {
+            tint: style.getPropertyValue('--section-tint').trim(),
+            image: style.backgroundImage,
+          };
+        }),
       );
     }
-    expect(tints.size).toBe(4);
-    expect([...tints].every((tint) => tint.trim() !== '')).toBe(true);
+    expect(new Set([...looks.values()].map((look) => look.tint + look.image)).size).toBe(4);
+    expect(looks.get('/programas/').image).not.toContain('marble');
+    expect(looks.get('/programas/').image).toContain('linear-gradient');
+  });
+
+  test('las opciones con panel lateral no muestran tooltip y el tooltip no captura el puntero', async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name === 'mobile', 'sin hover táctil');
+    await page.addInitScript(() => sessionStorage.setItem('deus:intro-played', 'yes'));
+    await page.goto('/');
+    await page.locator('[data-consent-later]').click();
+    await page.locator('[data-push-open]:visible').first().click();
+    const options = page.locator('[data-push-dialog] label[data-push-option]');
+    const count = await options.count();
+    expect(count).toBeGreaterThanOrEqual(3);
+    for (let index = 0; index < count; index++) {
+      await options.nth(index).hover();
+      await expect(options.nth(index)).not.toHaveAttribute('data-tooltip', /.+/);
+      await expect(page.locator('#tooltip-layer:popover-open')).toHaveCount(0);
+    }
+    await page.keyboard.press('Escape');
+    await page.locator('[data-theme-toggle]').hover();
+    await expect(page.locator('#tooltip-layer')).toHaveCSS('pointer-events', 'none');
   });
 });

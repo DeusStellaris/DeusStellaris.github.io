@@ -82,7 +82,6 @@ const statusMessages = Object.fromEntries(
                 class="push__option"
                 data-push-option
                 {...detail(mode)}
-                data-tooltip={t(locale, `push.modes.${mode}.tooltip`)}
               >
                 <input type="radio" name="push-mode" value={mode} />
                 <span>{t(locale, `push.modes.${mode}.label`)}</span>

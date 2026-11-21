@@ -164,7 +164,6 @@ const en: Partial<Dictionary> = {
     impactCpu: 'CPU',
     impactBattery: 'Battery',
     liteTitle: 'Performance mode (Lite)',
-    liteTooltip: 'Turns Lite mode on or off: no animations or decorative effects.',
     liteText:
       'On: animations, transitions and ambient effects are switched off. Off: the full effects show (stardust, glints, micro-animations).',
     liteRam: 'Lower with Lite',
@@ -172,7 +171,6 @@ const en: Partial<Dictionary> = {
     liteCpu: 'Low with Lite',
     liteBattery: 'Maximum savings with Lite',
     themeTitle: 'Color theme',
-    themeTooltip: 'Switches between Black Marble (dark) and White Marble (light).',
     themeText:
       'Changes the palette of the whole site. Dark uses Black Marble with violet and gold; light uses White Marble.',
     themeRam: 'No noticeable difference',
@@ -281,7 +279,6 @@ const en: Partial<Dictionary> = {
     modes: {
       all: {
         label: 'Everything',
-        tooltip: 'Get an alert for every update on the site.',
         description:
           'One alert for every published update, whatever the section. The most complete option.',
         battery: 'Low: each alert wakes the device for a few seconds.',
@@ -289,7 +286,6 @@ const en: Partial<Dictionary> = {
       },
       none: {
         label: 'Nothing',
-        tooltip: 'Receive no alerts and cancel this device subscription.',
         description:
           'No alerts at all. This device subscription is cancelled and removed from the server.',
         battery: 'None.',
@@ -297,7 +293,6 @@ const en: Partial<Dictionary> = {
       },
       categories: {
         label: 'By category',
-        tooltip: 'Pick one or more sections: Games, Programs or Freelance.',
         description:
           'You only get alerts from the sections you tick: Games, Programs or Freelance.',
         battery: 'Very low: fewer alerts than Everything.',
@@ -305,7 +300,6 @@ const en: Partial<Dictionary> = {
       },
       projects: {
         label: 'By project',
-        tooltip: 'Follow specific projects, for example DeusDeck.',
         description:
           'You only get alerts from the projects you follow, such as DeusDeck. The quietest option.',
         battery: 'Minimal: only alerts for what you follow.',

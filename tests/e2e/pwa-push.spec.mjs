@@ -101,7 +101,9 @@ test.describe('Preferencias de notificaciones', () => {
     await expect(dialog).toBeVisible();
 
     await expect(dialog.locator('input[name="push-mode"]')).toHaveCount(4);
-    await expect(dialog.locator('[data-push-option][data-tooltip]').first()).toBeVisible();
+    // Las opciones con panel de detalle no llevan tooltip: su descripción ya está a la vista.
+    await expect(dialog.locator('[data-push-option][data-tooltip]')).toHaveCount(0);
+    await expect(dialog.locator('label[data-push-option]').first()).toBeVisible();
 
     await dialog.getByText('Por categoría').click();
     await expect(dialog.locator('input[name="push-category"]')).toHaveCount(3);

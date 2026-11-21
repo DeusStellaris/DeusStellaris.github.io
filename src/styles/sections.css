@@ -12,24 +12,6 @@ body[data-section="games"] {
   background-size: 150% auto;
 }
 
-body[data-section="programs"] {
-  /* Cuadrícula tenue de editor sobre el mármol, en el tono de texto del tema. */
-  --section-tint:
-    repeating-linear-gradient(
-      0deg,
-      color-mix(in srgb, var(--color-text) 5%, transparent) 0 1px,
-      transparent 1px 28px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      color-mix(in srgb, var(--color-text) 5%, transparent) 0 1px,
-      transparent 1px 28px
-    ),
-    radial-gradient(60rem 36rem at 100% 100%, rgb(124 58 237 / 0.22), transparent 70%);
-  background-position: 100% 100%;
-  background-size: 150% auto;
-}
-
 body[data-section="freelance"] {
   --section-tint:
     radial-gradient(70rem 40rem at 100% 0%, rgb(212 175 55 / 0.24), transparent 70%),
@@ -67,13 +49,6 @@ body .site-footer {
   z-index: 1;
 }
 
-:root[data-theme="light"] body[data-section="programs"] {
-  --section-tint:
-    repeating-linear-gradient(0deg, rgb(11 9 20 / 0.05) 0 1px, transparent 1px 28px),
-    repeating-linear-gradient(90deg, rgb(11 9 20 / 0.05) 0 1px, transparent 1px 28px),
-    radial-gradient(60rem 36rem at 100% 100%, rgb(124 58 237 / 0.12), transparent 70%);
-}
-
 :root[data-theme="light"]
   body:is([data-section="games"], [data-section="freelance"], [data-section="contact"]) {
   --section-tint: radial-gradient(
@@ -91,4 +66,47 @@ body .site-footer {
 :root[data-theme="light"] body[data-section="games"] {
   --tint-x: 0%;
   --tint-y: 0%;
+}
+
+/*
+ * Programas: plano técnico (blueprint) en la paleta de Deus. Fondo azul-violeta profundo con
+ * cuadrícula fina y trazo mayor cada 5 celdas; sin mármol, así no hay velos ni recuadros encima.
+ * Tinta de acento: oro kintsugi. Solo gradientes estáticos: Modo Lite no necesita apagarlos.
+ */
+body[data-section="programs"] {
+  --blueprint-bg: #0b1024;
+  --blueprint-surface: #111833;
+  --blueprint-line: rgb(140 160 255 / 0.1);
+  --blueprint-major: rgb(140 160 255 / 0.2);
+  --color-bg: var(--blueprint-bg);
+  --color-surface: var(--blueprint-surface);
+  --color-surface-raised: #182044;
+  --color-text: #e8ecff;
+  --color-text-muted: #a9b4de;
+  --color-border: rgb(140 160 255 / 0.22);
+  --veil-bg: transparent;
+  background-color: var(--blueprint-bg);
+  background-image:
+    linear-gradient(var(--blueprint-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--blueprint-major) 1px, transparent 1px),
+    linear-gradient(var(--blueprint-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--blueprint-line) 1px, transparent 1px);
+  background-size:
+    200px 200px,
+    200px 200px,
+    40px 40px,
+    40px 40px;
+  background-repeat: repeat;
+  background-position: 0 0;
+}
+
+:root[data-theme="light"] body[data-section="programs"] {
+  --blueprint-bg: #eef3fb;
+  --blueprint-surface: #ffffff;
+  --blueprint-line: rgb(29 78 216 / 0.08);
+  --blueprint-major: rgb(29 78 216 / 0.16);
+  --color-surface-raised: #e3eaf8;
+  --color-text: #101a38;
+  --color-text-muted: #44507a;
+  --color-border: rgb(29 78 216 / 0.22);
 }

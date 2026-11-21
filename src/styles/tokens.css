@@ -46,7 +46,6 @@
   --surface-veil: rgb(12 12 14 / 0.9);
   /* Velo translúcido para textos sueltos sobre el mármol (ver textures.css) */
   --veil-bg: rgb(12 12 14 / 0.72);
-  --veil-blur: 10px;
 
   /* Efectos ambientales (ver ambient.css): violeta y dorado discretos, polvo estelar cálido */
   --ambient-violet: rgb(124 58 237 / 0.5);

@@ -13,20 +13,13 @@ body {
 
 /*
  * Velo legible solo para los bloques de texto que van directamente sobre el mármol: encabezados de
- * página, rótulos de sección y estados vacíos. Fondo translúcido con desenfoque moderado, sin
+ * página, rótulos de sección y estados vacíos. Fondo translúcido, sin
  * sombras de texto ni contornos en las letras. Las tarjetas ya tienen superficie propia.
  */
 body :is(.home__hero, .home__heading, .section-intro, .empty-state, .site-footer, .faq > h2),
 body main h1:not(.home__hero h1, .section-intro h1) {
-  background: var(--veil-bg);
-  -webkit-backdrop-filter: blur(var(--veil-blur));
-  backdrop-filter: blur(var(--veil-blur));
-  border-radius: var(--radius-md);
-}
-
-/* El pie es una banda de ancho completo: sin esquinas redondeadas, continuidad con el contenido. */
-body .site-footer {
-  border-radius: 0;
+  /* Velo difuminado sin bordes: el centro aclara el mármol para leer y los extremos se funden. */
+  background: radial-gradient(ellipse at 30% 50%, var(--veil-bg) 45%, transparent 100%);
 }
 
 body :is(.home__hero, .section-intro) {
@@ -37,13 +30,4 @@ body :is(.home__hero, .section-intro) {
 body :is(.home__heading, .faq > h2, main h1:not(.home__hero h1, .section-intro h1)) {
   width: fit-content;
   padding: var(--space-1) var(--space-3);
-}
-
-/* Lite Mode: sin desenfoque (coste de GPU); el velo translúcido se mantiene. */
-html.lite-mode
-  body
-  :is(.home__hero, .home__heading, .section-intro, .empty-state, .site-footer, .faq > h2),
-html.lite-mode body main h1:not(.home__hero h1, .section-intro h1) {
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
 }
