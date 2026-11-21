@@ -30,7 +30,7 @@ const labelToDark = t(locale, 'preferences.themeToDark');
     <defs>
       <mask id="theme-toggle-mask">
         <rect x="-10" y="-10" width="44" height="44" fill="#fff" />
-        <circle class="theme-toggle__mask" cx="12" cy="12" r="7.3" fill="#000" />
+        <circle class="theme-toggle__mask" cx="12" cy="12" r="4.73" fill="#000" />
       </mask>
     </defs>
     <circle class="theme-toggle__core" cx="12" cy="12" r="5" fill="currentColor" mask="url(#theme-toggle-mask)" />
@@ -76,7 +76,7 @@ const labelToDark = t(locale, 'preferences.themeToDark');
    * Tema claro (data-theme="light" en <html>): sol completo, la máscara se aleja y aparecen los rayos.
    */
   :root:not([data-theme='light']) .theme-toggle__mask {
-    transform: translate(4.3px, -4.3px);
+    transform: translate(1.68px, -1.68px);
   }
 
   :root[data-theme='light'] .theme-toggle__mask {
@@ -84,8 +84,8 @@ const labelToDark = t(locale, 'preferences.themeToDark');
   }
 
   :root:not([data-theme='light']) .theme-toggle__core {
-    /* Media luna de ~19 px: se agranda y se desplaza para quedar centrada en el ícono. */
-    transform: translate(4px, -4px) scale(1.9);
+    /* Media luna clásica de ~19 px: puntas finas, centro estrecho y centrada en el ícono. */
+    transform: translate(0.5px, -0.5px) scale(2.17);
   }
 
   :root[data-theme='light'] .theme-toggle__core {

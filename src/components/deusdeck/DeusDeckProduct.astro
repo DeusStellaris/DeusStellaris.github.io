@@ -3,6 +3,7 @@ import deck from '../../config/deusdeck.json';
 import { type Locale, t } from '../../i18n';
 import { deckPaths, localizedHref } from '../../i18n/routes';
 import { formatDate } from '../../lib/format';
+import ProjectNotifyButton from '../push/ProjectNotifyButton.astro';
 
 interface Props {
   locale: Locale;
@@ -46,6 +47,7 @@ const osNames = JSON.stringify({
     </p>
     <h1>DeusDeck</h1>
     <p class="deck__lead">{t(locale, 'deck.lead')}</p>
+    <ProjectNotifyButton locale={locale} slug="deusdeck" title="DeusDeck" />
   </header>
 
   <section class="deck__status" aria-labelledby="deck-status-title">

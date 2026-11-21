@@ -3,6 +3,7 @@ import { Picture } from 'astro:assets';
 import { render } from 'astro:content';
 import AdSlot from '../components/ads/AdSlot.astro';
 import Comments from '../components/comments/Comments.astro';
+import ProjectNotifyButton from '../components/push/ProjectNotifyButton.astro';
 import FavoriteButton from '../components/favorites/FavoriteButton.astro';
 import LikeButton from '../components/likes/LikeButton.astro';
 import type { ContentSectionId } from '../config/sections';
@@ -74,6 +75,7 @@ const isFallback = sourceLocale !== locale;
       <p class="project__summary">{data.summary}</p>
       <div class="project__actions">
         <FavoriteButton locale={locale} slug={project.slug} />
+        <ProjectNotifyButton locale={locale} slug={project.slug} title={data.title} />
         <LikeButton locale={locale} slug={project.slug} />
       </div>
       {isFallback && <p class="project__fallback">{t(locale, 'projects.fallbackNotice')}</p>}

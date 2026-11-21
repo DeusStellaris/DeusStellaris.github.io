@@ -10,6 +10,7 @@ import {
   requestPermission,
   syncSubscription,
 } from './push-client';
+import { DIALOG_SELECTOR, PREFERENCES_CHANGED, type PanelConfig, readConfig } from './push-config';
 
 /**
  * Panel de preferencias de notificaciones (NotificationsDialog.astro).
@@ -19,7 +20,6 @@ import {
  */
 
 const OPEN_SELECTOR = '[data-push-open]';
-const DIALOG_SELECTOR = '[data-push-dialog]';
 const DETAIL_FIELDS = ['title', 'description', 'battery', 'data'] as const;
 
 type StatusKey =
@@ -31,23 +31,6 @@ type StatusKey =
   | 'unconfigured'
   | 'saving'
   | 'error';
-
-interface PanelConfig {
-  api: string;
-  vapid: string;
-  locale: string;
-  categories: string[];
-}
-
-function readConfig(dialog: HTMLDialogElement): PanelConfig {
-  const { api, vapid, locale, categories } = dialog.dataset;
-  return {
-    api: api ?? '',
-    vapid: vapid ?? '',
-    locale: locale ?? 'es',
-    categories: (categories ?? '').split(',').filter(Boolean),
-  };
-}
 
 function inputs(dialog: HTMLElement, name: string): HTMLInputElement[] {
   return [...dialog.querySelectorAll<HTMLInputElement>(`input[name="${name}"]`)];
@@ -149,6 +132,7 @@ async function refreshStatus(dialog: HTMLDialogElement, config: PanelConfig): Pr
 async function apply(dialog: HTMLDialogElement, config: PanelConfig): Promise<void> {
   const preferences = readForm(dialog, config);
   savePreferences(preferences);
+  window.dispatchEvent(new CustomEvent(PREFERENCES_CHANGED));
   setStatus(dialog, 'saving');
   try {
     if (preferences.mode === 'none') {
@@ -162,6 +146,21 @@ async function apply(dialog: HTMLDialogElement, config: PanelConfig): Promise<vo
   } catch {
     setStatus(dialog, 'error');
   }
+}
+
+/** Muestra solo los proyectos cuyo nombre contiene el texto buscado (sin distinguir acentos ni mayúsculas). */
+function filterProjects(input: HTMLInputElement): void {
+  const fold = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const query = fold(input.value.trim());
+  const group = input.closest('fieldset');
+  let visible = 0;
+  for (const item of group?.querySelectorAll<HTMLElement>('[data-push-project-item]') ?? []) {
+    const match = fold(item.textContent ?? '').includes(query);
+    item.hidden = !match;
+    if (match) visible++;
+  }
+  const empty = group?.querySelector<HTMLElement>('[data-push-project-empty]');
+  if (empty) empty.hidden = visible > 0;
 }
 
 function openDialog(dialog: HTMLDialogElement): void {
@@ -197,6 +196,15 @@ function bindOnce(): void {
     if (!dialog) return;
     if (target.closest('[data-push-close]')) dialog.close();
     else if (target.closest('[data-push-enable]')) void enableNotifications(dialog);
+  });
+
+  document.addEventListener('input', (event) => {
+    if (
+      !(event.target instanceof HTMLInputElement) ||
+      !event.target.matches('[data-push-project-filter]')
+    )
+      return;
+    filterProjects(event.target);
   });
 
   document.addEventListener('change', (event) => {

@@ -26,6 +26,41 @@ test.describe('Fase 4 y 5: proyectos publicados', () => {
     await expect(dos.locator('.badge--wip')).toHaveText('En desarrollo');
   });
 
+  test('la campanita sigue un proyecto, avisa con un toast y se sincroniza con el modal', async ({
+    page,
+    context,
+  }) => {
+    const watch = watchPage(page);
+    await context.grantPermissions(['notifications']);
+    await page.goto('/');
+    await waitForIntroDone(page);
+    await page.locator('[data-consent-later]').click();
+    const bell = page
+      .locator('.project-card', { hasText: 'Proyecto de prueba uno' })
+      .locator('[data-follow-toggle]');
+    await expect(bell).toHaveAttribute('aria-pressed', 'false');
+    await bell.click();
+    await expect(page.locator('.toast')).toHaveText('Avisos activados para Proyecto de prueba uno');
+    await expect(bell).toHaveAttribute('aria-pressed', 'true');
+    await expect(bell).toHaveAttribute('data-tooltip', /Dejar de recibir/);
+
+    await page.locator('[data-push-open]:visible').first().click();
+    await expect(page.locator('input[name="push-mode"][value="projects"]')).toBeChecked();
+    await expect(page.locator('input[name="push-project"][value="fixture-uno"]')).toBeChecked();
+    await page.locator('[data-push-project-filter]').fill('zzz');
+    await expect(page.locator('[data-push-project-empty]')).toBeVisible();
+    await page.locator('[data-push-project-filter]').fill('uno');
+    await expect(page.locator('[data-push-project-empty]')).toBeHidden();
+    await page.locator('[data-push-close]').click();
+
+    await bell.click();
+    await expect(page.locator('.toast').last()).toHaveText(
+      'Avisos desactivados para Proyecto de prueba uno',
+    );
+    await expect(bell).toHaveAttribute('aria-pressed', 'false');
+    expect(watch.consoleErrors).toEqual([]);
+  });
+
   test('el feed de inicio ordena por fecha de publicación, de la más reciente a la más antigua', async ({
     page,
   }) => {

@@ -45,3 +45,26 @@ export function normalizePreferences(
     projects: stringList(projects, (item) => SLUG_PATTERN.test(item), MAX_PROJECTS),
   };
 }
+
+/** True si los avisos de un proyecto llegan: se sigue todo el sitio o el proyecto está en la lista. */
+export function followsProject(preferences: PushPreferences, slug: string): boolean {
+  return (
+    preferences.mode === 'all' ||
+    (preferences.mode === 'projects' && preferences.projects.includes(slug))
+  );
+}
+
+/**
+ * Sigue o deja de seguir un proyecto puntual. Con "Todo" activo no hay nada que cambiar; desde
+ * "Nada" o "Por categoría" se pasa a "Por proyecto" (las categorías guardadas se conservan).
+ */
+export function withProject(
+  preferences: PushPreferences,
+  slug: string,
+  follow: boolean,
+): PushPreferences {
+  if (preferences.mode === 'all') return preferences;
+  const others = preferences.projects.filter((item) => item !== slug);
+  const projects = follow ? [...others, slug].slice(-MAX_PROJECTS) : others;
+  return { ...preferences, mode: 'projects', projects };
+}

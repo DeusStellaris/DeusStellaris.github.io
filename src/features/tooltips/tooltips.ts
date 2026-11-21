@@ -52,7 +52,10 @@ function onActivate(event: Event): void {
   if (event instanceof PointerEvent && event.pointerType === 'touch') return;
   if (!(event.target instanceof Element)) return;
   const control = event.target.closest<HTMLElement>(SELECTOR);
-  if (control) show(control);
+  if (!control) return;
+  // Con el foco solo cuenta la navegación real por teclado, no el retorno de foco tras cerrar un modal.
+  if (event.type === 'focusin' && !control.matches(':focus-visible')) return;
+  show(control);
 }
 
 function onLeave(event: Event): void {
@@ -70,6 +73,9 @@ export function initTooltips(): void {
   document.addEventListener('focusout', onLeave, { passive: true });
   document.addEventListener('pointerdown', hide, { passive: true });
   document.addEventListener('scroll', hide, { passive: true, capture: true });
+  // Abrir o cerrar un <dialog> (el evento no burbujea: se escucha en captura) limpia el tooltip.
+  document.addEventListener('close', hide, { capture: true });
+  document.addEventListener('cancel', hide, { capture: true });
   document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') hide();
   });

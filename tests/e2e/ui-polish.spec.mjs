@@ -10,7 +10,7 @@ test.describe('Pulido de interfaz', () => {
     await page.goto('/');
     await waitForIntroDone(page);
     const mask = page.locator('.theme-toggle__mask');
-    await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 4.3, -4.3)');
+    await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 1.68, -1.68)');
     await page.locator('[data-theme-toggle]').click();
     await expect(mask).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 24, -24)');
   });
@@ -156,6 +156,9 @@ test.describe('Pulido de interfaz', () => {
       // El desplazamiento oculta el tooltip: se espera a que termine antes de enfocar.
       await page.waitForTimeout(150);
       await controls.nth(index).focus();
+      // El tooltip por foco exige teclado real (:focus-visible): se sale y se vuelve a entrar con Tab.
+      await page.keyboard.press('Shift+Tab');
+      await page.keyboard.press('Tab');
       const box = await page.locator('#tooltip-layer').boundingBox();
       expect(box, `tooltip ${index}`).not.toBeNull();
       expect(box?.x ?? 0).toBeGreaterThanOrEqual(11.5);
@@ -235,5 +238,34 @@ test.describe('Pulido de interfaz', () => {
     await page.keyboard.press('Escape');
     await page.locator('[data-theme-toggle]').hover();
     await expect(page.locator('#tooltip-layer')).toHaveCSS('pointer-events', 'none');
+  });
+
+  test('al cerrar el modal de perfil no queda ningún tooltip abierto', async ({
+    page,
+  }, testInfo) => {
+    test.skip(testInfo.project.name === 'mobile', 'sin hover táctil');
+    await page.addInitScript(() => sessionStorage.setItem('deus:intro-played', 'yes'));
+    await page.goto('/');
+    await page.locator('[data-consent-later]').click();
+    await page.locator('[data-profile-open]:visible').first().click();
+    await page.locator('.profile__close').click();
+    await page.mouse.move(5, 5);
+    await expect(page.locator('[data-profile-dialog]')).not.toHaveAttribute('open', '');
+    expect(await page.locator('#tooltip-layer').evaluate((el) => el.matches(':popover-open'))).toBe(
+      false,
+    );
+  });
+
+  test('la media luna está centrada y tiene el tamaño del sol', async ({ page }) => {
+    await page.addInitScript(() => localStorage.setItem('deus:theme', 'dark'));
+    await page.goto('/');
+    await expect(page.locator('.theme-toggle__core')).toHaveCSS(
+      'transform',
+      'matrix(2.17, 0, 0, 2.17, 0.5, -0.5)',
+    );
+    await expect(page.locator('.theme-toggle__mask')).toHaveCSS(
+      'transform',
+      'matrix(1, 0, 0, 1, 1.68, -1.68)',
+    );
   });
 });

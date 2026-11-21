@@ -1,0 +1,88 @@
+---
+import { type Locale, t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+  slug: string;
+  title: string;
+}
+
+const { locale, slug, title } = Astro.props;
+---
+
+{/*
+  Campanita de avisos por proyecto. Su estado (aria-pressed, etiqueta y tooltip) lo sincroniza
+  src/features/push/push-follow.ts con las preferencias del modal de notificaciones.
+*/}
+<button
+  type="button"
+  class="follow-button"
+  data-follow-toggle
+  data-slug={slug}
+  data-title={title}
+  data-label-add={t(locale, 'push.followAdd')}
+  data-label-remove={t(locale, 'push.followRemove')}
+  data-msg-on={t(locale, 'push.followOn')}
+  data-msg-off={t(locale, 'push.followOff')}
+  data-msg-all={t(locale, 'push.followAll')}
+  data-msg-denied={t(locale, 'push.followDenied')}
+  data-msg-unsupported={t(locale, 'push.followUnsupported')}
+  data-msg-install={t(locale, 'push.ios')}
+  data-msg-error={t(locale, 'push.followError')}
+  data-tooltip={t(locale, 'push.followAdd')}
+  aria-label={t(locale, 'push.followAdd')}
+  aria-pressed="false"
+>
+  <svg class="follow-button__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path
+      d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7.5 2.5 7.5h-17S6 15 6 9Z"
+      fill="currentColor"
+      stroke="currentColor"
+      stroke-width="1.75"
+      stroke-linejoin="round"
+    />
+    <path d="M10 20a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+  </svg>
+</button>
+
+<style>
+  .follow-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--target-min);
+    height: var(--target-min);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      color var(--duration-fast),
+      border-color var(--duration-fast),
+      transform var(--duration-fast);
+  }
+
+  .follow-button:hover {
+    border-color: var(--color-kintsugi);
+    color: var(--color-text);
+  }
+
+  .follow-button:active {
+    transform: scale(0.94);
+  }
+
+  .follow-button[aria-pressed='true'] {
+    border-color: var(--color-kintsugi);
+    color: var(--color-kintsugi);
+  }
+
+  .follow-button__icon {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  .follow-button[aria-pressed='false'] .follow-button__icon path:first-child {
+    fill: none;
+  }
+</style>

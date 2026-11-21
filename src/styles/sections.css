@@ -11,13 +11,6 @@ body[data-section="contact"] {
   background-position: 0% 100%;
 }
 
-/* Contenido y pie por encima de las capas decorativas fijas. */
-body main,
-body .site-footer {
-  position: relative;
-  z-index: 1;
-}
-
 /* Juegos y Programas no llevan mármol: los encabezados quedan sobre el fondo sin superficie propia. */
 body:is([data-section="games"], [data-section="programs"]) {
   --head-bg: transparent;

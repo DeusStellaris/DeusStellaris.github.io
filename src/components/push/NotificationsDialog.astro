@@ -104,9 +104,18 @@ const statusMessages = Object.fromEntries(
 
         <fieldset class="push__group" data-push-projects data-push-option {...detail('projects')} hidden>
           <legend>{t(locale, 'push.projectsGroup')}</legend>
+          <input
+            type="search"
+            class="push__filter"
+            data-push-project-filter
+            aria-label={t(locale, 'push.projectFilterLabel')}
+            placeholder={t(locale, 'push.projectFilterPlaceholder')}
+            autocomplete="off"
+          />
+          <p class="push__filter-empty" data-push-project-empty hidden>{t(locale, 'push.projectFilterEmpty')}</p>
           {
             [...projects].map(([slug, title]) => (
-              <label class="push__option" data-tooltip={t(locale, 'push.projectTooltip')}>
+              <label class="push__option" data-push-project-item data-tooltip={t(locale, 'push.projectTooltip')}>
                 <input type="checkbox" name="push-project" value={slug} />
                 <span>{title}</span>
               </label>
@@ -230,6 +239,25 @@ const statusMessages = Object.fromEntries(
     font-size: var(--text-sm);
     text-transform: uppercase;
     letter-spacing: 0.06em;
+  }
+
+  .push__filter {
+    min-height: var(--target-min);
+    padding-inline: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: var(--color-text);
+  }
+
+  .push__filter-empty {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .push__option[hidden] {
+    display: none;
   }
 
   .push__option {
