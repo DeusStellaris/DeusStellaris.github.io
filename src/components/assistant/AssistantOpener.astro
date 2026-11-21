@@ -1,0 +1,32 @@
+---
+import { type Locale, t } from '../../i18n';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+{/* Botón de búsqueda global del encabezado. Abre AssistantDialog (assistant.ts). */}
+<button
+  type="button"
+  class="icon-button assistant-opener"
+  data-assistant-open
+  aria-haspopup="dialog"
+  aria-controls="assistant-dialog"
+  aria-label={t(locale, 'assistant.open')}
+  data-tooltip={t(locale, 'assistant.open')}
+>
+  <svg class="assistant-opener__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="1.75" />
+    <path d="m20 20-4-4" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
+  </svg>
+</button>
+
+<style>
+  .assistant-opener__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+</style>

@@ -3,6 +3,7 @@ import DemoCards from '../components/demos/DemoCards.astro';
 import DeckFeatured from '../components/deusdeck/DeckFeatured.astro';
 import EmptyState from '../components/EmptyState.astro';
 import FaqAccordion from '../components/faq/FaqAccordion.astro';
+import SearchWidget from '../components/search/SearchWidget.astro';
 import ProjectGrid from '../components/projects/ProjectGrid.astro';
 import ContactLinks from '../components/sections/ContactLinks.astro';
 import SectionIntro from '../components/sections/SectionIntro.astro';
@@ -33,6 +34,7 @@ const demos = section === 'games' ? listDemos() : [];
 >
   <div class="container">
     <SectionIntro title={copy.title} intro={copy.intro} />
+    {section !== 'contact' && <SearchWidget locale={locale} variant="section" scope={section} />}
     {section === 'programs' && <DeckFeatured locale={locale} />}
     {demos.length > 0 && <DemoCards locale={locale} demos={demos} />}
     {

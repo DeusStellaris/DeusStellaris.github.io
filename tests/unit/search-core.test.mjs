@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
+  MAX_QUERY_LENGTH,
   normalizeText,
+  sanitizeQuery,
   scoreEntry,
   searchEntries,
   tokenize,
@@ -103,4 +105,41 @@ test('el total refleja todas las coincidencias aunque el límite recorte la list
   const outcome = searchEntries(many, 'servidor', { limit: 5 });
   assert.equal(outcome.results.length, 5);
   assert.equal(outcome.total, 40);
+});
+
+test('sanitizeQuery acota a 100 caracteres y colapsa espacios', () => {
+  assert.equal(MAX_QUERY_LENGTH, 100);
+  assert.equal(sanitizeQuery('  hola    mundo  '), 'hola mundo');
+  assert.equal(sanitizeQuery('a'.repeat(500)).length, 100);
+});
+
+test('los metacaracteres de regex se tratan como texto y no rompen ni demoran la búsqueda', () => {
+  const entries = [entry({ title: 'Panel (v1) [beta]', summary: 'a+b' })];
+  const nasty = '(.*)+$ '.repeat(40);
+  const started = performance.now();
+  const outcome = searchEntries(entries, nasty);
+  assert.equal(outcome.status, 'results');
+  assert.ok(performance.now() - started < 50);
+  assert.equal(searchEntries(entries, '(v1)').total, 1);
+});
+
+test('con type project se omiten las entradas de sección', () => {
+  const entries = [
+    entry({ id: 'a', type: 'section', title: 'Programas', section: 'programs' }),
+    entry({ id: 'b', type: 'project', title: 'Programas útiles', section: 'programs' }),
+  ];
+  const outcome = searchEntries(entries, 'programas', { section: 'programs', type: 'project' });
+  assert.equal(outcome.total, 1);
+  assert.equal(outcome.results[0].id, 'b');
+});
+
+test('con locale solo se devuelven entradas de ese idioma', () => {
+  const entries = [
+    entry({ id: 'es', locale: 'es', title: 'Panel útil' }),
+    entry({ id: 'en', locale: 'en', title: 'Useful panel' }),
+  ];
+  assert.deepEqual(
+    searchEntries(entries, 'panel', { locale: 'en' }).results.map((item) => item.id),
+    ['en'],
+  );
 });

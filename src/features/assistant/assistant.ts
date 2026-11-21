@@ -1,33 +1,31 @@
 import { initSearchWidgets } from '../search/search-widget';
 
 /**
- * Asistente flotante. Es un <dialog> no modal: no bloquea la página ni el resto de la navegación.
- * Se cierra con Escape o con su botón, y devuelve el foco al botón que lo abrió.
+ * Búsqueda global. Es un <dialog> modal (el navegador gestiona foco, Escape y retorno del foco).
+ * Se abre con el botón del encabezado, Ctrl/Cmd + K o "/" fuera de un campo de texto, y se cierra
+ * con su ×, con Escape o haciendo clic en el fondo.
  */
 
-const ROOT_SELECTOR = '[data-assistant]';
-
+const DIALOG_SELECTOR = '[data-assistant-dialog]';
 let listenersBound = false;
 
-function openAssistant(root: HTMLElement): void {
-  const dialog = root.querySelector<HTMLDialogElement>('[data-assistant-dialog]');
-  const opener = root.querySelector<HTMLButtonElement>('[data-assistant-open]');
-  if (!dialog || dialog.open) return;
+function dialogElement(): HTMLDialogElement | null {
+  return document.querySelector<HTMLDialogElement>(DIALOG_SELECTOR);
+}
 
+function openAssistant(): void {
+  const dialog = dialogElement();
+  if (!dialog || dialog.open) return;
   initSearchWidgets();
-  dialog.show();
-  opener?.setAttribute('aria-expanded', 'true');
+  dialog.showModal();
   dialog.querySelector<HTMLInputElement>('[data-search-input]')?.focus();
 }
 
-function closeAssistant(root: HTMLElement): void {
-  const dialog = root.querySelector<HTMLDialogElement>('[data-assistant-dialog]');
-  const opener = root.querySelector<HTMLButtonElement>('[data-assistant-open]');
-  if (!dialog?.open) return;
-
-  dialog.close();
-  opener?.setAttribute('aria-expanded', 'false');
-  opener?.focus();
+function isTypingTarget(target: EventTarget | null): boolean {
+  return (
+    target instanceof HTMLElement &&
+    (target.isContentEditable || target.matches('input, textarea, select'))
+  );
 }
 
 function bindOnce(): void {
@@ -36,31 +34,30 @@ function bindOnce(): void {
 
   document.addEventListener('click', (event) => {
     if (!(event.target instanceof Element)) return;
-    const root = event.target.closest<HTMLElement>(ROOT_SELECTOR);
-    if (!root) return;
-
     if (event.target.closest('[data-assistant-open]')) {
-      const dialog = root.querySelector<HTMLDialogElement>('[data-assistant-dialog]');
-      if (dialog?.open) closeAssistant(root);
-      else openAssistant(root);
+      openAssistant();
       return;
     }
     if (event.target.closest('[data-assistant-close]')) {
-      closeAssistant(root);
+      dialogElement()?.close();
+      return;
     }
+    // Clic en el fondo: el propio <dialog> (sin padding) es el área fuera del contenido.
+    if (event.target === dialogElement()) dialogElement()?.close();
   });
 
   document.addEventListener('keydown', (event) => {
-    if (event.key !== 'Escape') return;
-    const open = document.querySelector<HTMLElement>(
-      `${ROOT_SELECTOR} [data-assistant-dialog][open]`,
-    );
-    const root = open?.closest<HTMLElement>(ROOT_SELECTOR);
-    if (root) closeAssistant(root);
+    const quick = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+    const slash = event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey;
+    if (quick || (slash && !isTypingTarget(event.target))) {
+      if (!dialogElement()) return;
+      event.preventDefault();
+      openAssistant();
+    }
   });
 }
 
-/** Activa el asistente de la página actual. Idempotente. */
+/** Activa la búsqueda global de la página actual. Idempotente. */
 export function initAssistant(): void {
   bindOnce();
 }

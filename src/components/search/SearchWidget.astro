@@ -4,16 +4,24 @@ import { type Locale, type TranslationKey, t } from '../../i18n';
 
 interface Props {
   locale: Locale;
-  /** 'page' muestra el filtro por sección; 'compact' es la versión del asistente. */
-  variant: 'page' | 'compact';
+  /** 'page' muestra el filtro por sección; 'compact' es la del asistente; 'section' busca solo en una categoría. */
+  variant: 'page' | 'compact' | 'section';
+  /** Categoría fija de la variante 'section': solo se buscan sus proyectos. */
+  scope?: 'games' | 'programs' | 'freelance' | undefined;
   /** Sección de la página actual: sus resultados aparecen primero. */
   context?: SectionId | undefined;
   /** Si es true, lee ?q= de la URL al cargar. */
   prefillFromUrl?: boolean;
 }
 
-const { locale, variant, context, prefillFromUrl = false } = Astro.props;
+const { locale, variant, scope, context, prefillFromUrl = false } = Astro.props;
 const id = `search-${variant}`;
+const SCOPE_PLACEHOLDERS = {
+  games: 'search.scopeGames',
+  programs: 'search.scopePrograms',
+  freelance: 'search.scopeFreelance',
+} as const;
+const placeholder = t(locale, scope ? SCOPE_PLACEHOLDERS[scope] : 'search.placeholder');
 const FILTER_KEYS: Record<(typeof NAV_SECTIONS)[number], TranslationKey> = {
   games: 'nav.games',
   programs: 'nav.programs',
@@ -30,6 +38,8 @@ const FILTER_KEYS: Record<(typeof NAV_SECTIONS)[number], TranslationKey> = {
   class:list={['search-widget', `search-widget--${variant}`]}
   data-search-widget
   data-context={context ?? ''}
+  data-scope={scope ?? ''}
+  data-locale={locale}
   data-prefill-from-url={prefillFromUrl ? 'true' : 'false'}
   data-msg-loading={t(locale, 'search.loading')}
   data-msg-error={t(locale, 'search.error')}
@@ -50,6 +60,11 @@ const FILTER_KEYS: Record<(typeof NAV_SECTIONS)[number], TranslationKey> = {
       <h2 id={`${id}-heading`} class="visually-hidden">{t(locale, 'assistant.title')}</h2>
     )
   }
+  {
+    variant === 'section' && (
+      <h2 id={`${id}-heading`} class="visually-hidden">{t(locale, 'search.scopeLabel')}</h2>
+    )
+  }
 
   <form class="search-widget__form" role="search" data-search-form>
     <label class="visually-hidden" for={`${id}-input`}>{t(locale, 'search.label')}</label>
@@ -61,11 +76,18 @@ const FILTER_KEYS: Record<(typeof NAV_SECTIONS)[number], TranslationKey> = {
         name="q"
         autocomplete="off"
         spellcheck="false"
-        placeholder={t(locale, 'search.placeholder')}
+        placeholder={placeholder}
+        maxlength="100"
         data-search-input
       />
-      <button type="button" class="search-widget__button" data-search-clear>
-        {t(locale, 'search.clear')}
+      <button
+        type="button"
+        class="search-widget__clear"
+        data-search-clear
+        aria-label={t(locale, 'search.clear')}
+        data-tooltip={t(locale, 'search.clear')}
+      >
+        <span aria-hidden="true">×</span>
       </button>
     </div>
 
@@ -99,19 +121,50 @@ const FILTER_KEYS: Record<(typeof NAV_SECTIONS)[number], TranslationKey> = {
     gap: var(--space-3);
   }
 
+  /* El botón de limpiar vive dentro del campo y solo aparece cuando hay texto. */
   .search-widget__row {
+    position: relative;
     display: flex;
-    gap: var(--space-2);
+  }
+
+  .search-widget__clear {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    display: grid;
+    place-items: center;
+    width: var(--target-min);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-text-muted);
+    font-size: var(--text-xl);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .search-widget__clear:hover {
+    color: var(--color-kintsugi);
+  }
+
+  .search-widget__input:placeholder-shown + .search-widget__clear {
+    display: none;
   }
 
   .search-widget__input {
     flex: 1;
     min-height: var(--target-min);
-    padding: var(--space-2) var(--space-4);
+    padding: var(--space-2) calc(var(--target-min) + var(--space-1)) var(--space-2) var(--space-4);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-pill);
     background: var(--color-surface);
     color: var(--color-text);
+  }
+
+  /* La × nativa del navegador se oculta: el campo ya trae la suya dentro. */
+  .search-widget__input::-webkit-search-cancel-button {
+    appearance: none;
+    display: none;
   }
 
   .search-widget__input:focus-visible {
@@ -183,6 +236,10 @@ const FILTER_KEYS: Record<(typeof NAV_SECTIONS)[number], TranslationKey> = {
     margin: var(--space-1) 0 0;
     color: var(--color-text-muted);
     font-size: var(--text-sm);
+  }
+
+  .search-widget--section {
+    margin-bottom: var(--space-8);
   }
 
   .search-widget--page {

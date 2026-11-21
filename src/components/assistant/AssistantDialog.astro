@@ -1,0 +1,106 @@
+---
+import { type Locale, t } from '../../i18n';
+import SearchWidget from '../search/SearchWidget.astro';
+
+interface Props {
+  locale: Locale;
+  /** Sección de la página actual, para priorizar sus resultados. */
+  context?: 'games' | 'programs' | 'freelance' | 'contact' | undefined;
+}
+
+const { locale, context } = Astro.props;
+---
+
+{/*
+  Búsqueda global tipo paleta de comandos: un <dialog> modal en el tercio superior. Se abre desde
+  el botón del encabezado, con Ctrl/Cmd + K o con "/". Lo gestiona src/features/assistant/assistant.ts.
+*/}
+<dialog id="assistant-dialog" class="assistant__dialog" data-assistant-dialog aria-labelledby="assistant-dialog-title">
+  <div class="assistant__inner">
+    <header class="assistant__header">
+      <h2 id="assistant-dialog-title">{t(locale, 'assistant.title')}</h2>
+      <button
+        type="button"
+        class="assistant__close"
+        data-assistant-close
+        aria-label={t(locale, 'assistant.close')}
+        data-tooltip={t(locale, 'assistant.close')}
+      >
+        <span aria-hidden="true">×</span>
+      </button>
+    </header>
+    <p class="assistant__intro">{t(locale, 'assistant.intro')}</p>
+    {context && <p class="assistant__context">{t(locale, 'assistant.contextHint')}</p>}
+    <SearchWidget locale={locale} variant="compact" context={context} />
+  </div>
+</dialog>
+
+<style>
+  .assistant__dialog {
+    width: min(38rem, calc(100vw - 2rem));
+    max-height: min(76dvh, 40rem);
+    margin: 12dvh auto 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background:
+      linear-gradient(155deg, rgb(124 58 237 / 0.14), transparent 50%),
+      var(--color-surface);
+    color: var(--color-text);
+    box-shadow:
+      inset 0 2px 0 var(--color-kintsugi),
+      0 24px 60px rgb(0 0 0 / 0.5);
+  }
+
+  .assistant__dialog::backdrop {
+    background: rgb(11 9 20 / 0.6);
+  }
+
+  .assistant__inner {
+    display: grid;
+    gap: var(--space-3);
+    max-height: min(76dvh, 40rem);
+    padding: var(--space-4) var(--space-6) var(--space-6);
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .assistant__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .assistant__header h2 {
+    margin: 0;
+    font-size: var(--text-lg);
+  }
+
+  .assistant__intro,
+  .assistant__context {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+  }
+
+  .assistant__close {
+    display: grid;
+    place-items: center;
+    width: var(--target-min);
+    height: var(--target-min);
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-raised);
+    color: var(--color-text);
+    font-size: var(--text-xl);
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .assistant__close:hover {
+    border-color: var(--color-kintsugi);
+  }
+</style>

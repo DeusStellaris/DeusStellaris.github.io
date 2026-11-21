@@ -1,7 +1,7 @@
 import { SECTION_IDS, type SectionId } from '../config/sections';
 import type { SearchEntry, SearchSection } from '../features/search/search-core';
 import { LOCALES, t } from '../i18n';
-import { localizedHref, projectSegmentPath, sectionHref } from '../i18n/routes';
+import { deckPaths, localizedHref, projectSegmentPath, sectionHref } from '../i18n/routes';
 import { sectionCopy } from '../i18n/section-copy';
 import { getCategoryLabel, listProjects } from './projects';
 
@@ -43,6 +43,19 @@ export async function buildSearchEntries(): Promise<SearchEntry[]> {
         tags: [],
       });
     }
+
+    // DeusDeck tiene página propia (no sale de la colección de proyectos): se indexa a mano.
+    entries.push({
+      id: `project:deusdeck:${locale}`,
+      type: 'project',
+      locale,
+      title: 'DeusDeck',
+      summary: t(locale, 'deck.lead'),
+      href: localizedHref(locale, deckPaths()[locale]),
+      section: 'programs',
+      category: t(locale, 'nav.programs'),
+      tags: [],
+    });
 
     for (const project of await listProjects(locale)) {
       const data = project.entry.data;

@@ -1,11 +1,12 @@
 import { loadSearchIndex } from './search-client';
-import { type SearchEntry, type SearchSection, searchEntries } from './search-core';
+import { type SearchEntry, type SearchSection, sanitizeQuery, searchEntries } from './search-core';
 
 /**
  * Controlador del buscador. Un mismo componente sirve para la página de búsqueda y para el
  * asistente flotante: se configura con data-* y no depende de la página.
  *
- * Todo texto dinámico se escribe con textContent, nunca con innerHTML.
+ * Todo texto dinámico se escribe con textContent, nunca con innerHTML. La consulta se acota a 100
+ * caracteres y se compara con includes (sin expresiones regulares), así no hay ReDoS.
  */
 
 const DEBOUNCE_MS = 150;
@@ -97,13 +98,15 @@ function initWidget(root: HTMLElement): void {
 
   const messages = readMessages(root);
   const context = asSection(root.dataset.context ?? '');
+  // Con categoría fija (buscador de sección) solo se buscan proyectos de esa categoría.
+  const scope = asSection(root.dataset.scope ?? '');
   let timer: number | undefined;
   let lastQuery = '';
 
   form?.addEventListener('submit', (event) => event.preventDefault());
 
   async function run(): Promise<void> {
-    const query = input?.value ?? '';
+    const query = sanitizeQuery(input?.value ?? '');
     lastQuery = query;
     if (retry) retry.hidden = true;
 
@@ -122,8 +125,10 @@ function initWidget(root: HTMLElement): void {
     if (query !== lastQuery) return;
 
     const outcome = searchEntries(entries, query, {
-      section: asSection(filter?.value ?? 'all'),
+      section: scope === 'all' ? asSection(filter?.value ?? 'all') : scope,
       contextSection: context === 'all' ? undefined : context,
+      type: scope === 'all' ? undefined : 'project',
+      locale: root.dataset.locale === 'en' ? 'en' : 'es',
     });
 
     if (outcome.status === 'hint') {
@@ -133,7 +138,7 @@ function initWidget(root: HTMLElement): void {
     }
     renderResults(resultList, outcome.results, messages);
     if (outcome.total === 0) {
-      setStatus(statusEl, fill(messages.noResults, { query: query.trim() }));
+      setStatus(statusEl, fill(messages.noResults, { query }));
     } else {
       setStatus(statusEl, fill(messages.count, { count: outcome.total }));
     }

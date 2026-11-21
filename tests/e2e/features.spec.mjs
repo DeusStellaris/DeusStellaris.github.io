@@ -43,7 +43,7 @@ test.describe('Fase 5: funcionalidades', () => {
     await opener.click();
     const dialog = page.locator('[data-assistant-dialog]');
     await expect(dialog).toHaveAttribute('open', '');
-    await expect(page.locator('[data-search-input]').first()).toBeFocused();
+    await expect(page.locator('#assistant-dialog [data-search-input]')).toBeFocused();
     await page.keyboard.press('Escape');
     await expect(dialog).not.toHaveAttribute('open', '');
     await expect(opener).toBeFocused();

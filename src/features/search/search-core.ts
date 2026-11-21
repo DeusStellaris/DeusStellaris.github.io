@@ -25,6 +25,10 @@ export interface SearchOptions {
   section?: SearchSection | 'all' | undefined;
   /** Sección de la página actual: sus resultados suben, pero no se ocultan los demás. */
   contextSection?: SearchSection | undefined;
+  /** Si es 'project', se omiten las entradas de sección (búsqueda dentro de una categoría). */
+  type?: SearchEntry['type'] | undefined;
+  /** Idioma de la página: solo se devuelven entradas de ese idioma. */
+  locale?: SearchEntry['locale'] | undefined;
   limit?: number;
 }
 
@@ -32,6 +36,7 @@ export type SearchOutcome =
   | { status: 'hint' }
   | { status: 'results'; results: readonly SearchEntry[]; total: number };
 
+export const MAX_QUERY_LENGTH = 100;
 const MIN_TOKEN_LENGTH = 2;
 const DEFAULT_LIMIT = 30;
 const CONTEXT_BONUS = 0.5;
@@ -46,9 +51,14 @@ export function normalizeText(value: string): string {
     .trim();
 }
 
+/** Consulta acotada a 100 caracteres y con espacios colapsados. La búsqueda usa includes, nunca regex. */
+export function sanitizeQuery(query: string): string {
+  return query.replace(/\s+/g, ' ').trim().slice(0, MAX_QUERY_LENGTH);
+}
+
 /** Tokens normalizados de la consulta; descarta los demasiado cortos. */
 export function tokenize(query: string): string[] {
-  return normalizeText(query)
+  return normalizeText(sanitizeQuery(query))
     .split(' ')
     .filter((token) => token.length >= MIN_TOKEN_LENGTH);
 }
@@ -99,6 +109,8 @@ export function searchEntries(
   const scored: Array<{ entry: SearchEntry; score: number }> = [];
   for (const entry of entries) {
     if (section !== 'all' && entry.section !== section) continue;
+    if (options.type !== undefined && entry.type !== options.type) continue;
+    if (options.locale !== undefined && entry.locale !== options.locale) continue;
     const base = scoreEntry(entry, tokens);
     if (base === 0) continue;
     const bonus =

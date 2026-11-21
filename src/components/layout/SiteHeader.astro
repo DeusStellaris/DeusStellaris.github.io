@@ -2,6 +2,7 @@
 import { NAV_SECTIONS, type NavSectionId, type SectionId } from '../../config/sections';
 import { type Locale, type TranslationKey, t } from '../../i18n';
 import { sectionHref } from '../../i18n/routes';
+import AssistantOpener from '../assistant/AssistantOpener.astro';
 import ProfileButton from '../profile/ProfileButton.astro';
 import NotificationsButton from '../push/NotificationsButton.astro';
 import LanguagePill from '../ui/LanguagePill.astro';
@@ -15,11 +16,13 @@ interface Props {
   section: SectionId;
   /** La barra de secciones se oculta solo en la portada, donde las secciones ya son tarjetas. */
   showNav: boolean;
+  /** Muestra el botón de búsqueda global. */
+  showSearch: boolean;
   /** Destino del selector de idioma por cada locale (página equivalente). */
   switchHrefs: Record<Locale, string>;
 }
 
-const { locale, section, showNav, switchHrefs } = Astro.props;
+const { locale, section, showNav, showSearch, switchHrefs } = Astro.props;
 
 const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
   games: 'nav.games',
@@ -61,10 +64,13 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
     }
 
     <div class="site-header__controls">
-      <ProfileButton locale={locale} />
-      <NotificationsButton locale={locale} />
-      <LiteModeToggle locale={locale} />
-      <ThemeToggle locale={locale} />
+      <div class="site-header__actions">
+        {showSearch && <AssistantOpener locale={locale} />}
+        <ProfileButton locale={locale} />
+        <NotificationsButton locale={locale} />
+        <LiteModeToggle locale={locale} />
+        <ThemeToggle locale={locale} />
+      </div>
       <LanguagePill locale={locale} hrefs={switchHrefs} />
     </div>
   </div>
@@ -130,7 +136,8 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
     color: var(--color-accent-strong);
   }
 
-  .site-header__controls {
+  .site-header__controls,
+  .site-header__actions {
     display: flex;
     align-items: center;
     gap: var(--space-2);
@@ -167,12 +174,13 @@ const NAV_LABEL_KEYS: Record<NavSectionId, TranslationKey> = {
       justify-self: end;
     }
 
-    .site-header__controls :global(.icon-button) {
-      grid-row: 3;
-      justify-self: center;
+    /* Fila de botones: reparte 4 o 5 íconos a todo el ancho sin depender de las columnas. */
+    .site-header__actions {
+      grid-area: 3 / 1 / 4 / 5;
+      justify-content: space-around;
     }
 
-    .site-header--home :global(.icon-button) {
+    .site-header--home .site-header__actions {
       grid-row: 2;
     }
 

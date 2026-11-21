@@ -10,6 +10,7 @@ interface Props {
 const { locale } = Astro.props;
 // El correo de contacto es el del titular, ya publicado en los documentos legales.
 const email = legal.controller.email;
+const gmailHref = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(email ?? '')}`;
 // Solo se muestran enlaces con URL configurada. Los null son placeholders pendientes.
 const socials = contact.socials.flatMap((social) =>
   social.url === null ? [] : [{ label: social.label, url: social.url }],
@@ -42,6 +43,15 @@ const socials = contact.socials.flatMap((social) =>
             data-tooltip={t(locale, 'sections.contact.writeEmailTooltip')}
           >
             {t(locale, 'sections.contact.writeEmail')}
+          </a>
+          <a
+            class="contact__button"
+            href={gmailHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-tooltip={t(locale, 'sections.contact.openGmailTooltip')}
+          >
+            {t(locale, 'sections.contact.openGmail')}
           </a>
         </div>
       </div>
@@ -105,8 +115,8 @@ const socials = contact.socials.flatMap((social) =>
   .contact__email {
     margin: 0 0 var(--space-4);
     font-family: var(--font-display);
-    font-size: var(--text-xl);
-    overflow-wrap: anywhere;
+    font-size: clamp(0.95rem, 4.1vw, 1.35rem);
+    white-space: nowrap;
   }
 
   .contact__actions,

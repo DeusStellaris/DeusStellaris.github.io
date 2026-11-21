@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
-import AssistantButton from '../components/assistant/AssistantButton.astro';
+import AssistantDialog from '../components/assistant/AssistantDialog.astro';
 import ConsentBanner from '../components/consent/ConsentBanner.astro';
 import IntroOverlay from '../components/layout/IntroOverlay.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
@@ -102,7 +102,7 @@ const switchHrefs = switchTargets(paths ?? {});
   <body data-section={section ?? 'home'}>
     <IntroOverlay locale={locale} />
     <a class="skip-link" href="#main">{t(locale, 'common.skipToContent')}</a>
-    <SiteHeader locale={locale} section={section ?? 'home'} showNav={section !== 'home'} switchHrefs={switchHrefs} />
+    <SiteHeader locale={locale} section={section ?? 'home'} showNav={section !== 'home'} showSearch={assistant} switchHrefs={switchHrefs} />
     <main id="main" tabindex="-1">
       <slot />
     </main>
@@ -112,7 +112,7 @@ const switchHrefs = switchTargets(paths ?? {});
     <ConsentBanner locale={locale} />
     {
       assistant && (
-        <AssistantButton locale={locale} context={section && section !== 'home' ? section : undefined} />
+        <AssistantDialog locale={locale} context={section && section !== 'home' ? section : undefined} />
       )
     }
     <script>

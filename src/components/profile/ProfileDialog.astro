@@ -271,6 +271,21 @@ function settingsInfo(prefix: 'lite' | 'theme'): string {
     color: var(--color-text-muted);
   }
 
+  /* Móvil: todo el perfil scrollea de corrido; el panel de impacto deja de quedar fijo y tapar campos. */
+  @media (max-width: 45em) {
+    .profile__inner {
+      overflow-y: auto;
+    }
+
+    .profile__body {
+      overflow: visible;
+    }
+
+    .profile__detail {
+      position: static;
+    }
+  }
+
   .profile__close {
     display: grid;
     place-items: center;

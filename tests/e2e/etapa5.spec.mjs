@@ -127,30 +127,18 @@ test.describe('Capas de los modales', () => {
   for (const [name, trigger] of [
     ['Tu perfil local', '.profile-button'],
     ['notificaciones', '[data-push-open]'],
+    ['búsqueda', '[data-assistant-open]'],
   ]) {
-    test(`el modal de ${name} cubre el botón flotante y bloquea el fondo`, async ({ page }) => {
+    test(`el modal de ${name} queda encima y bloquea el fondo`, async ({ page }) => {
       await prepare(page);
       await page.goto('/');
-      const opener = page.locator('.assistant__opener');
-      const point = await opener.evaluate((el) => {
-        const rect = el.getBoundingClientRect();
-        return { x: rect.x + rect.width / 2, y: rect.y + rect.height / 2 };
-      });
       await page.locator(trigger).first().click();
       const dialog = page.locator('dialog[open]:modal').first();
       await expect(dialog).toBeVisible();
-
-      const top = await page.evaluate(
-        ({ x, y }) => document.elementFromPoint(x, y)?.closest('dialog') !== null,
-        point,
-      );
-      expect(top, 'el modal (o su fondo) debe estar encima del botón flotante').toBe(true);
-      await expect(opener).toBeHidden();
       expect(await page.evaluate(() => getComputedStyle(document.body).overflow)).toBe('hidden');
 
       await page.keyboard.press('Escape');
       await expect(page.locator('dialog[open]')).toHaveCount(0);
-      await expect(opener).toBeVisible();
     });
   }
 });
