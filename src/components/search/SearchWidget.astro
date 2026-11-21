@@ -199,9 +199,16 @@ const FILTER_KEYS: Record<(typeof NAV_SECTIONS)[number], TranslationKey> = {
     color: var(--color-text);
   }
 
+  /* Pastilla con superficie propia: el texto nunca queda apoyado sobre las vetas del mármol. */
   .search-widget__status {
+    width: fit-content;
+    max-width: 100%;
     margin: var(--space-4) 0 var(--space-2);
-    color: var(--color-text-muted);
+    padding: var(--space-1) var(--space-3);
+    border: 1px solid var(--panel-border);
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+    color: var(--color-text);
     font-size: var(--text-sm);
   }
 

@@ -148,7 +148,7 @@ test.describe('Pulido de interfaz', () => {
     await page.goto('/');
     await page.locator('[data-consent-later]').click();
     await page.locator('[data-profile-open]:visible').first().click();
-    const controls = page.locator('[data-profile-dialog] [data-tooltip]');
+    const controls = page.locator('[data-profile-dialog] [data-tooltip]:visible');
     const count = await controls.count();
     expect(count).toBeGreaterThan(3);
     for (let index = 0; index < count; index++) {

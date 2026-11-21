@@ -88,18 +88,6 @@ export async function projectLocales(slug: string): Promise<Locale[]> {
   return LOCALES.filter((locale) => pickVersion(versions, locale) !== undefined);
 }
 
-/** Proyecto visible en un idioma concreto, o undefined si no está publicado en ese idioma ni en español. */
-export async function getProject(
-  slug: string,
-  locale: Locale,
-): Promise<ProjectSummary | undefined> {
-  const index = await indexProjects();
-  const versions = index.get(slug);
-  if (!versions) return undefined;
-  const picked = pickVersion(versions, locale);
-  return picked ? { slug, ...picked } : undefined;
-}
-
 /** Nombre legible de una categoría en el idioma pedido; cae al español si falta la traducción. */
 export async function getCategoryLabel(
   categoryRef: ProjectEntry['data']['category'],

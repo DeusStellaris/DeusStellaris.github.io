@@ -1,6 +1,6 @@
 ---
+import OfflineNotice from '../components/layout/OfflineNotice.astro';
 import { type Locale, t } from '../i18n';
-import { sectionHref } from '../i18n/routes';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const locale: Locale = 'es';
@@ -14,15 +14,5 @@ const locale: Locale = 'es';
   assistant={false}
   noindex
 >
-  <div class="container offline">
-    <h1>{t(locale, 'offline.title')}</h1>
-    <p>{t(locale, 'offline.body')}</p>
-    <p><a href={sectionHref('home', locale)}>{t(locale, 'offline.back')}</a></p>
-  </div>
+  <OfflineNotice locale={locale} />
 </BaseLayout>
-
-<style>
-  .offline {
-    padding-block: var(--space-24);
-  }
-</style>

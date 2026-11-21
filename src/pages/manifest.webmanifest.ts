@@ -16,6 +16,12 @@ export const GET: APIRoute = () => {
     scope: base,
     id: base,
     display: 'standalone',
+    orientation: 'any',
+    categories: ['portfolio', 'productivity', 'games'],
+    shortcuts: [
+      { name: 'Contacto', short_name: 'Contacto', url: `${base}contacto/` },
+      { name: 'Contact', short_name: 'Contact', url: `${base}en/contact/` },
+    ],
     background_color: BRAND_BACKGROUND,
     theme_color: BRAND_THEME,
     icons: [

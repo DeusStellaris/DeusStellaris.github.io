@@ -1,0 +1,78 @@
+---
+import { type Locale, t } from '../../i18n';
+import { publicAssetUrl } from '../../lib/assets';
+import { sectionHref } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+{/* Contenido de la página sin conexión (la sirve el Service Worker cuando falla la red). */}
+<div class="container offline">
+  <div class="offline__card">
+    <img
+      class="offline__mark"
+      src={publicAssetUrl('assets/logo/deus-samurai.webp')}
+      alt=""
+      width="96"
+      height="96"
+    />
+    <h1>{t(locale, 'offline.title')}</h1>
+    <p>{t(locale, 'offline.body')}</p>
+    <div class="offline__actions">
+      <a class="offline__button offline__button--primary" href={sectionHref('home', locale)}>
+        {t(locale, 'offline.back')}
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .offline {
+    padding-block: var(--space-16);
+  }
+
+  .offline__card {
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    max-width: 34rem;
+    margin-inline: auto;
+    padding: var(--space-8) var(--space-6);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background:
+      linear-gradient(155deg, rgb(124 58 237 / 0.16), transparent 55%),
+      var(--color-surface);
+    box-shadow: inset 0 2px 0 var(--color-kintsugi);
+    text-align: center;
+  }
+
+  .offline__card h1,
+  .offline__card p {
+    margin: 0;
+  }
+
+  .offline__card p {
+    color: var(--color-text-muted);
+  }
+
+  .offline__mark {
+    border-radius: 50%;
+  }
+
+  .offline__button {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--target-min);
+    padding-inline: var(--space-6);
+    border: 1px solid var(--color-violet);
+    border-radius: var(--radius-pill);
+    background: var(--color-violet);
+    color: #fff;
+    text-decoration: none;
+  }
+</style>

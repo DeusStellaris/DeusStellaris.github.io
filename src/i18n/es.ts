@@ -145,6 +145,10 @@ const es = {
   profile: {
     open: 'Perfil local',
     openTooltip: 'Tus favoritos, ajustes y cuenta.',
+    installApp: 'Instalar la app',
+    installTooltip: 'Agrega Deus a tu pantalla de inicio; funciona sin conexión.',
+    installed: 'App instalada',
+    installIos: 'En iPhone o iPad: tocá Compartir y elegí “Agregar a pantalla de inicio”.',
     title: 'Tu perfil local',
     privacy:
       'Este perfil es anónimo y se guarda solo en este navegador. No hay cuenta ni datos enviados a un servidor.',

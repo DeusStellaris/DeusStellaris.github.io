@@ -41,8 +41,3 @@ export function t(locale: Locale, key: TranslationKey): string {
   }
   return value;
 }
-
-/** Idioma válido a partir de una cadena cualquiera; usa el predeterminado si no lo es. */
-export function resolveLocale(value: string | undefined): Locale {
-  return value === 'en' ? 'en' : DEFAULT_LOCALE;
-}

@@ -10,6 +10,7 @@
   },
   "scripts": {
     "sync:decap": "node scripts/sync-decap.mjs",
+    "icons": "node scripts/generate-icons.mjs",
     "predev": "npm run sync:decap",
     "dev": "astro dev",
     "prebuild": "npm run sync:decap",

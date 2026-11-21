@@ -3,7 +3,9 @@
 ## PWA
 
 - `src/pages/manifest.webmanifest.ts` genera el manifiesto (nombre "Deus", `standalone`, fondo `#0B0914`, tema `#7C3AED`) respetando `basePath`.
-- `src/pages/sw.js.ts` publica `src/pwa/service-worker.js` en la raíz de la ruta base. Estrategias: navegación red primero con copia de las páginas visitadas, recursos estáticos con caché y revalidación, `/admin/` sin interceptar. Sin conexión se muestra `/offline/` (o `/en/offline/`).
+- `src/pages/sw.js.ts` publica `src/pwa/service-worker.js` en la raíz de la ruta base. Estrategias: HTML red primero (con copia de lo visitado y, si no hay, `/offline/` o `/en/offline/`), assets de `/_astro/` y `/assets/` caché primero, el resto del mismo origen (p. ej. `search-index.json`) caché con revalidación, y red estricta —sin interceptar— para `/auth`, `/push`, `/consent`, `/accounts`, `/api`, `/admin/` y todo otro origen (el Worker de API). Al instalarse guarda inicio, páginas sin conexión, índice de búsqueda, logo y los CSS/JS/fuentes que declaran esas páginas; el caché es versionado por build.
+- Instalación: `src/features/pwa/install.ts` captura `beforeinstallprompt` y muestra el botón del perfil; en iOS Safari muestra la nota con los pasos manuales.
+- Íconos: `npm run icons` (scripts/generate-icons.mjs) los regenera desde el original de `_Deus_Assets/brand-sources/`.
 - Íconos en `public/assets/icons/` (192, 512, maskable 512 y apple-touch), derivados del logotipo original que vive en `_Deus_Assets/brand-sources/`.
 - El registro (`src/features/pwa/register.ts`) solo corre en producción: no funciona con `npm run dev`.
 

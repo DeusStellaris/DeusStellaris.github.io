@@ -11,6 +11,7 @@ import { initProfile } from './profile/profile';
 import { initSettingsPanel } from './settings/settings-panel';
 import { initPushFollow } from './push/push-follow';
 import { initPushPanel } from './push/push-panel';
+import { initInstall } from './pwa/install';
 import { registerServiceWorker } from './pwa/register';
 import { initRum } from './rum/rum';
 import { initSearchWidgets } from './search/search-widget';
@@ -49,6 +50,7 @@ function initPage(): void {
   initSettingsPanel();
   initPushPanel();
   initPushFollow();
+  initInstall();
   initAssistant();
   initSearchWidgets();
   initLikes();

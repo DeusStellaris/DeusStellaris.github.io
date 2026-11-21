@@ -94,6 +94,21 @@ function settingsInfo(prefix: 'lite' | 'theme'): string {
       </ul>
     </section>
 
+    <section class="profile__section" aria-labelledby="profile-install-heading">
+      <h3 id="profile-install-heading">{t(locale, 'profile.installApp')}</h3>
+      <button
+        type="button"
+        class="profile__clear"
+        data-install-app
+        data-msg-installed={t(locale, 'profile.installed')}
+        data-tooltip={t(locale, 'profile.installTooltip')}
+        hidden
+      >
+        {t(locale, 'profile.installApp')}
+      </button>
+      <p class="profile__privacy" data-install-ios hidden>{t(locale, 'profile.installIos')}</p>
+    </section>
+
     {services.accountsEnabled === true && <AccountPanel locale={locale} api={services.apiBaseUrl ?? ''} />}
     </div>
 

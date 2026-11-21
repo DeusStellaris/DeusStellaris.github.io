@@ -147,6 +147,10 @@ const en: Partial<Dictionary> = {
   profile: {
     open: 'Local profile',
     openTooltip: 'Your favorites, settings and account.',
+    installApp: 'Install the app',
+    installTooltip: 'Adds Deus to your home screen; it works offline.',
+    installed: 'App installed',
+    installIos: 'On iPhone or iPad: tap Share and choose “Add to Home Screen”.',
     title: 'Your local profile',
     privacy:
       'This profile is anonymous and is stored only in this browser. There is no account and no data is sent to a server.',
