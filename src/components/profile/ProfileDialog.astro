@@ -30,9 +30,18 @@ const { locale } = Astro.props;
   <div class="profile__inner">
     <header class="profile__header">
       <h2 id="profile-title">{t(locale, 'profile.title')}</h2>
-      <button type="button" class="profile__close" data-profile-close>{t(locale, 'profile.close')}</button>
+      <button
+        type="button"
+        class="profile__close"
+        data-profile-close
+        data-tooltip={t(locale, 'profile.closeTooltip')}
+        aria-label={t(locale, 'profile.close')}
+      >
+        <span aria-hidden="true">×</span>
+      </button>
     </header>
 
+    <div class="profile__body">
     <p class="profile__privacy">{t(locale, 'profile.privacy')}</p>
 
     <section class="profile__section" aria-labelledby="profile-favorites-heading">
@@ -52,6 +61,7 @@ const { locale } = Astro.props;
     </section>
 
     {services.accountsEnabled === true && <AccountPanel locale={locale} api={services.apiBaseUrl ?? ''} />}
+    </div>
   </div>
 </dialog>
 
@@ -60,24 +70,39 @@ const { locale } = Astro.props;
     width: min(92vw, 36rem);
     max-height: 85dvh;
     padding: 0;
+    overflow: hidden;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-md);
     background: var(--color-surface);
     color: var(--color-text);
   }
 
+  /* Contenedor externo sin scroll; solo el cuerpo se desplaza y la cabecera queda fija. */
   .profile__inner {
+    display: flex;
+    flex-direction: column;
+    max-height: 85dvh;
+  }
+
+  .profile__body {
     display: grid;
     gap: var(--space-6);
     padding: var(--space-6);
     overflow-y: auto;
+    overscroll-behavior: contain;
   }
 
   .profile__header {
+    position: sticky;
+    top: 0;
+    z-index: 1;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: var(--space-4);
+    padding: var(--space-3) var(--space-4) var(--space-3) var(--space-6);
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
   }
 
   .profile__header h2 {
@@ -130,6 +155,15 @@ const { locale } = Astro.props;
     margin: 0;
   }
 
+  .profile__close {
+    display: grid;
+    place-items: center;
+    width: var(--target-min);
+    padding: 0;
+    font-size: var(--text-xl);
+    line-height: 1;
+  }
+
   .profile__close,
   .profile__clear,
   .profile__remove {
@@ -140,6 +174,17 @@ const { locale } = Astro.props;
     background: var(--color-surface-raised);
     color: var(--color-text);
     cursor: pointer;
+    transition: transform var(--duration-fast) var(--ease-out);
+  }
+
+  .profile__close:hover {
+    transform: rotate(90deg);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .profile__close:hover {
+      transform: none;
+    }
   }
 
   .profile__clear {

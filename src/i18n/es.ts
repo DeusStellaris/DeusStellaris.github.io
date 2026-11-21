@@ -124,6 +124,7 @@ const es = {
     on: 'Activado',
     off: 'Desactivado',
     close: 'Cerrar',
+    closeTooltip: 'Cerrar el perfil (Esc)',
     remove: 'Quitar',
     clearAll: 'Borrar favoritos',
   },

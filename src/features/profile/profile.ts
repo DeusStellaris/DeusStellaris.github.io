@@ -142,6 +142,11 @@ function bindOnce(): void {
     const dialog = target.closest<HTMLDialogElement>(DIALOG_SELECTOR);
     if (!dialog) return;
 
+    // Clic fuera: el fondo del modal es el propio <dialog> (sin padding).
+    if (target === dialog) {
+      dialog.close();
+      return;
+    }
     if (target.closest('[data-profile-close]')) {
       dialog.close();
       return;

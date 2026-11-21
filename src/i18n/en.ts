@@ -126,6 +126,7 @@ const en: Partial<Dictionary> = {
     on: 'On',
     off: 'Off',
     close: 'Close',
+    closeTooltip: 'Close profile (Esc)',
     remove: 'Remove',
     clearAll: 'Clear favorites',
   },
