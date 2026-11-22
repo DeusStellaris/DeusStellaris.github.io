@@ -136,3 +136,32 @@ test('debounce ejecuta una sola vez con el último valor', async () => {
   await new Promise((resolve) => setTimeout(resolve, 60));
   assert.deepEqual(calls, ['c']);
 });
+
+test('parseManifest valida versión, hashes y URLs https', async () => {
+  const { parseManifest } = await import('../../src/features/deusdeck/manifest.ts');
+  const entry = (url) => ({ url, sha256: 'a'.repeat(64) });
+  const ok = {
+    version: '0.1.0',
+    windows: entry('https://x.dev/programas/deusdeck/a.exe'),
+    android: entry('https://x.dev/programas/deusdeck/a.apk'),
+    notes: { es: { fixed: ['a', 1] }, en: {} },
+  };
+  assert.equal(parseManifest(ok)?.notes.es.fixed?.length, 1);
+  assert.equal(parseManifest({ ...ok, version: 'v1' }), null);
+  assert.equal(parseManifest({ ...ok, windows: { ...ok.windows, sha256: 'xyz' } }), null);
+  assert.equal(parseManifest({ ...ok, android: entry('http://x.dev/a.apk') }), null);
+  assert.equal(parseManifest(null), null);
+});
+
+test('resolveDownloadUrl reubica solo las descargas del propio sitio y formatSize usa MiB', async () => {
+  const { resolveDownloadUrl, formatSize } = await import(
+    '../../src/features/deusdeck/manifest.ts'
+  );
+  assert.equal(
+    resolveDownloadUrl('https://prod.dev/programas/deusdeck/a.exe', 'https://prev.dev'),
+    'https://prev.dev/programas/deusdeck/a.exe',
+  );
+  const gh = 'https://github.com/DeusStellaris/DeusDeck/releases/download/v0.1.0/a.exe';
+  assert.equal(resolveDownloadUrl(gh, 'https://prev.dev'), gh);
+  assert.equal(formatSize(5754231, 'en'), '5.5 MiB');
+});

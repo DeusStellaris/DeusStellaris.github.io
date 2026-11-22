@@ -1,0 +1,47 @@
+{
+  "schema": 1,
+  "version": "0.1.0",
+  "page": "https://deusstellaris-github-io.pages.dev/programas/deusdeck/",
+  "windows": {
+    "url": "https://deusstellaris-github-io.pages.dev/programas/deusdeck/DeusDeck_0.1.0_x64-setup.exe",
+    "sha256": "3a22d6788abf68db206f3cfee4b27d8cf0bf6cf1cd15625ff657425ba0a0b183"
+  },
+  "android": {
+    "url": "https://deusstellaris-github-io.pages.dev/programas/deusdeck/DeusDeck-0.1.0-android.apk",
+    "sha256": "6c363eb954a371f15be65f5d4a56a1f8b96c24708fa085c76cca40108e27dca2"
+  },
+  "notes": {
+    "es": {
+      "fixed": [
+        "La app de Android ya no se queda en «Reconectando…»: conecta por la red local y se puede volver atrás.",
+        "Las etiquetas de las teclas ya no parten palabras cortas.",
+        "El borde activo de las teclas no se recorta en ningún celular."
+      ],
+      "added": [
+        "Sección «Información de la aplicación» en Ajustes, en PC y celular.",
+        "Aviso de actualizaciones con notas del parche y respaldo de configuración en un clic.",
+        "Accesos directos .lnk y .url de lanzadores (CurseForge, Steam, Epic) en «Abrir aplicación»."
+      ],
+      "improved": [
+        "El celular muestra categorías debajo de la barra superior, con la grilla ajustada al espacio restante."
+      ]
+    },
+    "en": {
+      "fixed": [
+        "The Android app no longer gets stuck on «Reconnecting…»: it connects over the local network and you can go back.",
+        "Key labels no longer split short words.",
+        "The active key border is no longer clipped on any phone."
+      ],
+      "added": [
+        "«App information» section in Settings, on PC and phone.",
+        "Update notices with patch notes and one-click settings backup.",
+        ".lnk and .url launcher shortcuts (CurseForge, Steam, Epic) in «Open application»."
+      ],
+      "improved": [
+        "The phone shows categories under the top bar, with the grid fitted to the remaining space."
+      ]
+    }
+  },
+  "revoked_serials": [],
+  "signature": "908f637cd77c79aa9645c31527510829d05da557d6210a30ce747a7f480242bcfe7fe443ed51dcb586f303a66594ebee1c4decdfc7063b49089596a7ba031d0d"
+}

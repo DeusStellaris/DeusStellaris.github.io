@@ -1,8 +1,6 @@
 ---
-import deck from '../../config/deusdeck.json';
 import { type Locale, t } from '../../i18n';
 import { deckPaths, localizedHref } from '../../i18n/routes';
-import { formatDate } from '../../lib/format';
 import ProjectNotifyButton from '../push/ProjectNotifyButton.astro';
 
 interface Props {
@@ -30,7 +28,13 @@ const legalLinks = [
     tip: t(locale, 'deck.legalTermsTooltip'),
   },
 ];
-const releases = deck.releases;
+const MANIFEST_URL = '/programas/deusdeck/version.json';
+const PLATFORMS = ['windows', 'android'] as const;
+const noteLabels = JSON.stringify({
+  added: t(locale, 'deck.notesAdded'),
+  improved: t(locale, 'deck.notesImproved'),
+  fixed: t(locale, 'deck.notesFixed'),
+});
 const osNames = JSON.stringify({
   windows: t(locale, 'deck.os.windows'),
   mac: t(locale, 'deck.os.mac'),
@@ -39,7 +43,14 @@ const osNames = JSON.stringify({
 });
 ---
 
-<article class="deck" data-deck-product data-os-names={osNames}>
+<article
+  class="deck"
+  data-deck-product
+  data-locale={locale}
+  data-manifest-url={MANIFEST_URL}
+  data-os-names={osNames}
+  data-note-labels={noteLabels}
+>
   <header class="deck__hero">
     <p class="deck__eyebrow">
       <span>{t(locale, 'deck.programsLabel')}</span>
@@ -76,44 +87,46 @@ const osNames = JSON.stringify({
       {t(locale, 'deck.detectedOs')}: <strong data-deck-os>{t(locale, 'deck.os.windows')}</strong>
     </p>
     <p class="deck__notice" data-deck-unsupported hidden>{t(locale, 'deck.windowsOnly')}</p>
+    <p class="deck__notice" data-deck-error hidden>
+      {t(locale, 'deck.manifestError')} <a href={MANIFEST_URL}>version.json</a>
+    </p>
+    <noscript><p class="deck__notice">{t(locale, 'deck.noScript')} <a href={MANIFEST_URL}>version.json</a></p></noscript>
 
-    <div class="deck__version">
-      <label for="deck-version">{t(locale, 'deck.versionLabel')}</label>
-      <select id="deck-version" data-deck-version data-tooltip={t(locale, 'deck.versionTooltip')}>
-        {releases.map((release, index) => <option value={release.version} selected={index === 0}>{release.version}</option>)}
-      </select>
+    <div data-deck-manifest hidden>
+      <p class="deck__version">{t(locale, 'deck.versionLabel')}: <strong data-deck-version></strong></p>
+      <div class="deck__installers">
+        {
+          PLATFORMS.map((platform) => (
+            <a class="deck__button deck__button--primary" data-deck-download={platform} aria-disabled="true" data-tooltip={t(locale, `deck.${platform}Tooltip`)}>
+              {t(locale, `deck.${platform}Label`)} <small data-deck-size={platform}></small>
+            </a>
+          ))
+        }
+      </div>
+
+      <h3>{t(locale, 'deck.hashHeading')}</h3>
+      <p class="deck__hint">{t(locale, 'deck.hashHelp')}</p>
+      <dl class="deck__hashes">
+        {
+          PLATFORMS.map((platform) => (
+            <>
+              <dt data-tooltip={t(locale, 'deck.hashTooltip')}>{t(locale, `deck.${platform}Label`)}</dt>
+              <dd><code data-deck-sha={platform}></code></dd>
+            </>
+          ))
+        }
+      </dl>
+
+      <h3>{t(locale, 'deck.notesHeading')}</h3>
+      <div data-deck-notes></div>
     </div>
+  </section>
 
-    {
-      releases.map((release, index) => (
-        <div class="deck__release" data-deck-release={release.version} hidden={index !== 0}>
-          <div class="deck__installers" data-deck-installers>
-            {(['msi', 'exe'] as const).map((kind) => {
-              const url = release.installers.windows[kind];
-              const label = t(locale, kind === 'msi' ? 'deck.installerMsi' : 'deck.installerExe');
-              return url ? (
-                <a class="deck__button deck__button--primary" href={url} data-tooltip={t(locale, kind === 'msi' ? 'deck.installerMsiTooltip' : 'deck.installerExeTooltip')}>
-                  {label}
-                </a>
-              ) : (
-                <button type="button" class="deck__button" disabled data-deck-installer={kind} data-tooltip={t(locale, 'deck.downloadPrivateTooltip')}>
-                  {label}
-                </button>
-              );
-            })}
-          </div>
-          <p class="deck__private-note">{t(locale, 'deck.downloadPrivate')}</p>
-
-          <h3>{t(locale, 'deck.notesHeading')}</h3>
-          <p class="deck__date">
-            {release.date ? `${t(locale, 'deck.releaseDate')} ${formatDate(new Date(release.date), locale)}` : t(locale, 'deck.noDate')}
-          </p>
-          <ul class="deck__notes">
-            {release.notes[locale].map((note) => <li>{note}</li>)}
-          </ul>
-        </div>
-      ))
-    }
+  <section aria-labelledby="deck-pair-title">
+    <h2 id="deck-pair-title">{t(locale, 'deck.pairHeading')}</h2>
+    <ol class="deck__steps">
+      {(['1', '2', '3'] as const).map((n) => <li>{t(locale, `deck.pairStep${n}`)}</li>)}
+    </ol>
   </section>
 
   <section class="deck__hub" aria-labelledby="deck-hub-title">
@@ -254,24 +267,11 @@ const osNames = JSON.stringify({
   }
 
   .deck__version {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--space-3);
-    margin-bottom: var(--space-4);
+    margin: 0 0 var(--space-4);
   }
 
-  .deck__version select {
-    min-height: var(--target-min);
-    padding-inline: var(--space-3);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-md);
-    background: var(--color-surface-raised);
-    color: var(--color-text);
-  }
-
-  .deck__installers[hidden],
-  .deck__notice[hidden] {
+  .deck__notice[hidden],
+  [data-deck-manifest][hidden] {
     display: none;
   }
 
@@ -282,16 +282,46 @@ const osNames = JSON.stringify({
     gap: var(--space-3);
   }
 
-  .deck__private-note,
-  .deck__date,
+  .deck__button[aria-disabled='true'] {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+
+  .deck__button small {
+    margin-left: var(--space-2);
+    color: var(--color-text-muted);
+  }
+
+  .deck__hint,
   .deck__legal-note {
     margin: var(--space-2) 0;
     color: var(--color-text-muted);
     font-size: var(--text-sm);
   }
 
-  .deck__notes {
-    margin: 0;
+  .deck__hashes {
+    display: grid;
+    gap: var(--space-1) var(--space-4);
+    margin: 0 0 var(--space-6);
+  }
+
+  .deck__hashes dt {
+    width: fit-content;
+    font-size: var(--text-sm);
+  }
+
+  .deck__hashes dd {
+    margin: 0 0 var(--space-3);
+  }
+
+  .deck__hashes code {
+    overflow-wrap: anywhere;
+    font-size: var(--text-sm);
+  }
+
+  .deck__notes,
+  .deck__steps {
+    margin: 0 0 var(--space-3);
     padding-left: var(--space-6);
   }
 
@@ -308,11 +338,6 @@ const osNames = JSON.stringify({
     font-size: var(--text-sm);
     text-decoration: none;
     cursor: pointer;
-  }
-
-  .deck__button:disabled {
-    cursor: not-allowed;
-    opacity: 0.6;
   }
 
   .deck__button--primary {

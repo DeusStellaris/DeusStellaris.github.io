@@ -77,7 +77,7 @@ test.describe('Ficha de DeusDeck', () => {
     await page.goto('/programas/deusdeck/');
     await waitForIntroDone(page);
     await expect(page.locator('h1')).toHaveText('DeusDeck');
-    await expect(page.locator('.deck__badge')).toContainText('Prueba privada');
+    await expect(page.locator('.deck__badge')).toContainText('Beta');
     await expect(page.locator('.deck__feature')).toHaveCount(6);
     for (const text of ['LAN', 'OBS', 'emojis', 'Soundboard', 'monitores', 'carpetas anidadas']) {
       await expect(page.locator('.deck__features')).toContainText(text);
@@ -92,20 +92,18 @@ test.describe('Ficha de DeusDeck', () => {
     expect(watch.cspViolations).toEqual([]);
   });
 
-  test('sin binarios públicos: los instaladores .msi y .exe quedan desactivados con tooltip', async ({
-    browser,
-  }) => {
+  test('los instaladores .exe y .apk y sus hashes salen de version.json', async ({ browser }) => {
     const context = await browser.newContext({ userAgent: WINDOWS_UA });
     const page = await context.newPage();
     await page.goto('/programas/deusdeck/');
-    const buttons = page.locator('[data-deck-installers] button');
-    await expect(buttons).toHaveCount(2);
-    for (let i = 0; i < 2; i++) {
-      await expect(buttons.nth(i)).toBeDisabled();
-      await expect(buttons.nth(i)).toHaveAttribute('data-tooltip', /instaladores públicos/);
-    }
-    await expect(page.locator('[data-deck-installers]')).toContainText('.msi');
-    await expect(page.locator('[data-deck-installers]')).toContainText('.exe');
+    const windows = page.locator('[data-deck-download="windows"]');
+    const android = page.locator('[data-deck-download="android"]');
+    await expect(windows).toHaveAttribute('href', /DeusDeck_\d+\.\d+\.\d+_x64-setup\.exe$/);
+    await expect(android).toHaveAttribute('href', /DeusDeck-\d+\.\d+\.\d+-android\.apk$/);
+    await expect(windows).toHaveAttribute('data-tooltip', /Windows/);
+    await expect(page.locator('[data-deck-sha="windows"]')).toHaveText(/^[0-9a-f]{64}$/);
+    await expect(page.locator('[data-deck-sha="android"]')).toHaveText(/^[0-9a-f]{64}$/);
+    await expect(page.locator('[data-deck-version]')).toHaveText(/^v\d+\.\d+\.\d+$/);
     await expect(page.locator('[data-deck-os]')).toHaveText('Windows');
     await expect(page.locator('[data-deck-unsupported]')).toBeHidden();
     await context.close();
@@ -119,26 +117,19 @@ test.describe('Ficha de DeusDeck', () => {
     await page.goto('/programas/deusdeck/');
     await expect(page.locator('[data-deck-os]')).toHaveText('macOS');
     await expect(page.locator('[data-deck-unsupported]')).toBeVisible();
-    await expect(page.locator('[data-deck-installers]')).toBeHidden();
+    await expect(page.locator('[data-deck-download="android"]')).toBeVisible();
     await context.close();
   });
 
-  test('el selector de versión muestra las notas de lanzamiento y el estado privado', async ({
-    page,
-  }) => {
+  test('las notas de la versión se leen del manifiesto, agrupadas', async ({ page }) => {
     await page.goto('/programas/deusdeck/');
-    const select = page.locator('[data-deck-version]');
-    await expect(select).toHaveAttribute('data-tooltip', /notas/);
-    await expect(select.locator('option')).toHaveCount(1);
-    await expect(
-      page.locator('.deck__release:not([hidden]) .deck__notes li').first(),
-    ).toContainText('Prueba cerrada');
-    await expect(page.locator('.deck__release:not([hidden])')).toContainText('Sin fecha');
+    await expect(page.locator('[data-deck-notes] h4').first()).toBeVisible();
+    await expect(page.locator('[data-deck-notes] li').first()).toBeVisible();
   });
 
   test('la versión en inglés está traducida y enlaza a su EULA y al Hub', async ({ page }) => {
     await page.goto('/en/programs/deusdeck/');
-    await expect(page.locator('.deck__badge')).toContainText('Private beta');
+    await expect(page.locator('.deck__badge')).toContainText('Beta');
     await expect(page.locator('.deck__features')).toContainText('Phone control over LAN');
     await expect(page.locator('.deck__hub a')).toHaveAttribute(
       'href',

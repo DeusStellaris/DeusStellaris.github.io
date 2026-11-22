@@ -16,8 +16,8 @@ Programas destaca DeusDeck con una tarjeta. Las rutas de demo y las reseñas se 
 
 ## Ficha de DeusDeck
 
-- Datos en `src/config/deusdeck.json`: `releases[]` con notas es/en e instaladores. Un instalador en `null` deja su botón desactivado y con tooltip: **no se expone ningún binario**. Cuando exista uno, se carga la URL y el botón pasa a enlace.
-- El sistema operativo se detecta en el navegador (`src/features/deusdeck/os-detect.ts`) y no se envía a ningún lado. Los instaladores `.msi` y `.exe` son para Windows; en otros sistemas se muestra un aviso.
+- Versión, enlaces, hashes SHA-256 y notas se leen en el navegador desde `public/programas/deusdeck/version.json` (firmado Ed25519 por el script de release de DeusDeck; no editar a mano). Los instaladores (`.exe`, `.apk`) viven en esa misma carpeta mientras pesen menos de 25 MiB; si no, `version.json` apunta al GitHub Release y se re-firma.
+- El sistema operativo se detecta en el navegador (`src/features/deusdeck/os-detect.ts`) y no se envía a ningún lado. Hay instalador `.exe` (Windows) y `.apk` (Android); en macOS y Linux se muestra un aviso.
 
 ## DeusDeck Hub
 

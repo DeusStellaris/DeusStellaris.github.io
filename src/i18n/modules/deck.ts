@@ -1,12 +1,12 @@
 // Textos de la ficha de DeusDeck y del DeusDeck Hub (es / en).
 
 export const deckEs = {
-  badge: 'Prueba privada',
+  badge: 'Beta',
   programsLabel: 'Programas',
   lead: 'Tu panel de control para la PC, el stream y el escritorio, manejado desde el celular por la red local.',
-  statusTitle: 'Estado: prueba privada',
+  statusTitle: 'Estado: beta',
   statusBody:
-    'DeusDeck está en prueba cerrada. Los instaladores todavía no son públicos y este sitio no distribuye ningún binario hasta que termine esa etapa.',
+    'DeusDeck está en beta temprana. Descargalo solo desde esta página y verificá el hash SHA-256 antes de instalarlo.',
   featuresHeading: 'Qué hace',
   features: {
     lan: {
@@ -37,21 +37,25 @@ export const deckEs = {
   downloadHeading: 'Descarga',
   detectedOs: 'Sistema detectado',
   os: { windows: 'Windows', mac: 'macOS', linux: 'Linux', other: 'otro sistema' },
-  windowsOnly:
-    'Los instaladores actuales son solo para Windows. Tu sistema no está soportado por ahora.',
-  installerMsi: 'Instalador .msi (recomendado)',
-  installerExe: 'Instalador .exe',
-  installerMsiTooltip:
-    'Paquete de Windows Installer: ideal para instalar y desinstalar de forma limpia.',
-  installerExeTooltip: 'Instalador clásico con asistente. Alternativa si el .msi no te funciona.',
-  downloadPrivate: 'Disponible al terminar la prueba privada',
-  downloadPrivateTooltip:
-    'Todavía no hay instaladores públicos. Este botón se activa cuando se publique una versión.',
+  windowsOnly: 'Hay instaladores para Windows y Android. Tu sistema no está soportado por ahora.',
+  windowsLabel: 'Instalador para Windows (.exe)',
+  androidLabel: 'App para Android (.apk)',
+  windowsTooltip: 'Instalador clásico con asistente para Windows de 64 bits.',
+  androidTooltip: 'Paquete APK: en Android hay que permitir instalar apps de este origen.',
+  manifestError: 'No se pudo leer la información de la versión. Reintentá o abrí',
+  noScript: 'Sin JavaScript no se muestran los enlaces. Los datos de la versión están en',
   versionLabel: 'Versión',
-  versionTooltip: 'Elegí una versión para ver sus notas de lanzamiento.',
+  hashHeading: 'Verificación SHA-256',
+  hashHelp: 'En PowerShell: Get-FileHash <archivo> y comparalo con la huella de abajo.',
+  hashTooltip: 'Huella SHA-256 del archivo: si no coincide con la tuya, no lo ejecutes.',
   notesHeading: 'Notas de la versión',
-  releaseDate: 'Publicada el',
-  noDate: 'Sin fecha de publicación (prueba privada)',
+  notesAdded: 'Agregado',
+  notesImproved: 'Mejorado',
+  notesFixed: 'Corregido',
+  pairHeading: 'Vinculá el celular',
+  pairStep1: 'Instalá y abrí DeusDeck en la PC.',
+  pairStep2: 'Instalá la app de Android y abrila con el celular en la misma red Wi-Fi.',
+  pairStep3: 'Escaneá el QR que muestra la PC, o ingresá la IP y el PIN que aparecen en pantalla.',
   hubTitle: 'DeusDeck Hub',
   hubBody:
     'Temas, íconos vectoriales, emojis animados y plugins de la comunidad, pensados para instalarse desde la app.',
@@ -74,12 +78,12 @@ export const deckEs = {
 };
 
 export const deckEn: typeof deckEs = {
-  badge: 'Private beta',
+  badge: 'Beta',
   programsLabel: 'Programs',
   lead: 'Your control panel for the PC, the stream and the desktop, driven from your phone over the local network.',
-  statusTitle: 'Status: private beta',
+  statusTitle: 'Status: beta',
   statusBody:
-    'DeusDeck is in closed testing. Installers are not public yet and this site distributes no binaries until that stage ends.',
+    'DeusDeck is in early beta. Download it only from this page and verify the SHA-256 hash before installing.',
   featuresHeading: 'What it does',
   features: {
     lan: {
@@ -110,19 +114,26 @@ export const deckEn: typeof deckEs = {
   downloadHeading: 'Download',
   detectedOs: 'Detected system',
   os: { windows: 'Windows', mac: 'macOS', linux: 'Linux', other: 'another system' },
-  windowsOnly: 'Current installers are for Windows only. Your system is not supported yet.',
-  installerMsi: '.msi installer (recommended)',
-  installerExe: '.exe installer',
-  installerMsiTooltip: 'Windows Installer package: best for a clean install and uninstall.',
-  installerExeTooltip: 'Classic installer with a wizard. An alternative if the .msi does not work.',
-  downloadPrivate: 'Available when the private beta ends',
-  downloadPrivateTooltip:
-    'There are no public installers yet. This button turns on when a version is published.',
+  windowsOnly:
+    'Installers are available for Windows and Android. Your system is not supported yet.',
+  windowsLabel: 'Windows installer (.exe)',
+  androidLabel: 'Android app (.apk)',
+  windowsTooltip: 'Classic installer with a wizard for 64-bit Windows.',
+  androidTooltip: 'APK package: on Android you must allow installing apps from this source.',
+  manifestError: 'Could not read the version info. Try again or open',
+  noScript: 'Links are not shown without JavaScript. The version data is in',
   versionLabel: 'Version',
-  versionTooltip: 'Pick a version to read its release notes.',
+  hashHeading: 'SHA-256 verification',
+  hashHelp: 'In PowerShell: Get-FileHash <file> and compare it with the fingerprint below.',
+  hashTooltip: 'SHA-256 fingerprint of the file: if it does not match yours, do not run it.',
   notesHeading: 'Release notes',
-  releaseDate: 'Published on',
-  noDate: 'No publication date (private beta)',
+  notesAdded: 'Added',
+  notesImproved: 'Improved',
+  notesFixed: 'Fixed',
+  pairHeading: 'Link your phone',
+  pairStep1: 'Install and open DeusDeck on the PC.',
+  pairStep2: 'Install the Android app and open it with the phone on the same Wi-Fi network.',
+  pairStep3: 'Scan the QR shown on the PC, or enter the IP and PIN shown on screen.',
   hubTitle: 'DeusDeck Hub',
   hubBody:
     'Community themes, vector icons, animated emojis and plugins, designed to be installed from the app.',
